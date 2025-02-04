@@ -18,8 +18,8 @@ Pod::Spec.new do |spec|
   spec.license      = { :type => "MIT", :file => "LICENSE" }
   spec.author       = { "田风有" => "420144542@qq.com" }
   
-  spec.ios.deployment_target = "13.0"
-  spec.osx.deployment_target = "11.0"
+  spec.ios.deployment_target = "15.0"
+  spec.osx.deployment_target = "12.0"
   spec.swift_version = "5.0"
   
   spec.source       = { :git => "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
