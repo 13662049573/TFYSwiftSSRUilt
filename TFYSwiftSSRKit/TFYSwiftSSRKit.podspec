@@ -14,42 +14,42 @@ Pod::Spec.new do |spec|
                     * Traffic statistics
                     DESC
                     
-  spec.homepage     = "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit"
+  spec.homepage     = "https://github.com/yourusername/TFYSwiftSSRKit"
   spec.license      = { :type => "MIT", :file => "LICENSE" }
-  spec.author       = { "田风有" => "420144542@qq.com" }
+  spec.author       = { "tianfengyou" => "youremail@example.com" }
   
   spec.ios.deployment_target = "13.0"
   spec.osx.deployment_target = "11.0"
   spec.swift_version = "5.0"
   
-  spec.source       = { :git => "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
+  spec.source       = { :git => "https://github.com/yourusername/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
   
-  spec.source_files = "TFYSwiftSSRKit/Classes/**/*.{h,m,swift}"
-  spec.public_header_files = "TFYSwiftSSRKit/Classes/**/*.h"
+  spec.source_files = "Classes/**/*.{h,m,swift}"
+  spec.public_header_files = "Classes/**/*.h"
   
   # 资源文件
   spec.resource_bundles = {
     'TFYSwiftSSRKit' => [
-      'TFYSwiftSSRKit/Resources/*.json',
-      'TFYSwiftSSRKit/Resources/*.mmdb'
+      'Resources/*.json',
+      'Resources/*.mmdb'
     ]
   }
   
   # 预编译二进制文件
   spec.vendored_libraries = [
-    'TFYSwiftSSRKit/shadowsocks/install/lib/*.{a,dylib}',
-    'TFYSwiftSSRKit/libsodium/install/lib/*.{a,dylib}',
-    'TFYSwiftSSRKit/openssl/install/lib/*.{a,dylib}',
-    'TFYSwiftSSRKit/libmaxminddb/install/lib/*.{a,dylib}'
+    'shadowsocks/install/lib/*.{a,dylib}',
+    'libsodium/install/lib/*.{a,dylib}',
+    'openssl/install/lib/*.{a,dylib}',
+    'libmaxminddb/install/lib/*.{a,dylib}'
   ]
   
   # 二进制文件
   spec.preserve_paths = [
-    'TFYSwiftSSRKit/shadowsocks/install/bin/*',
-    'TFYSwiftSSRKit/shadowsocks/install/include/*',
-    'TFYSwiftSSRKit/libsodium/install/include/*',
-    'TFYSwiftSSRKit/openssl/install/include/*',
-    'TFYSwiftSSRKit/libmaxminddb/install/include/*'
+    'shadowsocks/install/bin/*',
+    'shadowsocks/install/include/*',
+    'libsodium/install/include/*',
+    'openssl/install/include/*',
+    'libmaxminddb/install/include/*'
   ]
   
   # 系统框架依赖
@@ -59,22 +59,22 @@ Pod::Spec.new do |spec|
   # 编译设置
   spec.pod_target_xcconfig = {
     'HEADER_SEARCH_PATHS' => [
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks/install/include',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libsodium/install/include',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/openssl/install/include',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libmaxminddb/install/include'
+      '$(PODS_TARGET_SRCROOT)/shadowsocks/install/include',
+      '$(PODS_TARGET_SRCROOT)/libsodium/install/include',
+      '$(PODS_TARGET_SRCROOT)/openssl/install/include',
+      '$(PODS_TARGET_SRCROOT)/libmaxminddb/install/include'
     ],
     'LIBRARY_SEARCH_PATHS' => [
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks/install/lib',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libsodium/install/lib',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/openssl/install/lib',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libmaxminddb/install/lib'
+      '$(PODS_TARGET_SRCROOT)/shadowsocks/install/lib',
+      '$(PODS_TARGET_SRCROOT)/libsodium/install/lib',
+      '$(PODS_TARGET_SRCROOT)/openssl/install/lib',
+      '$(PODS_TARGET_SRCROOT)/libmaxminddb/install/lib'
     ],
     'SWIFT_INCLUDE_PATHS' => [
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks/install/include',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libsodium/install/include',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/openssl/install/include',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libmaxminddb/install/include'
+      '$(PODS_TARGET_SRCROOT)/shadowsocks/install/include',
+      '$(PODS_TARGET_SRCROOT)/libsodium/install/include',
+      '$(PODS_TARGET_SRCROOT)/openssl/install/include',
+      '$(PODS_TARGET_SRCROOT)/libmaxminddb/install/include'
     ],
     'GCC_PREPROCESSOR_DEFINITIONS' => [
       'SODIUM_STATIC=1',
