@@ -15,7 +15,9 @@ Pod::Spec.new do |spec|
                     DESC
                     
   spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRUilt"
+
   spec.license      = { :type => "MIT", :file => "LICENSE" }
+  
   spec.author       = { "田风有" => "420144542@qq.com" }
   
   spec.ios.deployment_target = "15.0"
@@ -38,10 +40,10 @@ Pod::Spec.new do |spec|
   
   # 预编译二进制文件
   spec.vendored_libraries = [
-    'shadowsocks/install/lib/*.{a,dylib}',
     'libsodium/install/lib/*.{a,dylib}',
     'openssl/install/lib/*.{a,dylib}',
-    'libmaxminddb/install/lib/*.{a,dylib}'
+    'libmaxminddb/install/lib/*.{a,dylib}',
+    'shadowsocks/install/lib/*.{a,dylib}'
   ]
   
   # 二进制文件

@@ -29,10 +29,10 @@
     ]
   },
   "vendored_libraries": [
-    "shadowsocks/install/lib/*.{a,dylib}",
     "libsodium/install/lib/*.{a,dylib}",
     "openssl/install/lib/*.{a,dylib}",
-    "libmaxminddb/install/lib/*.{a,dylib}"
+    "libmaxminddb/install/lib/*.{a,dylib}",
+    "shadowsocks/install/lib/*.{a,dylib}"
   ],
   "preserve_paths": [
     "shadowsocks/install/bin/*",

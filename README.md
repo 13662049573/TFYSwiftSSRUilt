@@ -7,7 +7,7 @@
 - libsodium (最新版本：1.0.20) - 用于加密操作
 - libmaxminddb (最新版本：1.7.1) - 用于GeoIP查询
 - OpenSSL (最新版本：3.1.4) - 用于SSL/TLS支持
-- shadowsocks-libev (最新版本：3.4.0) - SSR核心功能
+- shadowsocks-rust (最新版本：1.22.0) - SSR核心功能
 - Antinat (最新版本：0.93) - NAT穿透
 - Privoxy (最新版本：3.0.34) - 代理服务器
 
