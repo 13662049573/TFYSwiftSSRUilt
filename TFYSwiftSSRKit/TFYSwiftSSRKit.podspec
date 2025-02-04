@@ -14,15 +14,15 @@ Pod::Spec.new do |spec|
                     * Traffic statistics
                     DESC
                     
-  spec.homepage     = "https://github.com/yourusername/TFYSwiftSSRKit"
+  spec.homepage     = "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit"
   spec.license      = { :type => "MIT", :file => "LICENSE" }
-  spec.author       = { "tianfengyou" => "youremail@example.com" }
+  spec.author       = { "田风有" => "420144542@qq.com" }
   
   spec.ios.deployment_target = "13.0"
   spec.osx.deployment_target = "11.0"
   spec.swift_version = "5.0"
   
-  spec.source       = { :git => "https://github.com/yourusername/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
+  spec.source       = { :git => "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
   
   spec.source_files = "Classes/**/*.{h,m,swift}"
   spec.public_header_files = "Classes/**/*.h"
