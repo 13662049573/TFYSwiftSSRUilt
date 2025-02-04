@@ -14,7 +14,7 @@ Pod::Spec.new do |spec|
                     * Traffic statistics
                     DESC
                     
-  spec.homepage     = "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit"
+  spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRUilt"
   spec.license      = { :type => "MIT", :file => "LICENSE" }
   spec.author       = { "田风有" => "420144542@qq.com" }
   
@@ -22,26 +22,17 @@ Pod::Spec.new do |spec|
   spec.osx.deployment_target = "12.0"
   spec.swift_version = "5.0"
   
-  spec.source       = { :git => "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
+  spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRUilt.git", :tag => "#{spec.version}" }
   
   # Swift 源文件和头文件
-  spec.source_files = [
-    "ConfigurationManager.swift",
-    "NetworkMonitor.swift",
-    "RuleManager.swift",
-    "ShadowsocksError.swift",
-    "ShadowsocksManager.swift",
-    "TFYSwiftSSRKit-Bridging-Header.h"
-  ]
-  
-  spec.public_header_files = "TFYSwiftSSRKit-Bridging-Header.h"
+  spec.source_files = "Classes/**/*.{swift,h}"
+  spec.public_header_files = "Classes/**/*.h"
   
   # 资源文件
   spec.resource_bundles = {
     'TFYSwiftSSRKit' => [
-      "default_rules.json",
-      "user_rules.json",
-      "GeoLite2-Country.mmdb"
+      "Resources/*.json",
+      "Resources/*.mmdb"
     ]
   }
   

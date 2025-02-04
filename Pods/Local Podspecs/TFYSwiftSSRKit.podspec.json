@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "summary": "A powerful iOS/macOS shadowsocks client library written in Swift",
   "description": "TFYSwiftSSRKit is a comprehensive shadowsocks client library for iOS and macOS.\nFeatures:\n* Multiple encryption methods support (OpenSSL & libsodium)\n* GeoIP based routing\n* TLS support\n* Automatic network monitoring and reconnection\n* Rule-based proxy configuration\n* Traffic statistics",
-  "homepage": "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit",
+  "homepage": "https://github.com/13662049573/TFYSwiftSSRUilt",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -17,23 +17,15 @@
   },
   "swift_versions": "5.0",
   "source": {
-    "git": "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit.git",
+    "git": "https://github.com/13662049573/TFYSwiftSSRUilt.git",
     "tag": "1.0.0"
   },
-  "source_files": [
-    "ConfigurationManager.swift",
-    "NetworkMonitor.swift",
-    "RuleManager.swift",
-    "ShadowsocksError.swift",
-    "ShadowsocksManager.swift",
-    "TFYSwiftSSRKit-Bridging-Header.h"
-  ],
-  "public_header_files": "TFYSwiftSSRKit-Bridging-Header.h",
+  "source_files": "Classes/**/*.{swift,h}",
+  "public_header_files": "Classes/**/*.h",
   "resource_bundles": {
     "TFYSwiftSSRKit": [
-      "default_rules.json",
-      "user_rules.json",
-      "GeoLite2-Country.mmdb"
+      "Resources/*.json",
+      "Resources/*.mmdb"
     ]
   },
   "vendored_libraries": [

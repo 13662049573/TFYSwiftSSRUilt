@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0D1ACE183DA9DA13C879022064433A6B"
-               BuildableName = "TFYSwiftSSRKit"
+               BuildableName = "TFYSwiftSSRKit.framework"
                BlueprintName = "TFYSwiftSSRKit"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
