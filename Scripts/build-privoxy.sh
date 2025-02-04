@@ -6,9 +6,10 @@ set -e
 # 基础配置
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$SCRIPT_DIR/.."
-DEPS_ROOT="$PROJECT_ROOT/TFYSwiftSSRKit/privoxy"
+DEPS_ROOT="$PROJECT_ROOT/TFYSwiftSSRKit"
 VERSION="3.0.34"
 LIB_NAME="privoxy"
+PCRE_VERSION="8.45"
 
 # 设置编译环境
 export IPHONEOS_DEPLOYMENT_TARGET="15.0"
@@ -44,122 +45,182 @@ trap 'handle_error $LINENO' ERR
 cleanup() {
     if [ "$1" = "success" ]; then
         log_info "Cleaning up build files after successful build..."
-        rm -rf "$DEPS_ROOT/build"
-        rm -rf "$DEPS_ROOT/install/ios"
-        rm -rf "$DEPS_ROOT/install/macos"
+        rm -rf "$DEPS_ROOT/$LIB_NAME/build"
     else
         log_info "Keeping build files for debugging..."
     fi
 }
 
 # 创建必要的目录
-mkdir -p "$DEPS_ROOT"
+mkdir -p "$DEPS_ROOT/$LIB_NAME"
+mkdir -p "$SCRIPT_DIR/backup"
 
-# 下载和构建
+# 构建 PCRE
+build_pcre() {
+    local BUILD_DIR="$DEPS_ROOT/pcre/build"
+    local INSTALL_DIR="$DEPS_ROOT/pcre/install"
+    local DOWNLOAD_URL="https://sourceforge.net/projects/pcre/files/pcre/$PCRE_VERSION/pcre-$PCRE_VERSION.tar.gz/download"
+    local ARCHIVE="$BUILD_DIR/pcre.tar.gz"
+    
+    rm -rf "$BUILD_DIR"
+    rm -rf "$INSTALL_DIR"
+    mkdir -p "$BUILD_DIR"
+    mkdir -p "$INSTALL_DIR"
+    
+    cd "$BUILD_DIR"
+    
+    # 下载 PCRE
+    log_info "Downloading PCRE..."
+    if ! curl -L --retry 3 --retry-delay 2 -o "$ARCHIVE" "$DOWNLOAD_URL"; then
+        log_error "Failed to download PCRE"
+        return 1
+    fi
+    
+    # 解压 PCRE
+    log_info "Extracting PCRE..."
+    if ! tar xzf "$ARCHIVE"; then
+        log_error "Failed to extract PCRE"
+        return 1
+    fi
+    
+    cd "pcre-$PCRE_VERSION"
+    
+    # iOS 构建
+    log_info "Building PCRE for iOS..."
+    
+    # 设置交叉编译环境变量
+    export CC="$(xcrun -find -sdk iphoneos clang)"
+    export CXX="$(xcrun -find -sdk iphoneos clang++)"
+    export CFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -mios-version-min=$IPHONEOS_DEPLOYMENT_TARGET"
+    export CXXFLAGS="$CFLAGS"
+    export LDFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path)"
+    export CROSS_COMPILE="arm-apple-darwin"
+    
+    # 设置交叉编译缓存变量
+    export ac_cv_func_malloc_0_nonnull=yes
+    export ac_cv_func_realloc_0_nonnull=yes
+    export ac_cv_func_mmap_fixed_mapped=yes
+    export ac_cv_file__dev_zero=no
+    export ac_cv_file__dev_random=yes
+    export ac_cv_prog_cc_g=no
+    export ac_cv_c_bigendian=no
+    export ac_cv_sizeof_long=8
+    export ac_cv_sizeof_size_t=8
+    export ac_cv_sizeof_void_p=8
+    export ac_cv_type_long_long=yes
+    export ac_cv_type_unsigned_long_long=yes
+    
+    # 运行配置
+    ./configure --host=arm-apple-darwin \
+                --build="$(./config.guess)" \
+                --prefix="$INSTALL_DIR/ios" \
+                --enable-static \
+                --disable-shared \
+                --enable-utf8 \
+                --enable-unicode-properties \
+                --disable-cpp \
+                --with-pic \
+                --disable-dependency-tracking \
+                || return 1
+    
+    make clean || true
+    make -j$(sysctl -n hw.ncpu) || return 1
+    make install || return 1
+    
+    # 验证构建结果
+    if [ ! -f "$INSTALL_DIR/ios/lib/libpcre.a" ]; then
+        log_error "Failed to build PCRE: libpcre.a not found"
+        return 1
+    fi
+    
+    return 0
+}
+
+# 构建 Privoxy
 build_privoxy() {
-    local BUILD_DIR="$DEPS_ROOT/build"
-    local INSTALL_DIR="$DEPS_ROOT/install"
+    local BUILD_DIR="$DEPS_ROOT/$LIB_NAME/build"
+    local INSTALL_DIR="$DEPS_ROOT/$LIB_NAME/install"
+    local DOWNLOAD_URL="https://sourceforge.net/projects/ijbswa/files/Sources/$VERSION%20%28stable%29/privoxy-$VERSION-stable-src.tar.gz/download"
+    local ARCHIVE="$BUILD_DIR/privoxy.tar.gz"
     
-    log_info "Building $LIB_NAME version $VERSION..."
+    rm -rf "$BUILD_DIR"
+    rm -rf "$INSTALL_DIR"
+    mkdir -p "$BUILD_DIR"
+    mkdir -p "$INSTALL_DIR"
     
-    # 创建构建目录
-    mkdir -p "$BUILD_DIR" "$INSTALL_DIR"
     cd "$BUILD_DIR"
     
     # 下载源码
-    if [ ! -f "${LIB_NAME}.tar.gz" ]; then
-        log_info "Downloading $LIB_NAME..."
-        local DOWNLOAD_URL="https://sourceforge.net/projects/ijbswa/files/Sources/${VERSION}%20%28stable%29/privoxy-${VERSION}-stable-src.tar.gz"
-        if ! curl -L --retry 3 --retry-delay 2 -o "${LIB_NAME}.tar.gz" "$DOWNLOAD_URL"; then
-            log_error "Failed to download $LIB_NAME"
-            return 1
-        fi
+    log_info "Downloading privoxy..."
+    if ! curl -L --retry 3 --retry-delay 2 -o "$ARCHIVE" "$DOWNLOAD_URL"; then
+        log_error "Failed to download privoxy"
+        return 1
     fi
     
     # 解压源码
-    if [ ! -d "${LIB_NAME}-${VERSION}-stable" ]; then
-        log_info "Extracting ${LIB_NAME}.tar.gz..."
-        if ! tar xzf "${LIB_NAME}.tar.gz"; then
-            log_error "Failed to extract ${LIB_NAME}.tar.gz"
-            return 1
-        fi
-    fi
-    
-    cd "${LIB_NAME}-${VERSION}-stable"
-    
-    # 运行自动工具链
-    log_info "Running autotools chain..."
-    if ! autoheader; then
-        log_error "autoheader failed"
+    log_info "Extracting privoxy..."
+    if ! tar xzf "$ARCHIVE"; then
+        log_error "Failed to extract privoxy"
         return 1
     fi
     
-    if ! autoconf; then
-        log_error "autoconf failed"
+    cd "privoxy-$VERSION-stable"
+    
+    # 检查 PCRE 库
+    if [ ! -f "$DEPS_ROOT/pcre/install/ios/lib/libpcre.a" ]; then
+        log_error "PCRE library not found at $DEPS_ROOT/pcre/install/ios/lib/libpcre.a"
         return 1
     fi
-    
-    # 通用配置选项
-    local COMMON_CONFIG_OPTS="--enable-static \
-                            --disable-shared \
-                            --disable-dependency-tracking \
-                            --disable-pcre \
-                            --without-mbedtls \
-                            --without-openssl \
-                            --disable-debug \
-                            --disable-editor \
-                            --disable-toggle \
-                            --disable-force \
-                            --disable-extended-host-patterns \
-                            --disable-pcrs-memory-debug \
-                            --disable-dynamic-pcrs \
-                            --disable-external-filters \
-                            --disable-fast-redirects \
-                            --disable-stats \
-                            --disable-graceful-termination \
-                            --disable-compression \
-                            --disable-zlib"
     
     # iOS 构建
     log_info "Building for iOS (arm64)..."
     
-    # 设置 iOS 编译环境
     export CC="$(xcrun -find -sdk iphoneos clang)"
     export CXX="$(xcrun -find -sdk iphoneos clang++)"
-    export CFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -mios-version-min=$IPHONEOS_DEPLOYMENT_TARGET -fembed-bitcode"
+    export CFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -mios-version-min=$IPHONEOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/pcre/install/ios/include"
     export CXXFLAGS="$CFLAGS"
-    export LDFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path)"
+    export LDFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -L$DEPS_ROOT/pcre/install/ios/lib"
+    export LIBS="-lpcre -lpcreposix"
+    export PKG_CONFIG_PATH="$DEPS_ROOT/pcre/install/ios/lib/pkgconfig"
+    export PCRE_CONFIG="$DEPS_ROOT/pcre/install/ios/bin/pcre-config"
     
-    if ! ./configure --prefix="$INSTALL_DIR/ios" \
-                    --host="arm-apple-darwin" \
-                    --build="$(./config.guess)" \
-                    $COMMON_CONFIG_OPTS; then
-        log_error "iOS configure failed"
-        return 1
-    fi
+    # 运行自动工具链
+    autoreconf -fiv
     
-    make clean
-    if ! make -j$(sysctl -n hw.ncpu); then
-        log_error "iOS make failed"
-        return 1
-    fi
+    ./configure --prefix="$INSTALL_DIR/ios" \
+                --host=arm-apple-darwin \
+                --target=arm-apple-darwin \
+                --build="$(./config.guess)" \
+                --enable-static-linking \
+                --disable-pthread \
+                --disable-editor \
+                --disable-toggle \
+                --disable-force \
+                --disable-trust-files \
+                --disable-graceful-termination \
+                --disable-compression \
+                --disable-client-tags \
+                --disable-accept-filter \
+                --disable-external-filters \
+                --with-pcre="$DEPS_ROOT/pcre/install/ios" \
+                || (log_error "iOS configure failed" && return 1)
     
-    if ! make install; then
-        log_error "iOS make install failed"
-        return 1
-    fi
+    make clean || true
+    make -j$(sysctl -n hw.ncpu) || (log_error "iOS make failed" && return 1)
+    make install || (log_error "iOS make install failed" && return 1)
     
     # macOS 构建
-    log_info "Building for macOS..."
     for ARCH in $MACOS_ARCHS; do
         log_info "Building for macOS architecture: $ARCH"
         
-        # 设置 macOS 编译环境
         export CC="$(xcrun -find -sdk macosx clang)"
         export CXX="$(xcrun -find -sdk macosx clang++)"
-        export CFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -mmacosx-version-min=$MACOS_DEPLOYMENT_TARGET"
+        export CFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -mmacosx-version-min=$MACOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/pcre/install/macos/include"
         export CXXFLAGS="$CFLAGS"
-        export LDFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path)"
+        export LDFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -L$DEPS_ROOT/pcre/install/macos/lib"
+        export LIBS="-lpcre -lpcreposix"
+        export PKG_CONFIG_PATH="$DEPS_ROOT/pcre/install/macos/lib/pkgconfig"
+        export PCRE_CONFIG="$DEPS_ROOT/pcre/install/macos/bin/pcre-config"
         
         local HOST_ARCH
         if [ "$ARCH" = "arm64" ]; then
@@ -168,24 +229,27 @@ build_privoxy() {
             HOST_ARCH="x86_64-apple-darwin"
         fi
         
-        if ! ./configure --prefix="$INSTALL_DIR/macos/$ARCH" \
-                        --host="$HOST_ARCH" \
-                        --build="$(./config.guess)" \
-                        $COMMON_CONFIG_OPTS; then
-            log_error "macOS $ARCH configure failed"
-            return 1
-        fi
+        ./configure --prefix="$INSTALL_DIR/macos/$ARCH" \
+                    --host="$HOST_ARCH" \
+                    --target="$HOST_ARCH" \
+                    --build="$(./config.guess)" \
+                    --enable-static-linking \
+                    --disable-pthread \
+                    --disable-editor \
+                    --disable-toggle \
+                    --disable-force \
+                    --disable-trust-files \
+                    --disable-graceful-termination \
+                    --disable-compression \
+                    --disable-client-tags \
+                    --disable-accept-filter \
+                    --disable-external-filters \
+                    --with-pcre="$DEPS_ROOT/pcre/install/macos" \
+                    || (log_error "macOS $ARCH configure failed" && return 1)
         
-        make clean
-        if ! make -j$(sysctl -n hw.ncpu); then
-            log_error "macOS $ARCH make failed"
-            return 1
-        fi
-        
-        if ! make install; then
-            log_error "macOS $ARCH make install failed"
-            return 1
-        fi
+        make clean || true
+        make -j$(sysctl -n hw.ncpu) || (log_error "macOS $ARCH make failed" && return 1)
+        make install || (log_error "macOS $ARCH make install failed" && return 1)
     done
     
     return 0
@@ -193,57 +257,30 @@ build_privoxy() {
 
 # 创建通用库
 create_universal_library() {
-    local INSTALL_DIR="$DEPS_ROOT/install"
+    local INSTALL_DIR="$DEPS_ROOT/$LIB_NAME/install"
     mkdir -p "$INSTALL_DIR/lib"
     
-    log_info "Creating universal libraries..."
-    
-    # iOS 通用库
-    log_info "Creating iOS universal library..."
-    if ! cp "$INSTALL_DIR/ios/lib/libprivoxy.a" "$INSTALL_DIR/lib/libprivoxy_ios.a"; then
-        log_error "Failed to create iOS universal library"
-        return 1
-    fi
+    # iOS 库
+    cp "$INSTALL_DIR/ios/lib/libprivoxy.a" "$INSTALL_DIR/lib/libprivoxy_ios.a"
     
     # macOS 通用库
-    log_info "Creating macOS universal library..."
-    if ! xcrun lipo -create \
+    xcrun lipo -create \
         "$INSTALL_DIR/macos/arm64/lib/libprivoxy.a" \
         "$INSTALL_DIR/macos/x86_64/lib/libprivoxy.a" \
-        -output "$INSTALL_DIR/lib/libprivoxy_macos.a"; then
-        log_error "Failed to create macOS universal library"
-        return 1
-    fi
+        -output "$INSTALL_DIR/lib/libprivoxy_macos.a"
     
     # 复制头文件
-    log_info "Copying headers..."
-    if ! cp -R "$INSTALL_DIR/ios/include" "$INSTALL_DIR/"; then
-        log_error "Failed to copy headers"
-        return 1
-    fi
+    cp -R "$INSTALL_DIR/ios/include" "$INSTALL_DIR/"
     
-    # 验证生成的库
-    log_info "Verifying libraries..."
-    if [ ! -f "$INSTALL_DIR/lib/libprivoxy_ios.a" ] || \
-       [ ! -f "$INSTALL_DIR/lib/libprivoxy_macos.a" ]; then
-        log_error "Library verification failed"
-        return 1
-    fi
-    
-    # 显示库信息
-    log_info "iOS library info:"
+    # 验证库
     xcrun lipo -info "$INSTALL_DIR/lib/libprivoxy_ios.a"
-    
-    log_info "macOS library info:"
     xcrun lipo -info "$INSTALL_DIR/lib/libprivoxy_macos.a"
-    
-    return 0
 }
 
 # 主函数
 main() {
     # 检查必要工具
-    local REQUIRED_TOOLS="autoconf automake libtool"
+    local REQUIRED_TOOLS="autoconf automake libtool pkg-config"
     local MISSING_TOOLS=()
     
     for tool in $REQUIRED_TOOLS; do
@@ -258,15 +295,19 @@ main() {
         exit 1
     fi
     
-    # 清理旧的构建文件
-    cleanup
+    # 先构建 PCRE
+    log_info "Building PCRE..."
+    if ! build_pcre; then
+        log_error "Failed to build PCRE"
+        exit 1
+    fi
     
-    # 构建流程
+    # 构建 Privoxy
     if build_privoxy && create_universal_library; then
-        cleanup
+        cleanup "success"
         log_info "Build completed successfully!"
-        log_info "Libraries available at: $DEPS_ROOT/install/lib"
-        log_info "Headers available at: $DEPS_ROOT/install/include"
+        log_info "Libraries available at: $DEPS_ROOT/$LIB_NAME/install/lib"
+        log_info "Headers available at: $DEPS_ROOT/$LIB_NAME/install/include"
         return 0
     else
         log_error "Build failed"

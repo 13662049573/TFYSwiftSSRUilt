@@ -1,7 +1,7 @@
 {
   "name": "TFYSwiftSSRKit",
   "version": "1.0.0",
-  "summary": "A powerful iOS/macOS shadowsocks client library written in Swift",
+  "summary": "A powerful iOS/macOS shadowsocks client library written in Objective-C",
   "description": "TFYSwiftSSRKit is a comprehensive shadowsocks client library for iOS and macOS.\nFeatures:\n* Multiple encryption methods support (OpenSSL & libsodium)\n* GeoIP based routing\n* TLS support\n* Automatic network monitoring and reconnection\n* Rule-based proxy configuration\n* Traffic statistics",
   "homepage": "https://github.com/13662049573/TFYSwiftSSRUilt",
   "license": {
@@ -15,39 +15,105 @@
     "ios": "15.0",
     "osx": "12.0"
   },
-  "swift_versions": "5.0",
   "source": {
     "git": "https://github.com/13662049573/TFYSwiftSSRUilt.git",
     "tag": "1.0.0"
   },
-  "source_files": "Classes/**/*",
+  "source_files": [
+    "Classes/*.{h,m}",
+    "libmaxminddb/install/include/*.h",
+    "libsodium/install/include/*.h",
+    "libsodium/install/include/sodium/*.h",
+    "openssl/install/include/openssl/*.h",
+    "shadowsocks/install/include/*.h"
+  ],
+  "public_header_files": [
+    "Classes/*.h",
+    "libmaxminddb/install/include/*.h",
+    "libsodium/install/include/*.h",
+    "libsodium/install/include/sodium/*.h",
+    "openssl/install/include/openssl/*.h",
+    "shadowsocks/install/include/*.h"
+  ],
   "resource_bundles": {
     "TFYSwiftSSRKit": [
-      "Resources/**/*"
+      "Resources/default_rules.json",
+      "Resources/GeoLite2-Country.mmdb",
+      "Resources/user_rules.json",
+      "shadowsocks/install/bin/sslocal",
+      "shadowsocks/install/bin/ssmanager",
+      "shadowsocks/install/bin/ssserver",
+      "shadowsocks/install/bin/ssurl"
     ]
   },
-  "frameworks": "SystemConfiguration",
+  "frameworks": [
+    "Network",
+    "SystemConfiguration"
+  ],
+  "dependencies": {
+    "CocoaAsyncSocket": [
+      "~> 7.6.5"
+    ],
+    "MMWormhole": [
+      "~> 2.0.0"
+    ]
+  },
   "pod_target_xcconfig": {
     "HEADER_SEARCH_PATHS": [
-      "$(PODS_TARGET_SRCROOT)/shadowsocks/**/*",
-      "$(PODS_TARGET_SRCROOT)/libsodium/**/*",
-      "$(PODS_TARGET_SRCROOT)/openssl/**/*",
-      "$(PODS_TARGET_SRCROOT)/libmaxminddb/**/*"
+      "$(PODS_TARGET_SRCROOT)",
+      "$(PODS_TARGET_SRCROOT)/libmaxminddb/install/include",
+      "$(PODS_TARGET_SRCROOT)/libsodium/install/include",
+      "$(PODS_TARGET_SRCROOT)/openssl/install/include",
+      "$(PODS_TARGET_SRCROOT)/shadowsocks/install/include",
+      "$(PODS_ROOT)/MMWormhole",
+      "$(PODS_ROOT)/CocoaAsyncSocket"
     ],
     "LIBRARY_SEARCH_PATHS": [
-      "$(PODS_TARGET_SRCROOT)/shadowsocks/**/*",
-      "$(PODS_TARGET_SRCROOT)/libsodium/**/*",
-      "$(PODS_TARGET_SRCROOT)/openssl/**/*",
-      "$(PODS_TARGET_SRCROOT)/libmaxminddb/**/*"
+      "$(PODS_TARGET_SRCROOT)/Frameworks"
     ],
-    "SWIFT_INCLUDE_PATHS": [
-      "$(PODS_TARGET_SRCROOT)/shadowsocks/**/*",
-      "$(PODS_TARGET_SRCROOT)/libsodium/**/*",
-      "$(PODS_TARGET_SRCROOT)/openssl/**/*",
-      "$(PODS_TARGET_SRCROOT)/libmaxminddb/**/*"
+    "ENABLE_BITCODE": "NO",
+    "OTHER_LDFLAGS": [
+      "-lmaxminddb",
+      "-lsodium",
+      "-lcrypto",
+      "-lssl"
     ],
-    "ENABLE_BITCODE": "NO"
+    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES",
+    "DEFINES_MODULE": "YES",
+    "GCC_PREPROCESSOR_DEFINITIONS": [
+      "HAVE_CONFIG_H=1",
+      "HAVE_MAXMINDDB=1",
+      "HAVE_SODIUM=1",
+      "HAVE_OPENSSL=1"
+    ],
+    "CLANG_ENABLE_OBJC_ARC": "YES",
+    "CLANG_WARN_DOCUMENTATION_COMMENTS": "NO"
   },
   "module_map": "module.modulemap",
-  "swift_version": "5.0"
+  "ios": {
+    "vendored_libraries": [
+      "Frameworks/libcrypto_ios.a",
+      "Frameworks/libmaxminddb_ios.a",
+      "Frameworks/libsodium_ios.a",
+      "Frameworks/libssl_ios.a"
+    ]
+  },
+  "osx": {
+    "vendored_libraries": [
+      "libmaxminddb/install/lib/libmaxminddb_macos.a",
+      "libsodium/install/lib/libsodium_macos.a",
+      "openssl/install/lib/libcrypto_macos.a",
+      "openssl/install/lib/libssl_macos.a"
+    ]
+  },
+  "preserve_paths": [
+    "Classes/**/*",
+    "Frameworks/**/*",
+    "Resources/**/*",
+    "libmaxminddb/install/**/*",
+    "libsodium/install/**/*",
+    "openssl/install/**/*",
+    "shadowsocks/install/**/*",
+    "module.modulemap"
+  ]
 }

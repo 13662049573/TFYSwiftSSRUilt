@@ -3,40 +3,65 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		179386EA8E7876E28204D118 /* Pods_TFYSwiftSSRUilt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B8A18B95507F28E7121A8C /* Pods_TFYSwiftSSRUilt.framework */; };
+		36C567AC2D51F85B00857950 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36C567972D51F81F00857950 /* NetworkExtension.framework */; };
+		36C567B42D51F85B00857950 /* PacketSwift.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 36C567AB2D51F85B00857950 /* PacketSwift.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		36C567C52D51F92900857950 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36C567BB2D51F92900857950 /* Assets.xcassets */; };
+		36C567C72D51F92900857950 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 36C567BE2D51F92900857950 /* LaunchScreen.storyboard */; };
+		36C567C82D51F92900857950 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 36C567C02D51F92900857950 /* Main.storyboard */; };
+		36C567C92D51F92900857950 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C567BA2D51F92900857950 /* AppDelegate.swift */; };
+		36C567CA2D51F92900857950 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C567C12D51F92900857950 /* SceneDelegate.swift */; };
+		36C567CB2D51F92900857950 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C567C32D51F92900857950 /* ViewController.swift */; };
+		36C567D02D51F92C00857950 /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C567CE2D51F92C00857950 /* PacketTunnelProvider.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		36C567B22D51F85B00857950 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 363B3E932D4F6AE500BC628D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 36C567AA2D51F85B00857950;
+			remoteInfo = PacketSwift;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		36C567A22D51F81F00857950 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				36C567B42D51F85B00857950 /* PacketSwift.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		03B8A18B95507F28E7121A8C /* Pods_TFYSwiftSSRUilt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TFYSwiftSSRUilt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		282BACC2A0D204E2E3F495E0 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt.debug.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt/Pods-TFYSwiftSSRUilt.debug.xcconfig"; sourceTree = "<group>"; };
 		363B3E9B2D4F6AE500BC628D /* TFYSwiftSSRUilt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TFYSwiftSSRUilt.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		36C567972D51F81F00857950 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		36C567AB2D51F85B00857950 /* PacketSwift.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PacketSwift.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		36C567BA2D51F92900857950 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		36C567BB2D51F92900857950 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		36C567BC2D51F92900857950 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		36C567BD2D51F92900857950 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		36C567BF2D51F92900857950 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		36C567C12D51F92900857950 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		36C567C22D51F92900857950 /* TFYSwiftSSRUilt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TFYSwiftSSRUilt.entitlements; sourceTree = "<group>"; };
+		36C567C32D51F92900857950 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		36C567CC2D51F92C00857950 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		36C567CD2D51F92C00857950 /* PacketSwift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PacketSwift.entitlements; sourceTree = "<group>"; };
+		36C567CE2D51F92C00857950 /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
 		BA9FC14F2702E846C9F5BD49 /* Pods-TFYSwiftSSRUilt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt.release.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt/Pods-TFYSwiftSSRUilt.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		363B3EAD2D4F6AE600BC628D /* Exceptions for "TFYSwiftSSRUilt" folder in "TFYSwiftSSRUilt" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 363B3E9A2D4F6AE500BC628D /* TFYSwiftSSRUilt */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		363B3E9D2D4F6AE500BC628D /* TFYSwiftSSRUilt */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				363B3EAD2D4F6AE600BC628D /* Exceptions for "TFYSwiftSSRUilt" folder in "TFYSwiftSSRUilt" target */,
-			);
-			path = TFYSwiftSSRUilt;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		363B3E982D4F6AE500BC628D /* Frameworks */ = {
@@ -47,6 +72,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		36C567A82D51F85B00857950 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				36C567AC2D51F85B00857950 /* NetworkExtension.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -54,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				03B8A18B95507F28E7121A8C /* Pods_TFYSwiftSSRUilt.framework */,
+				36C567972D51F81F00857950 /* NetworkExtension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -61,7 +95,8 @@
 		363B3E922D4F6AE500BC628D = {
 			isa = PBXGroup;
 			children = (
-				363B3E9D2D4F6AE500BC628D /* TFYSwiftSSRUilt */,
+				36C567C42D51F92900857950 /* TFYSwiftSSRUilt */,
+				36C567CF2D51F92C00857950 /* PacketSwift */,
 				363B3E9C2D4F6AE500BC628D /* Products */,
 				DC88AF3896C6F8FBD085272E /* Pods */,
 				1C154AF9EB5D0A8F0DBAB122 /* Frameworks */,
@@ -72,8 +107,34 @@
 			isa = PBXGroup;
 			children = (
 				363B3E9B2D4F6AE500BC628D /* TFYSwiftSSRUilt.app */,
+				36C567AB2D51F85B00857950 /* PacketSwift.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		36C567C42D51F92900857950 /* TFYSwiftSSRUilt */ = {
+			isa = PBXGroup;
+			children = (
+				36C567BA2D51F92900857950 /* AppDelegate.swift */,
+				36C567BB2D51F92900857950 /* Assets.xcassets */,
+				36C567BC2D51F92900857950 /* Info.plist */,
+				36C567BE2D51F92900857950 /* LaunchScreen.storyboard */,
+				36C567C02D51F92900857950 /* Main.storyboard */,
+				36C567C12D51F92900857950 /* SceneDelegate.swift */,
+				36C567C22D51F92900857950 /* TFYSwiftSSRUilt.entitlements */,
+				36C567C32D51F92900857950 /* ViewController.swift */,
+			);
+			path = TFYSwiftSSRUilt;
+			sourceTree = "<group>";
+		};
+		36C567CF2D51F92C00857950 /* PacketSwift */ = {
+			isa = PBXGroup;
+			children = (
+				36C567CC2D51F92C00857950 /* Info.plist */,
+				36C567CD2D51F92C00857950 /* PacketSwift.entitlements */,
+				36C567CE2D51F92C00857950 /* PacketTunnelProvider.swift */,
+			);
+			path = PacketSwift;
 			sourceTree = "<group>";
 		};
 		DC88AF3896C6F8FBD085272E /* Pods */ = {
@@ -82,7 +143,6 @@
 				282BACC2A0D204E2E3F495E0 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */,
 				BA9FC14F2702E846C9F5BD49 /* Pods-TFYSwiftSSRUilt.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -98,18 +158,36 @@
 				363B3E982D4F6AE500BC628D /* Frameworks */,
 				363B3E992D4F6AE500BC628D /* Resources */,
 				6D4025F56570CE0A9D9FA3C7 /* [CP] Embed Pods Frameworks */,
+				36C567A22D51F81F00857950 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				363B3E9D2D4F6AE500BC628D /* TFYSwiftSSRUilt */,
+				36C567B32D51F85B00857950 /* PBXTargetDependency */,
 			);
 			name = TFYSwiftSSRUilt;
 			productName = TFYSwiftSSRUilt;
 			productReference = 363B3E9B2D4F6AE500BC628D /* TFYSwiftSSRUilt.app */;
 			productType = "com.apple.product-type.application";
+		};
+		36C567AA2D51F85B00857950 /* PacketSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 36C567B52D51F85B00857950 /* Build configuration list for PBXNativeTarget "PacketSwift" */;
+			buildPhases = (
+				36C567A72D51F85B00857950 /* Sources */,
+				36C567A82D51F85B00857950 /* Frameworks */,
+				36C567A92D51F85B00857950 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PacketSwift;
+			packageProductDependencies = (
+			);
+			productName = PacketSwift;
+			productReference = 36C567AB2D51F85B00857950 /* PacketSwift.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -124,9 +202,13 @@
 					363B3E9A2D4F6AE500BC628D = {
 						CreatedOnToolsVersion = 16.2;
 					};
+					36C567AA2D51F85B00857950 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 				};
 			};
 			buildConfigurationList = 363B3E962D4F6AE500BC628D /* Build configuration list for PBXProject "TFYSwiftSSRUilt" */;
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -135,18 +217,28 @@
 			);
 			mainGroup = 363B3E922D4F6AE500BC628D;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 363B3E9C2D4F6AE500BC628D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				363B3E9A2D4F6AE500BC628D /* TFYSwiftSSRUilt */,
+				36C567AA2D51F85B00857950 /* PacketSwift */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		363B3E992D4F6AE500BC628D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				36C567C52D51F92900857950 /* Assets.xcassets in Resources */,
+				36C567C72D51F92900857950 /* LaunchScreen.storyboard in Resources */,
+				36C567C82D51F92900857950 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		36C567A92D51F85B00857950 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -202,10 +294,48 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36C567C92D51F92900857950 /* AppDelegate.swift in Sources */,
+				36C567CA2D51F92900857950 /* SceneDelegate.swift in Sources */,
+				36C567CB2D51F92900857950 /* ViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		36C567A72D51F85B00857950 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				36C567D02D51F92C00857950 /* PacketTunnelProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		36C567B32D51F85B00857950 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 36C567AA2D51F85B00857950 /* PacketSwift */;
+			targetProxy = 36C567B22D51F85B00857950 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		36C567BE2D51F92900857950 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				36C567BD2D51F92900857950 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		36C567C02D51F92900857950 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				36C567BF2D51F92900857950 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		363B3EAF2D4F6AE600BC628D /* Debug */ = {
@@ -214,6 +344,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TFYSwiftSSRUilt/TFYSwiftSSRUilt.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = QH95759TSS;
@@ -244,6 +375,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TFYSwiftSSRUilt/TFYSwiftSSRUilt.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = QH95759TSS;
@@ -387,6 +519,60 @@
 			};
 			name = Release;
 		};
+		36C567B62D51F85B00857950 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PacketSwift/PacketSwift.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QH95759TSS;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PacketSwift/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PacketSwift;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = coms.TFYSwiftSSRUilt.PacketSwift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		36C567B72D51F85B00857950 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PacketSwift/PacketSwift.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QH95759TSS;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PacketSwift/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PacketSwift;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = coms.TFYSwiftSSRUilt.PacketSwift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -404,6 +590,15 @@
 			buildConfigurations = (
 				363B3EAF2D4F6AE600BC628D /* Debug */,
 				363B3EB02D4F6AE600BC628D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		36C567B52D51F85B00857950 /* Build configuration list for PBXNativeTarget "PacketSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				36C567B62D51F85B00857950 /* Debug */,
+				36C567B72D51F85B00857950 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

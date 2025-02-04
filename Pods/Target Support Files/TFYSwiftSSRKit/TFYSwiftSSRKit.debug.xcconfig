@@ -1,11 +1,15 @@
+CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES
+CLANG_ENABLE_OBJC_ARC = YES
+CLANG_WARN_DOCUMENTATION_COMMENTS = NO
 CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
 CONFIGURATION_BUILD_DIR = ${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit
+DEFINES_MODULE = YES
 ENABLE_BITCODE = NO
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) $(PODS_TARGET_SRCROOT)/shadowsocks/**/* $(PODS_TARGET_SRCROOT)/libsodium/**/* $(PODS_TARGET_SRCROOT)/openssl/**/* $(PODS_TARGET_SRCROOT)/libmaxminddb/**/*
-LIBRARY_SEARCH_PATHS = $(inherited) "${TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}" /usr/lib/swift $(PODS_TARGET_SRCROOT)/shadowsocks/**/* $(PODS_TARGET_SRCROOT)/libsodium/**/* $(PODS_TARGET_SRCROOT)/openssl/**/* $(PODS_TARGET_SRCROOT)/libmaxminddb/**/*
-OTHER_LDFLAGS = $(inherited) -framework "SystemConfiguration"
-OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS -suppress-warnings
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaAsyncSocket" "${PODS_CONFIGURATION_BUILD_DIR}/MMWormhole"
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 HAVE_CONFIG_H=1 HAVE_MAXMINDDB=1 HAVE_SODIUM=1 HAVE_OPENSSL=1
+HEADER_SEARCH_PATHS = $(inherited) $(PODS_TARGET_SRCROOT) $(PODS_TARGET_SRCROOT)/libmaxminddb/install/include $(PODS_TARGET_SRCROOT)/libsodium/install/include $(PODS_TARGET_SRCROOT)/openssl/install/include $(PODS_TARGET_SRCROOT)/shadowsocks/install/include $(PODS_ROOT)/MMWormhole $(PODS_ROOT)/CocoaAsyncSocket
+LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/../TFYSwiftSSRKit/Frameworks" $(PODS_TARGET_SRCROOT)/Frameworks
+OTHER_LDFLAGS = $(inherited) -l"crypto" -l"crypto_ios" -l"maxminddb" -l"maxminddb_ios" -l"sodium" -l"sodium_ios" -l"ssl" -l"ssl_ios" -framework "CFNetwork" -framework "CocoaAsyncSocket" -framework "Foundation" -framework "MMWormhole" -framework "Network" -framework "Security" -framework "SystemConfiguration" -framework "WatchConnectivity"
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 PODS_DEVELOPMENT_LANGUAGE = ${DEVELOPMENT_LANGUAGE}
@@ -14,5 +18,4 @@ PODS_TARGET_SRCROOT = ${PODS_ROOT}/../TFYSwiftSSRKit
 PODS_XCFRAMEWORKS_BUILD_DIR = $(PODS_CONFIGURATION_BUILD_DIR)/XCFrameworkIntermediates
 PRODUCT_BUNDLE_IDENTIFIER = org.cocoapods.${PRODUCT_NAME:rfc1034identifier}
 SKIP_INSTALL = YES
-SWIFT_INCLUDE_PATHS = $(inherited) $(PODS_TARGET_SRCROOT)/shadowsocks/**/* $(PODS_TARGET_SRCROOT)/libsodium/**/* $(PODS_TARGET_SRCROOT)/openssl/**/* $(PODS_TARGET_SRCROOT)/libmaxminddb/**/*
 USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES = YES

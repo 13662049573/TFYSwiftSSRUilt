@@ -1,26 +1,47 @@
 framework module TFYSwiftSSRKit {
-    umbrella header "TFYSwiftSSRKit-Bridging-Header.h"
+    umbrella "Classes"
     
+    export *
     module * { export * }
     
-    explicit module OpenSSL {
-        header "openssl/ssl.h"
-        header "openssl/err.h"
-        header "openssl/evp.h"
+    module OpenSSL [system] {
+        requires !swift
+        
+        module ssl {
+            requires !swift
+            header "ssl.h"
+            export *
+        }
+        
+        module err {
+            requires !swift
+            header "err.h"
+            export *
+        }
+        
+        module evp {
+            requires !swift
+            header "evp.h"
+            export *
+        }
+        
         export *
     }
     
-    explicit module Sodium {
-        header "sodium.h"
+    module Sodium [system] {
+        requires !swift
+        header "sodium/sodium.h"
         export *
     }
     
-    explicit module MaxMindDB {
+    module MaxMindDB [system] {
+        requires !swift
         header "maxminddb.h"
         export *
     }
     
-    explicit module Shadowsocks {
+    module Shadowsocks [system] {
+        requires !swift
         header "shadowsocks.h"
         export *
     }

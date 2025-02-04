@@ -1,23 +1,147 @@
-# iOS/macOS SSR Network Accelerator
+# TFYSwiftSSRKit
 
-这是一个基于SSR协议的网络加速器项目，支持iOS和macOS平台。
+A powerful iOS/macOS shadowsocks client library written in Objective-C.
 
-## 项目依赖
-本项目依赖以下开源库：
-- libsodium (最新版本：1.0.20) - 用于加密操作
-- libmaxminddb (最新版本：1.7.1) - 用于GeoIP查询
-- OpenSSL (最新版本：3.1.4) - 用于SSL/TLS支持
-- shadowsocks-rust (最新版本：1.22.0) - SSR核心功能
-- Antinat (最新版本：0.93) - NAT穿透
-- Privoxy (最新版本：3.0.34) - 代理服务器
+## Features
 
-## 编译环境要求
-- Xcode 15.0+
-- iOS 15.0+
-- macOS 12.0+
-- CMake 3.21+
-- Autoconf
-- Automake
-- Libtool
+* Multiple encryption methods support (OpenSSL & libsodium)
+* GeoIP based routing
+* TLS support
+* Automatic network monitoring and reconnection
+* Rule-based proxy configuration
+* Traffic statistics
 
-## 项目结构 
+## Requirements
+
+* iOS 15.0+ / macOS 12.0+
+* Xcode 14.0+
+
+## Installation
+
+### CocoaPods
+
+```ruby
+pod 'TFYSwiftSSRKit'
+```
+
+## Project Structure
+
+```
+TFYSwiftSSRKit
+├── Classes
+│   ├── TFYShadowsocksManager.h/m
+│   ├── TFYConfigurationManager.h/m
+│   ├── TFYNetworkMonitor.h/m
+│   ├── TFYShadowsocksError.h/m
+├── Resources
+│   ├── default_rules.json
+│   ├── GeoLite2-Country.mmdb
+│   └── user_rules.json
+└── Libraries
+    ├── libmaxminddb
+    ├── libsodium
+    ├── openssl
+    └── shadowsocks
+```
+
+## Usage
+
+### Basic Setup
+
+```objc
+#import <TFYSwiftSSRKit/TFYShadowsocksManager.h>
+
+// Configure and start the shadowsocks client
+NSDictionary *config = @{
+    @"server": @"example.com",
+    @"server_port": @8388,
+    @"password": @"password",
+    @"method": @"aes-256-gcm",
+    @"local_port": @1080
+};
+
+[[TFYShadowsocksManager sharedManager] startWithConfiguration:config completion:^(NSError * _Nullable error) {
+    if (error) {
+        NSLog(@"Failed to start shadowsocks: %@", error);
+        return;
+    }
+    NSLog(@"Shadowsocks started successfully");
+}];
+```
+
+### Network Monitoring
+
+```objc
+#import <TFYSwiftSSRKit/TFYNetworkMonitor.h>
+
+@interface YourClass () <TFYNetworkMonitorDelegate>
+@end
+
+@implementation YourClass
+
+- (void)startMonitoring {
+    [TFYNetworkMonitor sharedMonitor].delegate = self;
+    [[TFYNetworkMonitor sharedMonitor] startMonitoring];
+}
+
+- (void)networkStatusDidChange:(TFYNetworkStatus)status {
+    switch (status) {
+        case TFYNetworkStatusReachableViaWiFi:
+            NSLog(@"Connected via WiFi");
+            break;
+        case TFYNetworkStatusReachableViaCellular:
+            NSLog(@"Connected via Cellular");
+            break;
+        case TFYNetworkStatusNotReachable:
+            NSLog(@"Network not reachable");
+            break;
+        default:
+            break;
+    }
+}
+
+@end
+```
+
+### Configuration Management
+
+```objc
+#import <TFYSwiftSSRKit/TFYConfigurationManager.h>
+
+// Save a configuration
+NSDictionary *config = @{
+    @"server": @"example.com",
+    @"server_port": @8388,
+    @"password": @"password",
+    @"method": @"aes-256-gcm",
+    @"local_port": @1080
+};
+
+[[TFYConfigurationManager sharedManager] saveConfiguration:config completion:^(NSError * _Nullable error) {
+    if (error) {
+        NSLog(@"Failed to save configuration: %@", error);
+        return;
+    }
+    NSLog(@"Configuration saved successfully");
+}];
+
+// Load saved configurations
+[[TFYConfigurationManager sharedManager] loadConfigurationWithCompletion:^(NSDictionary * _Nullable configuration, NSError * _Nullable error) {
+    if (error) {
+        NSLog(@"Failed to load configuration: %@", error);
+        return;
+    }
+    if (configuration) {
+        NSLog(@"Loaded configuration: %@", configuration);
+    }
+}];
+```
+
+## Dependencies
+
+* [CocoaAsyncSocket](https://github.com/robbiehanson/CocoaAsyncSocket) - For asynchronous socket communications
+* [MMWormhole](https://github.com/mutualmobile/MMWormhole) - For inter-process communication
+
+## License
+
+TFYSwiftSSRKit is available under the MIT license. See the LICENSE file for more info. 

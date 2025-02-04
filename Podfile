@@ -1,4 +1,4 @@
-# Uncomment the next line to define a global platform for your project
+source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '15.0'
 
 # 忽略所有警告
@@ -6,6 +6,9 @@ inhibit_all_warnings!
 
 # 使用 framework 而不是 static library
 use_frameworks!
+
+# 禁用未使用的 master specs repo 警告
+install! 'cocoapods', :warn_for_unused_master_specs_repo => false
 
 target 'TFYSwiftSSRUilt' do
   # 使用本地的 TFYSwiftSSRKit
@@ -32,3 +35,4 @@ post_install do |installer|
     end
   end
 end
+
