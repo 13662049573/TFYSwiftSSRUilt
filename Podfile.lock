@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "./TFYSwiftSSRKit"
 
 SPEC CHECKSUMS:
-  TFYSwiftSSRKit: 9db6d8d5129bfcedf23a6f8f98734a017dd587f1
+  TFYSwiftSSRKit: 1e65ad1d7875044d0b13cbeb771e6e9e270ebb2c
 
 PODFILE CHECKSUM: e9f91ecc1ce37ac4b7fadb2cc6befe41b35fb224
 

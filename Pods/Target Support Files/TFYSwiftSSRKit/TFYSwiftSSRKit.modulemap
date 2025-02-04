@@ -1,0 +1,27 @@
+framework module TFYSwiftSSRKit {
+    umbrella header "TFYSwiftSSRKit-Bridging-Header.h"
+    
+    module * { export * }
+    
+    explicit module OpenSSL {
+        header "openssl/ssl.h"
+        header "openssl/err.h"
+        header "openssl/evp.h"
+        export *
+    }
+    
+    explicit module Sodium {
+        header "sodium.h"
+        export *
+    }
+    
+    explicit module MaxMindDB {
+        header "maxminddb.h"
+        export *
+    }
+    
+    explicit module Shadowsocks {
+        header "shadowsocks.h"
+        export *
+    }
+} 

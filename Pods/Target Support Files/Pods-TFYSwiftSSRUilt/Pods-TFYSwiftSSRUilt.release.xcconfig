@@ -1,10 +1,12 @@
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks/install/include $(PODS_ROOT)/TFYSwiftSSRKit/libsodium/install/include $(PODS_ROOT)/TFYSwiftSSRKit/openssl/install/include $(PODS_ROOT)/TFYSwiftSSRKit/libmaxminddb/install/include
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit/TFYSwiftSSRKit.framework/Headers" $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks/install/include $(PODS_ROOT)/TFYSwiftSSRKit/libsodium/install/include $(PODS_ROOT)/TFYSwiftSSRKit/openssl/install/include $(PODS_ROOT)/TFYSwiftSSRKit/libmaxminddb/install/include
 LD_RUNPATH_SEARCH_PATHS = $(inherited) /usr/lib/swift '@executable_path/Frameworks' '@loader_path/Frameworks'
-LIBRARY_SEARCH_PATHS = $(inherited) "${TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}" /usr/lib/swift
-OTHER_LDFLAGS = $(inherited) -framework "SystemConfiguration"
+LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/../TFYSwiftSSRKit/libmaxminddb/install/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/libsodium/install/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/openssl/install/lib" "${TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}" /usr/lib/swift
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit/TFYSwiftSSRKit.framework/Headers" -iframework "${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit"
+OTHER_LDFLAGS = $(inherited) -ObjC -framework "SystemConfiguration" -framework "TFYSwiftSSRKit"
 OTHER_MODULE_VERIFIER_FLAGS = $(inherited) "-F${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
 PODS_BUILD_DIR = ${BUILD_DIR}
