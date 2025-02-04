@@ -20,66 +20,33 @@
     "git": "https://github.com/13662049573/TFYSwiftSSRUilt.git",
     "tag": "1.0.0"
   },
-  "source_files": "Classes/**/*.{swift,h}",
-  "public_header_files": "Classes/**/*.h",
+  "source_files": "Classes/**/*",
   "resource_bundles": {
     "TFYSwiftSSRKit": [
-      "Resources/*.json",
-      "Resources/*.mmdb"
+      "Resources/**/*"
     ]
   },
-  "vendored_libraries": [
-    "libsodium/install/lib/*.{a,dylib}",
-    "openssl/install/lib/*.{a,dylib}",
-    "libmaxminddb/install/lib/*.{a,dylib}",
-    "shadowsocks/install/lib/*.{a,dylib}"
-  ],
-  "preserve_paths": [
-    "shadowsocks/install/bin/*",
-    "shadowsocks/install/include/*",
-    "libsodium/install/include/*",
-    "openssl/install/include/*",
-    "libmaxminddb/install/include/*"
-  ],
   "frameworks": "SystemConfiguration",
   "pod_target_xcconfig": {
     "HEADER_SEARCH_PATHS": [
-      "$(PODS_TARGET_SRCROOT)/shadowsocks/install/include",
-      "$(PODS_TARGET_SRCROOT)/libsodium/install/include",
-      "$(PODS_TARGET_SRCROOT)/openssl/install/include",
-      "$(PODS_TARGET_SRCROOT)/libmaxminddb/install/include"
+      "$(PODS_TARGET_SRCROOT)/shadowsocks/**/*",
+      "$(PODS_TARGET_SRCROOT)/libsodium/**/*",
+      "$(PODS_TARGET_SRCROOT)/openssl/**/*",
+      "$(PODS_TARGET_SRCROOT)/libmaxminddb/**/*"
     ],
     "LIBRARY_SEARCH_PATHS": [
-      "$(PODS_TARGET_SRCROOT)/shadowsocks/install/lib",
-      "$(PODS_TARGET_SRCROOT)/libsodium/install/lib",
-      "$(PODS_TARGET_SRCROOT)/openssl/install/lib",
-      "$(PODS_TARGET_SRCROOT)/libmaxminddb/install/lib"
+      "$(PODS_TARGET_SRCROOT)/shadowsocks/**/*",
+      "$(PODS_TARGET_SRCROOT)/libsodium/**/*",
+      "$(PODS_TARGET_SRCROOT)/openssl/**/*",
+      "$(PODS_TARGET_SRCROOT)/libmaxminddb/**/*"
     ],
     "SWIFT_INCLUDE_PATHS": [
-      "$(PODS_TARGET_SRCROOT)/shadowsocks/install/include",
-      "$(PODS_TARGET_SRCROOT)/libsodium/install/include",
-      "$(PODS_TARGET_SRCROOT)/openssl/install/include",
-      "$(PODS_TARGET_SRCROOT)/libmaxminddb/install/include"
-    ],
-    "GCC_PREPROCESSOR_DEFINITIONS": [
-      "SODIUM_STATIC=1",
-      "OPENSSL_STATIC=1"
-    ],
-    "OTHER_LDFLAGS": [
-      "-lsodium",
-      "-lssl",
-      "-lcrypto",
-      "-lmaxminddb"
+      "$(PODS_TARGET_SRCROOT)/shadowsocks/**/*",
+      "$(PODS_TARGET_SRCROOT)/libsodium/**/*",
+      "$(PODS_TARGET_SRCROOT)/openssl/**/*",
+      "$(PODS_TARGET_SRCROOT)/libmaxminddb/**/*"
     ],
     "ENABLE_BITCODE": "NO"
-  },
-  "user_target_xcconfig": {
-    "HEADER_SEARCH_PATHS": [
-      "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks/install/include",
-      "$(PODS_ROOT)/TFYSwiftSSRKit/libsodium/install/include",
-      "$(PODS_ROOT)/TFYSwiftSSRKit/openssl/install/include",
-      "$(PODS_ROOT)/TFYSwiftSSRKit/libmaxminddb/install/include"
-    ]
   },
   "module_map": "module.modulemap",
   "swift_version": "5.0"

@@ -9,31 +9,31 @@
 /* Begin PBXBuildFile section */
 		00E224AC923A5F76017D1EDBE1392148 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D0408B9AE1758D42BEE7EFB0729394 /* SystemConfiguration.framework */; };
 		1C8E2EE1CF7B5FE9CFA5A1BD4F83B0E9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08A29F3A4CF2BE85A4E26F4BDC4B39BC /* Foundation.framework */; };
-		365E6B29EC28E0BB80296031D0EA3C14 /* ShadowsocksError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32853A73CF6D8C9C7B89A1F8C0B0CDB /* ShadowsocksError.swift */; };
+		365E6B29EC28E0BB80296031D0EA3C14 /* ShadowsocksError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC2DAA6A9F0C59CF75096D6A4EAC293 /* ShadowsocksError.swift */; };
 		50A35486B4C893DA87E14A9C668C09D4 /* Pods-TFYSwiftSSRUilt-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2316A1716AF95FFB71312C88998CD745 /* Pods-TFYSwiftSSRUilt-dummy.m */; };
-		6502D48C1FAE4C59AB8CDCFF1AA6E48B /* TFYSwiftSSRKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 17FAA037E485C2B36F5446E0E4551D56 /* TFYSwiftSSRKit-dummy.m */; };
-		7527FD5AA12690BD00346D9538139F2B /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FF65855806983CF1721BB92BC5363F /* NetworkMonitor.swift */; };
+		5211227F19F6DF57B5479FAB50BC54D6 /* default_rules.json in Resources */ = {isa = PBXBuildFile; fileRef = F29481706DABFB4E61E3D984948A8E6A /* default_rules.json */; };
+		6502D48C1FAE4C59AB8CDCFF1AA6E48B /* TFYSwiftSSRKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 61AEE4DF7988F66F06DF9A83F6DC8C0F /* TFYSwiftSSRKit-dummy.m */; };
+		7527FD5AA12690BD00346D9538139F2B /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75B08A0C418EAC1054B513886C7B284 /* NetworkMonitor.swift */; };
 		817DAF6984D2101906049CEC10EFD8BC /* Pods-TFYSwiftSSRUilt-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 71394447F18B518112B0904EE64A3EE4 /* Pods-TFYSwiftSSRUilt-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		81AE8858EDC545F2D459B28453EA0761 /* user_rules.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E686C05008A08183009D76347EB2262 /* user_rules.json */; };
-		8E2FB3E90BD0C17187C83BAA25C7A6AF /* default_rules.json in Resources */ = {isa = PBXBuildFile; fileRef = 6F36A8B6723B0635B4EEC588D5572FCF /* default_rules.json */; };
 		90C953B00D8975713C3DF0ED369E42EF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08A29F3A4CF2BE85A4E26F4BDC4B39BC /* Foundation.framework */; };
-		AB58433CF7E01AF4B2BED0A9C435C6C9 /* RuleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF5A5BF0A94FF31E95D4BEF36C03D5E /* RuleManager.swift */; };
-		B2B2F6801FA4E0F4628A187CF350745B /* ShadowsocksManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DA7381E1D5C6C29EAE19AEB508F7B3 /* ShadowsocksManager.swift */; };
-		C72E2A07420FF38D6510F0C594F78DC9 /* TFYSwiftSSRKit-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = E39F57A958A1E579D3D2F6AAB9B425D5 /* TFYSwiftSSRKit-Bridging-Header.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AB58433CF7E01AF4B2BED0A9C435C6C9 /* RuleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DBE344985032239C9E5E4195E1D7E /* RuleManager.swift */; };
+		B2B2F6801FA4E0F4628A187CF350745B /* ShadowsocksManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CA491F5973F060B345136C6933529B /* ShadowsocksManager.swift */; };
+		C5EA87798D81C7521BA9B57CB6EEEEBC /* GeoLite2-Country.mmdb in Resources */ = {isa = PBXBuildFile; fileRef = D4F461DF4009B232273D23C3FC34F201 /* GeoLite2-Country.mmdb */; };
+		C72E2A07420FF38D6510F0C594F78DC9 /* TFYSwiftSSRKit-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C04166886491967776205F61ABD2D6D /* TFYSwiftSSRKit-Bridging-Header.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C801F3E39BAB0B811D1DB7EBB3CAF4FF /* TFYSwiftSSRKit-TFYSwiftSSRKit in Resources */ = {isa = PBXBuildFile; fileRef = 2E6BC9B05134B9A1F2C1B027FD4E47F3 /* TFYSwiftSSRKit-TFYSwiftSSRKit */; };
-		CE65CBBA32975D1697C9A204EDB02F6B /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C929BB43EB9F84CBB637EAD7159E16A0 /* ConfigurationManager.swift */; };
-		E0A6905FA66C0C508AA9D5849A260D47 /* GeoLite2-Country.mmdb in Resources */ = {isa = PBXBuildFile; fileRef = D818A7E14D34990625E57F5C9A9D07F9 /* GeoLite2-Country.mmdb */; };
+		CE65CBBA32975D1697C9A204EDB02F6B /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C76F4CEB7688EED6076EEE2BB074FFF /* ConfigurationManager.swift */; };
+		F0900EB9CF58E0992B352ECCC76955A1 /* user_rules.json in Resources */ = {isa = PBXBuildFile; fileRef = 4B2D8FD1546AD450C14D1050210F56FC /* user_rules.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		02B4EBD063E796D595F7073039C15E81 /* PBXContainerItemProxy */ = {
+		125A6BDA3DE9082A75DE54B1A24712F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0D1ACE183DA9DA13C879022064433A6B;
 			remoteInfo = TFYSwiftSSRKit;
 		};
-		3535EE93A84CE5BF1269FF13AEB6F26A /* PBXContainerItemProxy */ = {
+		4D6E537751B16A8F840F96DA66BCA428 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
@@ -43,52 +43,44 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		02DDD1F4B841A0510CC3F34EDFD6BEF4 /* TFYSwiftSSRKit.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = TFYSwiftSSRKit.modulemap; sourceTree = "<group>"; };
 		08A29F3A4CF2BE85A4E26F4BDC4B39BC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		0CE77DF7B8E67BBEAFACA0936D8C79B9 /* libsodium_macos.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libsodium_macos.a; path = libsodium/install/lib/libsodium_macos.a; sourceTree = "<group>"; };
 		17D0408B9AE1758D42BEE7EFB0729394 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
-		17FAA037E485C2B36F5446E0E4551D56 /* TFYSwiftSSRKit-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "TFYSwiftSSRKit-dummy.m"; sourceTree = "<group>"; };
+		2081DEC2DA1A2690A5A857C3DF0DC03D /* ResourceBundle-TFYSwiftSSRKit-TFYSwiftSSRKit-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-TFYSwiftSSRKit-TFYSwiftSSRKit-Info.plist"; sourceTree = "<group>"; };
 		2316A1716AF95FFB71312C88998CD745 /* Pods-TFYSwiftSSRUilt-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-TFYSwiftSSRUilt-dummy.m"; sourceTree = "<group>"; };
-		28175103F474B30FBBEEC835BD48750F /* libcrypto_macos.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libcrypto_macos.a; path = openssl/install/lib/libcrypto_macos.a; sourceTree = "<group>"; };
 		2E6BC9B05134B9A1F2C1B027FD4E47F3 /* TFYSwiftSSRKit-TFYSwiftSSRKit */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "TFYSwiftSSRKit-TFYSwiftSSRKit"; path = TFYSwiftSSRKit.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		3123F254FC85803BA50B1F315E3078F7 /* ResourceBundle-TFYSwiftSSRKit-TFYSwiftSSRKit-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-TFYSwiftSSRKit-TFYSwiftSSRKit-Info.plist"; sourceTree = "<group>"; };
-		352AACE3F5E8DB27FA8B2F529D3E2666 /* module.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = module.modulemap; sourceTree = "<group>"; };
-		3C4E62601D39F83820E1EEFC6CD6B1C8 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		39AD60347FFF8BF1FEB69056EF12F173 /* TFYSwiftSSRKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = TFYSwiftSSRKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		3C7FA71599591B61EAAF4EDC5081223F /* Pods-TFYSwiftSSRUilt-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-TFYSwiftSSRUilt-acknowledgements.markdown"; sourceTree = "<group>"; };
 		45B415D8D601F5CC53BA50E8D9012BA2 /* Pods-TFYSwiftSSRUilt.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-TFYSwiftSSRUilt.modulemap"; sourceTree = "<group>"; };
-		4BEB8B56475688BA70AAC82F4829FB60 /* libsodium_ios.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libsodium_ios.a; path = libsodium/install/lib/libsodium_ios.a; sourceTree = "<group>"; };
-		4ED19C8B1452548607A700FF5BC6F084 /* libssl_macos.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libssl_macos.a; path = openssl/install/lib/libssl_macos.a; sourceTree = "<group>"; };
+		4AEF240343BB48FF4579E302004FBA53 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		4B2D8FD1546AD450C14D1050210F56FC /* user_rules.json */ = {isa = PBXFileReference; includeInIndex = 1; name = user_rules.json; path = Resources/user_rules.json; sourceTree = "<group>"; };
+		4CC2DAA6A9F0C59CF75096D6A4EAC293 /* ShadowsocksError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShadowsocksError.swift; path = Classes/ShadowsocksError.swift; sourceTree = "<group>"; };
+		516DBE344985032239C9E5E4195E1D7E /* RuleManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RuleManager.swift; path = Classes/RuleManager.swift; sourceTree = "<group>"; };
+		5C76F4CEB7688EED6076EEE2BB074FFF /* ConfigurationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConfigurationManager.swift; path = Classes/ConfigurationManager.swift; sourceTree = "<group>"; };
 		5DCFDE04A90ECEC7906C7A8DF7119845 /* Pods-TFYSwiftSSRUilt-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-TFYSwiftSSRUilt-acknowledgements.plist"; sourceTree = "<group>"; };
+		61AEE4DF7988F66F06DF9A83F6DC8C0F /* TFYSwiftSSRKit-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "TFYSwiftSSRKit-dummy.m"; sourceTree = "<group>"; };
 		6855092D3C620B6BF9B4E4375226FDFD /* Pods-TFYSwiftSSRUilt */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-TFYSwiftSSRUilt"; path = Pods_TFYSwiftSSRUilt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6BF5A5BF0A94FF31E95D4BEF36C03D5E /* RuleManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RuleManager.swift; path = Classes/RuleManager.swift; sourceTree = "<group>"; };
-		6DB7E808D4746E2D1E18B9DB5920B87A /* TFYSwiftSSRKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = TFYSwiftSSRKit.release.xcconfig; sourceTree = "<group>"; };
-		6E686C05008A08183009D76347EB2262 /* user_rules.json */ = {isa = PBXFileReference; includeInIndex = 1; name = user_rules.json; path = Resources/user_rules.json; sourceTree = "<group>"; };
-		6F36A8B6723B0635B4EEC588D5572FCF /* default_rules.json */ = {isa = PBXFileReference; includeInIndex = 1; name = default_rules.json; path = Resources/default_rules.json; sourceTree = "<group>"; };
 		71394447F18B518112B0904EE64A3EE4 /* Pods-TFYSwiftSSRUilt-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-TFYSwiftSSRUilt-umbrella.h"; sourceTree = "<group>"; };
 		718E976E4F01CE74E7B57E313657E81A /* Pods-TFYSwiftSSRUilt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TFYSwiftSSRUilt.release.xcconfig"; sourceTree = "<group>"; };
-		7776A838A746E20A98581181EAAC0372 /* TFYSwiftSSRKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = TFYSwiftSSRKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		7B466B06631F83118ADFAD2C35DFD51F /* TFYSwiftSSRKit-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "TFYSwiftSSRKit-Info.plist"; sourceTree = "<group>"; };
+		7C04166886491967776205F61ABD2D6D /* TFYSwiftSSRKit-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "TFYSwiftSSRKit-Bridging-Header.h"; path = "Classes/TFYSwiftSSRKit-Bridging-Header.h"; sourceTree = "<group>"; };
+		7ED26B8BC8EC61516673C93B85574FD6 /* TFYSwiftSSRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = TFYSwiftSSRKit.debug.xcconfig; sourceTree = "<group>"; };
 		880A9AB537E37BB90F1FB53931436F37 /* Pods-TFYSwiftSSRUilt-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-TFYSwiftSSRUilt-frameworks.sh"; sourceTree = "<group>"; };
-		8DA95074AEC942E5E7F62CFFD5B92BF8 /* TFYSwiftSSRKit-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "TFYSwiftSSRKit-prefix.pch"; sourceTree = "<group>"; };
-		916E2B51CBC530A8121A29536407EB7E /* libcrypto_ios.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libcrypto_ios.a; path = openssl/install/lib/libcrypto_ios.a; sourceTree = "<group>"; };
-		9887CF17A3072B9F951BB732510A79D4 /* libmaxminddb_macos.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libmaxminddb_macos.a; path = libmaxminddb/install/lib/libmaxminddb_macos.a; sourceTree = "<group>"; };
+		8EDF0A10E112DFCEB2EFD3FEC4428AB5 /* TFYSwiftSSRKit.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = TFYSwiftSSRKit.modulemap; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		A0FD56E489C68C2E28CB80D327CFBEC1 /* TFYSwiftSSRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = TFYSwiftSSRKit.debug.xcconfig; sourceTree = "<group>"; };
-		A946AA738EEB81BFA7A677F93A15069E /* libmaxminddb_ios.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libmaxminddb_ios.a; path = libmaxminddb/install/lib/libmaxminddb_ios.a; sourceTree = "<group>"; };
-		BB81140376F467F8D3B4E876EF5C8AD7 /* libssl_ios.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libssl_ios.a; path = openssl/install/lib/libssl_ios.a; sourceTree = "<group>"; };
-		C32853A73CF6D8C9C7B89A1F8C0B0CDB /* ShadowsocksError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShadowsocksError.swift; path = Classes/ShadowsocksError.swift; sourceTree = "<group>"; };
-		C3FF65855806983CF1721BB92BC5363F /* NetworkMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NetworkMonitor.swift; path = Classes/NetworkMonitor.swift; sourceTree = "<group>"; };
+		B75B08A0C418EAC1054B513886C7B284 /* NetworkMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NetworkMonitor.swift; path = Classes/NetworkMonitor.swift; sourceTree = "<group>"; };
+		BB381DF8CCAF2DF199CF486A6C0C9407 /* TFYSwiftSSRKit-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "TFYSwiftSSRKit-Info.plist"; sourceTree = "<group>"; };
+		C22B356B1C0C895C62E5270CC46CE69A /* TFYSwiftSSRKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = TFYSwiftSSRKit.release.xcconfig; sourceTree = "<group>"; };
 		C404BAB7A5A2ADD86A1AE37A7E0F60FB /* Pods-TFYSwiftSSRUilt-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-TFYSwiftSSRUilt-Info.plist"; sourceTree = "<group>"; };
-		C929BB43EB9F84CBB637EAD7159E16A0 /* ConfigurationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConfigurationManager.swift; path = Classes/ConfigurationManager.swift; sourceTree = "<group>"; };
+		C5CA491F5973F060B345136C6933529B /* ShadowsocksManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShadowsocksManager.swift; path = Classes/ShadowsocksManager.swift; sourceTree = "<group>"; };
 		CBA30E6E9F1F874147755EC9833A3291 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TFYSwiftSSRUilt.debug.xcconfig"; sourceTree = "<group>"; };
-		D7DA7381E1D5C6C29EAE19AEB508F7B3 /* ShadowsocksManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShadowsocksManager.swift; path = Classes/ShadowsocksManager.swift; sourceTree = "<group>"; };
-		D818A7E14D34990625E57F5C9A9D07F9 /* GeoLite2-Country.mmdb */ = {isa = PBXFileReference; includeInIndex = 1; name = "GeoLite2-Country.mmdb"; path = "Resources/GeoLite2-Country.mmdb"; sourceTree = "<group>"; };
-		E39F57A958A1E579D3D2F6AAB9B425D5 /* TFYSwiftSSRKit-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "TFYSwiftSSRKit-Bridging-Header.h"; path = "Classes/TFYSwiftSSRKit-Bridging-Header.h"; sourceTree = "<group>"; };
+		D4F461DF4009B232273D23C3FC34F201 /* GeoLite2-Country.mmdb */ = {isa = PBXFileReference; includeInIndex = 1; name = "GeoLite2-Country.mmdb"; path = "Resources/GeoLite2-Country.mmdb"; sourceTree = "<group>"; };
+		D8A5044DCFD35448C3E7B30CB5FA22B8 /* module.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = module.modulemap; sourceTree = "<group>"; };
 		EE23EC83962ECFE0331F968BFBDA73FB /* TFYSwiftSSRKit */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = TFYSwiftSSRKit; path = TFYSwiftSSRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F29481706DABFB4E61E3D984948A8E6A /* default_rules.json */ = {isa = PBXFileReference; includeInIndex = 1; name = default_rules.json; path = Resources/default_rules.json; sourceTree = "<group>"; };
+		F380E156B8506A703699EC1FA1608197 /* TFYSwiftSSRKit-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "TFYSwiftSSRKit-prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		4384A0C21EA97A136636B14FC28367FE /* Frameworks */ = {
+		9E727F0F45125CC5A3773877A1B9350A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -115,6 +107,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		139F31D62DB3531BA84DBEE6D7F11BBA /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E6732C716BFF8590EF9D0D5A29040876 /* TFYSwiftSSRKit */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
 		1628BF05B4CAFDCC3549A101F5A10A17 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -157,49 +157,19 @@
 			path = "Target Support Files/Pods-TFYSwiftSSRUilt";
 			sourceTree = "<group>";
 		};
-		78D22439C76A0990D65EE1FC871ECA8D /* Support Files */ = {
+		832CFEF8A962E290F40281AF92812E19 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				3123F254FC85803BA50B1F315E3078F7 /* ResourceBundle-TFYSwiftSSRKit-TFYSwiftSSRKit-Info.plist */,
-				02DDD1F4B841A0510CC3F34EDFD6BEF4 /* TFYSwiftSSRKit.modulemap */,
-				17FAA037E485C2B36F5446E0E4551D56 /* TFYSwiftSSRKit-dummy.m */,
-				7B466B06631F83118ADFAD2C35DFD51F /* TFYSwiftSSRKit-Info.plist */,
-				8DA95074AEC942E5E7F62CFFD5B92BF8 /* TFYSwiftSSRKit-prefix.pch */,
-				A0FD56E489C68C2E28CB80D327CFBEC1 /* TFYSwiftSSRKit.debug.xcconfig */,
-				6DB7E808D4746E2D1E18B9DB5920B87A /* TFYSwiftSSRKit.release.xcconfig */,
+				2081DEC2DA1A2690A5A857C3DF0DC03D /* ResourceBundle-TFYSwiftSSRKit-TFYSwiftSSRKit-Info.plist */,
+				8EDF0A10E112DFCEB2EFD3FEC4428AB5 /* TFYSwiftSSRKit.modulemap */,
+				61AEE4DF7988F66F06DF9A83F6DC8C0F /* TFYSwiftSSRKit-dummy.m */,
+				BB381DF8CCAF2DF199CF486A6C0C9407 /* TFYSwiftSSRKit-Info.plist */,
+				F380E156B8506A703699EC1FA1608197 /* TFYSwiftSSRKit-prefix.pch */,
+				7ED26B8BC8EC61516673C93B85574FD6 /* TFYSwiftSSRKit.debug.xcconfig */,
+				C22B356B1C0C895C62E5270CC46CE69A /* TFYSwiftSSRKit.release.xcconfig */,
 			);
 			name = "Support Files";
 			path = "../Pods/Target Support Files/TFYSwiftSSRKit";
-			sourceTree = "<group>";
-		};
-		81E4770FF0419384CE717ED0F12E5717 /* Pod */ = {
-			isa = PBXGroup;
-			children = (
-				3C4E62601D39F83820E1EEFC6CD6B1C8 /* LICENSE */,
-				352AACE3F5E8DB27FA8B2F529D3E2666 /* module.modulemap */,
-				7776A838A746E20A98581181EAAC0372 /* TFYSwiftSSRKit.podspec */,
-			);
-			name = Pod;
-			sourceTree = "<group>";
-		};
-		C52C343285B6E738E2E45CBFBC982289 /* TFYSwiftSSRKit */ = {
-			isa = PBXGroup;
-			children = (
-				C929BB43EB9F84CBB637EAD7159E16A0 /* ConfigurationManager.swift */,
-				6F36A8B6723B0635B4EEC588D5572FCF /* default_rules.json */,
-				D818A7E14D34990625E57F5C9A9D07F9 /* GeoLite2-Country.mmdb */,
-				C3FF65855806983CF1721BB92BC5363F /* NetworkMonitor.swift */,
-				6BF5A5BF0A94FF31E95D4BEF36C03D5E /* RuleManager.swift */,
-				C32853A73CF6D8C9C7B89A1F8C0B0CDB /* ShadowsocksError.swift */,
-				D7DA7381E1D5C6C29EAE19AEB508F7B3 /* ShadowsocksManager.swift */,
-				E39F57A958A1E579D3D2F6AAB9B425D5 /* TFYSwiftSSRKit-Bridging-Header.h */,
-				6E686C05008A08183009D76347EB2262 /* user_rules.json */,
-				FE8A74AE93801250F73DDD553DC71FAB /* Frameworks */,
-				81E4770FF0419384CE717ED0F12E5717 /* Pod */,
-				78D22439C76A0990D65EE1FC871ECA8D /* Support Files */,
-			);
-			name = TFYSwiftSSRKit;
-			path = ../TFYSwiftSSRKit;
 			sourceTree = "<group>";
 		};
 		CCE365CE97EEDFF57A8E6AF86EF9D17F /* Products */ = {
@@ -216,34 +186,40 @@
 			isa = PBXGroup;
 			children = (
 				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
-				F7F9FCD57521D7AC3468BDB9CBA2B272 /* Development Pods */,
+				139F31D62DB3531BA84DBEE6D7F11BBA /* Development Pods */,
 				1628BF05B4CAFDCC3549A101F5A10A17 /* Frameworks */,
 				CCE365CE97EEDFF57A8E6AF86EF9D17F /* Products */,
 				4B04BB1E3BB1685E70D989F986999327 /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
-		F7F9FCD57521D7AC3468BDB9CBA2B272 /* Development Pods */ = {
+		D7C5F1F8BD7C42C36B2857F81656E66F /* Pod */ = {
 			isa = PBXGroup;
 			children = (
-				C52C343285B6E738E2E45CBFBC982289 /* TFYSwiftSSRKit */,
+				4AEF240343BB48FF4579E302004FBA53 /* LICENSE */,
+				D8A5044DCFD35448C3E7B30CB5FA22B8 /* module.modulemap */,
+				39AD60347FFF8BF1FEB69056EF12F173 /* TFYSwiftSSRKit.podspec */,
 			);
-			name = "Development Pods";
+			name = Pod;
 			sourceTree = "<group>";
 		};
-		FE8A74AE93801250F73DDD553DC71FAB /* Frameworks */ = {
+		E6732C716BFF8590EF9D0D5A29040876 /* TFYSwiftSSRKit */ = {
 			isa = PBXGroup;
 			children = (
-				916E2B51CBC530A8121A29536407EB7E /* libcrypto_ios.a */,
-				28175103F474B30FBBEEC835BD48750F /* libcrypto_macos.a */,
-				A946AA738EEB81BFA7A677F93A15069E /* libmaxminddb_ios.a */,
-				9887CF17A3072B9F951BB732510A79D4 /* libmaxminddb_macos.a */,
-				4BEB8B56475688BA70AAC82F4829FB60 /* libsodium_ios.a */,
-				0CE77DF7B8E67BBEAFACA0936D8C79B9 /* libsodium_macos.a */,
-				BB81140376F467F8D3B4E876EF5C8AD7 /* libssl_ios.a */,
-				4ED19C8B1452548607A700FF5BC6F084 /* libssl_macos.a */,
+				5C76F4CEB7688EED6076EEE2BB074FFF /* ConfigurationManager.swift */,
+				F29481706DABFB4E61E3D984948A8E6A /* default_rules.json */,
+				D4F461DF4009B232273D23C3FC34F201 /* GeoLite2-Country.mmdb */,
+				B75B08A0C418EAC1054B513886C7B284 /* NetworkMonitor.swift */,
+				516DBE344985032239C9E5E4195E1D7E /* RuleManager.swift */,
+				4CC2DAA6A9F0C59CF75096D6A4EAC293 /* ShadowsocksError.swift */,
+				C5CA491F5973F060B345136C6933529B /* ShadowsocksManager.swift */,
+				7C04166886491967776205F61ABD2D6D /* TFYSwiftSSRKit-Bridging-Header.h */,
+				4B2D8FD1546AD450C14D1050210F56FC /* user_rules.json */,
+				D7C5F1F8BD7C42C36B2857F81656E66F /* Pod */,
+				832CFEF8A962E290F40281AF92812E19 /* Support Files */,
 			);
-			name = Frameworks;
+			name = TFYSwiftSSRKit;
+			path = ../TFYSwiftSSRKit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,7 +256,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				0BF8696B40374949F5321724360EE8E4 /* PBXTargetDependency */,
+				26D1BED604CCD1E0901701914B88EBA1 /* PBXTargetDependency */,
 			);
 			name = TFYSwiftSSRKit;
 			productName = TFYSwiftSSRKit;
@@ -289,11 +265,11 @@
 		};
 		5D026903C23C228AE038C7C8D7E09251 /* TFYSwiftSSRKit-TFYSwiftSSRKit */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 331A68DFBBC5DE016F2856A22390C307 /* Build configuration list for PBXNativeTarget "TFYSwiftSSRKit-TFYSwiftSSRKit" */;
+			buildConfigurationList = 535DD0D5398F6998A6A09EE17B68A0A9 /* Build configuration list for PBXNativeTarget "TFYSwiftSSRKit-TFYSwiftSSRKit" */;
 			buildPhases = (
-				65829950C12FF32291BDB1D3A83FDD18 /* Sources */,
-				4384A0C21EA97A136636B14FC28367FE /* Frameworks */,
-				FC8DDCF63F109729C70B5342103F18D8 /* Resources */,
+				F1E05FE7B41701D143E7B62223F58CAC /* Sources */,
+				9E727F0F45125CC5A3773877A1B9350A /* Frameworks */,
+				535277467D70C5617A1AA2251004C5C9 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -316,7 +292,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				E280422004706668B5B9C544B145AB2C /* PBXTargetDependency */,
+				575082EC95D75E68CBDA114D03CA4D0C /* PBXTargetDependency */,
 			);
 			name = "Pods-TFYSwiftSSRUilt";
 			productName = Pods_TFYSwiftSSRUilt;
@@ -362,21 +338,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		535277467D70C5617A1AA2251004C5C9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5211227F19F6DF57B5479FAB50BC54D6 /* default_rules.json in Resources */,
+				C5EA87798D81C7521BA9B57CB6EEEEBC /* GeoLite2-Country.mmdb in Resources */,
+				F0900EB9CF58E0992B352ECCC76955A1 /* user_rules.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DA941F07686CDE3442852A7AFBA6C089 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				C801F3E39BAB0B811D1DB7EBB3CAF4FF /* TFYSwiftSSRKit-TFYSwiftSSRKit in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FC8DDCF63F109729C70B5342103F18D8 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8E2FB3E90BD0C17187C83BAA25C7A6AF /* default_rules.json in Resources */,
-				E0A6905FA66C0C508AA9D5849A260D47 /* GeoLite2-Country.mmdb in Resources */,
-				81AE8858EDC545F2D459B28453EA0761 /* user_rules.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,13 +372,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		65829950C12FF32291BDB1D3A83FDD18 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		E8C8BD83F3C5E8B7CAFEC12AA1FFC05C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -411,24 +380,50 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1E05FE7B41701D143E7B62223F58CAC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0BF8696B40374949F5321724360EE8E4 /* PBXTargetDependency */ = {
+		26D1BED604CCD1E0901701914B88EBA1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "TFYSwiftSSRKit-TFYSwiftSSRKit";
 			target = 5D026903C23C228AE038C7C8D7E09251 /* TFYSwiftSSRKit-TFYSwiftSSRKit */;
-			targetProxy = 3535EE93A84CE5BF1269FF13AEB6F26A /* PBXContainerItemProxy */;
+			targetProxy = 4D6E537751B16A8F840F96DA66BCA428 /* PBXContainerItemProxy */;
 		};
-		E280422004706668B5B9C544B145AB2C /* PBXTargetDependency */ = {
+		575082EC95D75E68CBDA114D03CA4D0C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = TFYSwiftSSRKit;
 			target = 0D1ACE183DA9DA13C879022064433A6B /* TFYSwiftSSRKit */;
-			targetProxy = 02B4EBD063E796D595F7073039C15E81 /* PBXContainerItemProxy */;
+			targetProxy = 125A6BDA3DE9082A75DE54B1A24712F3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0C7ED3FB1C7FFEB002BB757AC7C10A0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C22B356B1C0C895C62E5270CC46CE69A /* TFYSwiftSSRKit.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/TFYSwiftSSRKit";
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				IBSC_MODULE = TFYSwiftSSRKit;
+				INFOPLIST_FILE = "Target Support Files/TFYSwiftSSRKit/ResourceBundle-TFYSwiftSSRKit-TFYSwiftSSRKit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_NAME = TFYSwiftSSRKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 		1A7169786E2BBF62111DEF68777B20BA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CBA30E6E9F1F874147755EC9833A3291 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */;
@@ -471,9 +466,9 @@
 			};
 			name = Debug;
 		};
-		41AD27E6AA26C706C58D87D6A5DCEC2D /* Debug */ = {
+		2424818190FB67FC72D67A97C2F0329A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A0FD56E489C68C2E28CB80D327CFBEC1 /* TFYSwiftSSRKit.debug.xcconfig */;
+			baseConfigurationReference = 7ED26B8BC8EC61516673C93B85574FD6 /* TFYSwiftSSRKit.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGNING_ALLOWED = NO;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/TFYSwiftSSRKit";
@@ -489,25 +484,6 @@
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
-		};
-		768E3793855E4E3A3F8AC13746621498 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6DB7E808D4746E2D1E18B9DB5920B87A /* TFYSwiftSSRKit.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGNING_ALLOWED = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/TFYSwiftSSRKit";
-				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
-				IBSC_MODULE = TFYSwiftSSRKit;
-				INFOPLIST_FILE = "Target Support Files/TFYSwiftSSRKit/ResourceBundle-TFYSwiftSSRKit-TFYSwiftSSRKit-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_NAME = TFYSwiftSSRKit;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
 		};
 		76E247BDADF02A425B9400F9DB058A1F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -682,7 +658,7 @@
 		};
 		EDE4DC98AA45882B7B4DB61182FEE810 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6DB7E808D4746E2D1E18B9DB5920B87A /* TFYSwiftSSRKit.release.xcconfig */;
+			baseConfigurationReference = C22B356B1C0C895C62E5270CC46CE69A /* TFYSwiftSSRKit.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -724,7 +700,7 @@
 		};
 		F9E2D98C883AD0A6A20C7C6C1BBD541E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A0FD56E489C68C2E28CB80D327CFBEC1 /* TFYSwiftSSRKit.debug.xcconfig */;
+			baseConfigurationReference = 7ED26B8BC8EC61516673C93B85574FD6 /* TFYSwiftSSRKit.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -766,20 +742,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		331A68DFBBC5DE016F2856A22390C307 /* Build configuration list for PBXNativeTarget "TFYSwiftSSRKit-TFYSwiftSSRKit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				41AD27E6AA26C706C58D87D6A5DCEC2D /* Debug */,
-				768E3793855E4E3A3F8AC13746621498 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				90D4D09BCB6A4660E43ACBE9ECB6FE9A /* Debug */,
 				9553C89E183877A5CB2F3C6801BEC129 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		535DD0D5398F6998A6A09EE17B68A0A9 /* Build configuration list for PBXNativeTarget "TFYSwiftSSRKit-TFYSwiftSSRKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2424818190FB67FC72D67A97C2F0329A /* Debug */,
+				0C7ED3FB1C7FFEB002BB757AC7C10A0D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
