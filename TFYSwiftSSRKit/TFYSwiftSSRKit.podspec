@@ -24,14 +24,24 @@ Pod::Spec.new do |spec|
   
   spec.source       = { :git => "https://github.com/TFYSwiftSSRUilt/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
   
-  spec.source_files = "Classes/**/*.{h,m,swift}"
-  spec.public_header_files = "Classes/**/*.h"
+  # Swift 源文件和头文件
+  spec.source_files = [
+    "ConfigurationManager.swift",
+    "NetworkMonitor.swift",
+    "RuleManager.swift",
+    "ShadowsocksError.swift",
+    "ShadowsocksManager.swift",
+    "TFYSwiftSSRKit-Bridging-Header.h"
+  ]
+  
+  spec.public_header_files = "TFYSwiftSSRKit-Bridging-Header.h"
   
   # 资源文件
   spec.resource_bundles = {
     'TFYSwiftSSRKit' => [
-      'Resources/*.json',
-      'Resources/*.mmdb'
+      "default_rules.json",
+      "user_rules.json",
+      "GeoLite2-Country.mmdb"
     ]
   }
   
