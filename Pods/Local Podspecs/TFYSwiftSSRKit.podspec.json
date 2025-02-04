@@ -1,0 +1,86 @@
+{
+  "name": "TFYSwiftSSRKit",
+  "version": "1.0.0",
+  "summary": "A powerful iOS/macOS shadowsocks client library written in Swift",
+  "description": "TFYSwiftSSRKit is a comprehensive shadowsocks client library for iOS and macOS.\nFeatures:\n* Multiple encryption methods support (OpenSSL & libsodium)\n* GeoIP based routing\n* TLS support\n* Automatic network monitoring and reconnection\n* Rule-based proxy configuration\n* Traffic statistics",
+  "homepage": "https://github.com/yourusername/TFYSwiftSSRKit",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "tianfengyou": "youremail@example.com"
+  },
+  "platforms": {
+    "ios": "13.0",
+    "osx": "11.0"
+  },
+  "swift_versions": "5.0",
+  "source": {
+    "git": "https://github.com/yourusername/TFYSwiftSSRKit.git",
+    "tag": "1.0.0"
+  },
+  "source_files": "TFYSwiftSSRKit/Classes/**/*.{h,m,swift}",
+  "public_header_files": "TFYSwiftSSRKit/Classes/**/*.h",
+  "resource_bundles": {
+    "TFYSwiftSSRKit": [
+      "TFYSwiftSSRKit/Resources/*.json",
+      "TFYSwiftSSRKit/Resources/*.mmdb"
+    ]
+  },
+  "vendored_libraries": [
+    "TFYSwiftSSRKit/shadowsocks/install/lib/*.{a,dylib}",
+    "TFYSwiftSSRKit/libsodium/install/lib/*.{a,dylib}",
+    "TFYSwiftSSRKit/openssl/install/lib/*.{a,dylib}",
+    "TFYSwiftSSRKit/libmaxminddb/install/lib/*.{a,dylib}"
+  ],
+  "preserve_paths": [
+    "TFYSwiftSSRKit/shadowsocks/install/bin/*",
+    "TFYSwiftSSRKit/shadowsocks/install/include/*",
+    "TFYSwiftSSRKit/libsodium/install/include/*",
+    "TFYSwiftSSRKit/openssl/install/include/*",
+    "TFYSwiftSSRKit/libmaxminddb/install/include/*"
+  ],
+  "frameworks": "SystemConfiguration",
+  "pod_target_xcconfig": {
+    "HEADER_SEARCH_PATHS": [
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks/install/include",
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libsodium/install/include",
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/openssl/install/include",
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libmaxminddb/install/include"
+    ],
+    "LIBRARY_SEARCH_PATHS": [
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks/install/lib",
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libsodium/install/lib",
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/openssl/install/lib",
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libmaxminddb/install/lib"
+    ],
+    "SWIFT_INCLUDE_PATHS": [
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks/install/include",
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libsodium/install/include",
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/openssl/install/include",
+      "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/libmaxminddb/install/include"
+    ],
+    "GCC_PREPROCESSOR_DEFINITIONS": [
+      "SODIUM_STATIC=1",
+      "OPENSSL_STATIC=1"
+    ],
+    "OTHER_LDFLAGS": [
+      "-lsodium",
+      "-lssl",
+      "-lcrypto",
+      "-lmaxminddb"
+    ],
+    "ENABLE_BITCODE": "NO"
+  },
+  "user_target_xcconfig": {
+    "HEADER_SEARCH_PATHS": [
+      "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks/install/include",
+      "$(PODS_ROOT)/TFYSwiftSSRKit/libsodium/install/include",
+      "$(PODS_ROOT)/TFYSwiftSSRKit/openssl/install/include",
+      "$(PODS_ROOT)/TFYSwiftSSRKit/libmaxminddb/install/include"
+    ]
+  },
+  "module_map": "module.modulemap",
+  "swift_version": "5.0"
+}

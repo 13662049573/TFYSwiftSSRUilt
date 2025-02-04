@@ -1,0 +1,16 @@
+PODS:
+  - TFYSwiftSSRKit (1.0.0)
+
+DEPENDENCIES:
+  - TFYSwiftSSRKit (from `./TFYSwiftSSRKit`)
+
+EXTERNAL SOURCES:
+  TFYSwiftSSRKit:
+    :path: "./TFYSwiftSSRKit"
+
+SPEC CHECKSUMS:
+  TFYSwiftSSRKit: 9db6d8d5129bfcedf23a6f8f98734a017dd587f1
+
+PODFILE CHECKSUM: e9f91ecc1ce37ac4b7fadb2cc6befe41b35fb224
+
+COCOAPODS: 1.16.2

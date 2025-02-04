@@ -1,0 +1,26 @@
+[
+    {
+        "type": "domain",
+        "value": "example.com",
+        "action": "proxy",
+        "description": "示例域名规则"
+    },
+    {
+        "type": "ipRange",
+        "value": "192.168.1.0/24",
+        "action": "direct",
+        "description": "示例 IP 范围规则"
+    },
+    {
+        "type": "keyword",
+        "value": "example",
+        "action": "proxy",
+        "description": "示例关键词规则"
+    },
+    {
+        "type": "userAgent",
+        "value": "Example/1.0",
+        "action": "proxy",
+        "description": "示例 User-Agent 规则"
+    }
+] 
