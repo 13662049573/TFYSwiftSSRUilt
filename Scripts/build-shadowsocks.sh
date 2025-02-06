@@ -85,12 +85,23 @@ build_shadowsocks() {
     cd "shadowsocks-libev-$VERSION"
     
     # 检查依赖库
-    if [ ! -f "$DEPS_ROOT/libsodium/install/ios/lib/libsodium_ios.a" ]; then
-        log_error "libsodium not found. Please build libsodium first."
+    if [ ! -f "$DEPS_ROOT/libsodium/install/lib/libsodium_ios.a" ]; then
+        log_error "libsodium iOS library not found at $DEPS_ROOT/libsodium/install/lib/libsodium_ios.a"
         return 1
     fi
-    if [ ! -f "$DEPS_ROOT/openssl/install/ios/lib/libssl_ios.a" ]; then
-        log_error "OpenSSL not found. Please build OpenSSL first."
+    
+    if [ ! -f "$DEPS_ROOT/libsodium/install/lib/libsodium_macos.a" ]; then
+        log_error "libsodium macOS library not found at $DEPS_ROOT/libsodium/install/lib/libsodium_macos.a"
+        return 1
+    fi
+    
+    if [ ! -f "$DEPS_ROOT/openssl/install/lib/libssl_ios.a" ] || [ ! -f "$DEPS_ROOT/openssl/install/lib/libcrypto_ios.a" ]; then
+        log_error "OpenSSL iOS libraries not found"
+        return 1
+    fi
+    
+    if [ ! -f "$DEPS_ROOT/openssl/install/lib/libssl_macos.a" ] || [ ! -f "$DEPS_ROOT/openssl/install/lib/libcrypto_macos.a" ]; then
+        log_error "OpenSSL macOS libraries not found"
         return 1
     fi
     
@@ -99,11 +110,10 @@ build_shadowsocks() {
     
     export CC="$(xcrun -find -sdk iphoneos clang)"
     export CXX="$(xcrun -find -sdk iphoneos clang++)"
-    export CFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -mios-version-min=$IPHONEOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/ios/include -I$DEPS_ROOT/openssl/install/ios/include"
+    export CFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -mios-version-min=$IPHONEOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/include -I$DEPS_ROOT/openssl/install/include"
     export CXXFLAGS="$CFLAGS"
-    export LDFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -L$DEPS_ROOT/libsodium/install/ios/lib -L$DEPS_ROOT/openssl/install/ios/lib"
-    export LIBS="-lsodium -lssl -lcrypto"
-    export PKG_CONFIG_PATH="$DEPS_ROOT/libsodium/install/ios/lib/pkgconfig:$DEPS_ROOT/openssl/install/ios/lib/pkgconfig"
+    export LDFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -L$DEPS_ROOT/libsodium/install/lib -L$DEPS_ROOT/openssl/install/lib"
+    export LIBS="-lsodium_ios -lssl_ios -lcrypto_ios"
     
     # 运行自动工具链
     ./autogen.sh
@@ -113,8 +123,8 @@ build_shadowsocks() {
                 --enable-static \
                 --disable-shared \
                 --disable-documentation \
-                --with-sodium="$DEPS_ROOT/libsodium/install/ios" \
-                --with-openssl="$DEPS_ROOT/openssl/install/ios" \
+                --with-sodium="$DEPS_ROOT/libsodium/install" \
+                --with-openssl="$DEPS_ROOT/openssl/install" \
                 || (log_error "iOS configure failed" && return 1)
     
     make clean || true
@@ -127,11 +137,10 @@ build_shadowsocks() {
         
         export CC="$(xcrun -find -sdk macosx clang)"
         export CXX="$(xcrun -find -sdk macosx clang++)"
-        export CFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -mmacosx-version-min=$MACOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/macos/include -I$DEPS_ROOT/openssl/install/macos/include"
+        export CFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -mmacosx-version-min=$MACOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/include -I$DEPS_ROOT/openssl/install/include"
         export CXXFLAGS="$CFLAGS"
-        export LDFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -L$DEPS_ROOT/libsodium/install/macos/lib -L$DEPS_ROOT/openssl/install/macos/lib"
-        export LIBS="-lsodium -lssl -lcrypto"
-        export PKG_CONFIG_PATH="$DEPS_ROOT/libsodium/install/macos/lib/pkgconfig:$DEPS_ROOT/openssl/install/macos/lib/pkgconfig"
+        export LDFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -L$DEPS_ROOT/libsodium/install/lib -L$DEPS_ROOT/openssl/install/lib"
+        export LIBS="-lsodium_macos -lssl_macos -lcrypto_macos"
         
         local HOST_ARCH
         if [ "$ARCH" = "arm64" ]; then
@@ -145,8 +154,8 @@ build_shadowsocks() {
                     --enable-static \
                     --disable-shared \
                     --disable-documentation \
-                    --with-sodium="$DEPS_ROOT/libsodium/install/macos" \
-                    --with-openssl="$DEPS_ROOT/openssl/install/macos" \
+                    --with-sodium="$DEPS_ROOT/libsodium/install" \
+                    --with-openssl="$DEPS_ROOT/openssl/install" \
                     || (log_error "macOS $ARCH configure failed" && return 1)
         
         make clean || true
