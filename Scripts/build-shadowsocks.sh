@@ -42,9 +42,13 @@ trap 'handle_error $LINENO' ERR
 
 # 清理函数
 cleanup() {
-    if [ "$1" = "success" ]; then
+    if [ "$1" = "success" ] && [ $BUILD_SUCCESS -eq 1 ]; then
         log_info "Cleaning up build files after successful build..."
         rm -rf "$DEPS_ROOT/$LIB_NAME/build"
+        rm -rf "$INSTALL_DIR/ios"
+        rm -rf "$INSTALL_DIR/macos"
+        rm -rf "$INSTALL_DIR/share"
+        rm -rf "$INSTALL_DIR/lib/pkgconfig"
     else
         log_info "Keeping build files for debugging..."
     fi
@@ -62,11 +66,14 @@ build_shadowsocks() {
     local ARCHIVE="$BUILD_DIR/shadowsocks-libev.tar.gz"
     
     rm -rf "$BUILD_DIR"
-    rm -rf "$INSTALL_DIR"
     mkdir -p "$BUILD_DIR"
     mkdir -p "$INSTALL_DIR"
     
     cd "$BUILD_DIR"
+    
+    # 安装依赖
+    log_info "Installing dependencies..."
+    brew install libcork mbedtls pcre
     
     # 下载源码
     log_info "Downloading shadowsocks-libev..."
@@ -105,18 +112,20 @@ build_shadowsocks() {
         return 1
     fi
     
+    # 运行自动工具链
+    log_info "Running autotools..."
+    ./autogen.sh
+    
     # iOS 构建
     log_info "Building for iOS (arm64)..."
     
     export CC="$(xcrun -find -sdk iphoneos clang)"
     export CXX="$(xcrun -find -sdk iphoneos clang++)"
-    export CFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -mios-version-min=$IPHONEOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/include -I$DEPS_ROOT/openssl/install/include"
+    export CFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -mios-version-min=$IPHONEOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/include -I$DEPS_ROOT/openssl/install/include -I/opt/homebrew/opt/pcre/include -I/opt/homebrew/opt/libcork/include -I/opt/homebrew/opt/mbedtls/include"
     export CXXFLAGS="$CFLAGS"
-    export LDFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -L$DEPS_ROOT/libsodium/install/lib -L$DEPS_ROOT/openssl/install/lib"
-    export LIBS="-lsodium_ios -lssl_ios -lcrypto_ios"
-    
-    # 运行自动工具链
-    ./autogen.sh
+    export LDFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -L$DEPS_ROOT/libsodium/install/lib -L$DEPS_ROOT/openssl/install/lib -L/opt/homebrew/opt/pcre/lib -L/opt/homebrew/opt/libcork/lib -L/opt/homebrew/opt/mbedtls/lib"
+    export LIBS="-lsodium_ios -lssl_ios -lcrypto_ios -lpcre -lcork -lmbedtls -lmbedcrypto -lmbedx509"
+    export PKG_CONFIG_PATH="/opt/homebrew/opt/pcre/lib/pkgconfig:/opt/homebrew/opt/libcork/lib/pkgconfig:/opt/homebrew/opt/mbedtls/lib/pkgconfig:$DEPS_ROOT/libsodium/install/lib/pkgconfig:$DEPS_ROOT/openssl/install/lib/pkgconfig"
     
     ./configure --prefix="$INSTALL_DIR/ios" \
                 --host=arm-apple-darwin \
@@ -124,7 +133,8 @@ build_shadowsocks() {
                 --disable-shared \
                 --disable-documentation \
                 --with-sodium="$DEPS_ROOT/libsodium/install" \
-                --with-openssl="$DEPS_ROOT/openssl/install" \
+                --with-mbedtls=/opt/homebrew/opt/mbedtls \
+                --with-crypto-library=mbedtls \
                 || (log_error "iOS configure failed" && return 1)
     
     make clean || true
@@ -137,10 +147,11 @@ build_shadowsocks() {
         
         export CC="$(xcrun -find -sdk macosx clang)"
         export CXX="$(xcrun -find -sdk macosx clang++)"
-        export CFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -mmacosx-version-min=$MACOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/include -I$DEPS_ROOT/openssl/install/include"
+        export CFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -mmacosx-version-min=$MACOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/include -I$DEPS_ROOT/openssl/install/include -I/opt/homebrew/opt/pcre/include -I/opt/homebrew/opt/libcork/include -I/opt/homebrew/opt/mbedtls/include"
         export CXXFLAGS="$CFLAGS"
-        export LDFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -L$DEPS_ROOT/libsodium/install/lib -L$DEPS_ROOT/openssl/install/lib"
-        export LIBS="-lsodium_macos -lssl_macos -lcrypto_macos"
+        export LDFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -L$DEPS_ROOT/libsodium/install/lib -L$DEPS_ROOT/openssl/install/lib -L/opt/homebrew/opt/pcre/lib -L/opt/homebrew/opt/libcork/lib -L/opt/homebrew/opt/mbedtls/lib"
+        export LIBS="-lsodium_macos -lssl_macos -lcrypto_macos -lpcre -lcork -lmbedtls -lmbedcrypto -lmbedx509"
+        export PKG_CONFIG_PATH="/opt/homebrew/opt/pcre/lib/pkgconfig:/opt/homebrew/opt/libcork/lib/pkgconfig:/opt/homebrew/opt/mbedtls/lib/pkgconfig:$DEPS_ROOT/libsodium/install/lib/pkgconfig:$DEPS_ROOT/openssl/install/lib/pkgconfig"
         
         local HOST_ARCH
         if [ "$ARCH" = "arm64" ]; then
@@ -155,7 +166,8 @@ build_shadowsocks() {
                     --disable-shared \
                     --disable-documentation \
                     --with-sodium="$DEPS_ROOT/libsodium/install" \
-                    --with-openssl="$DEPS_ROOT/openssl/install" \
+                    --with-mbedtls=/opt/homebrew/opt/mbedtls \
+                    --with-crypto-library=mbedtls \
                     || (log_error "macOS $ARCH configure failed" && return 1)
         
         make clean || true
@@ -196,6 +208,9 @@ create_universal_library() {
 
 # 主函数
 main() {
+    # 初始化构建成功标志
+    BUILD_SUCCESS=0
+    
     # 检查必要工具
     local REQUIRED_TOOLS="autoconf automake libtool pkg-config"
     local MISSING_TOOLS=()
@@ -214,6 +229,7 @@ main() {
     
     # 构建流程
     if build_shadowsocks && create_universal_library; then
+        BUILD_SUCCESS=1
         cleanup "success"
         log_info "Build completed successfully!"
         log_info "Libraries available at: $DEPS_ROOT/$LIB_NAME/install/lib"
