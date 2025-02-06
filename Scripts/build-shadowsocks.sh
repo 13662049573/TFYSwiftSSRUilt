@@ -6,10 +6,17 @@ set -e
 # 基础配置
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$SCRIPT_DIR/.."
-DEPS_ROOT="$PROJECT_ROOT/TFYSwiftSSRKit/shadowsocks"
-VERSION="v1.22.0"
-DOWNLOAD_URL="https://github.com/shadowsocks/shadowsocks-rust/releases/download/$VERSION/shadowsocks-$VERSION.aarch64-apple-darwin.tar.xz"
-ARCHIVE_NAME="shadowsocks-$VERSION.aarch64-apple-darwin.tar.xz"
+DEPS_ROOT="$PROJECT_ROOT/TFYSwiftSSRKit"
+VERSION="3.3.5"  # shadowsocks-libev 最新版本
+LIB_NAME="shadowsocks"
+
+# 设置编译环境
+export IPHONEOS_DEPLOYMENT_TARGET="15.0"
+export MACOS_DEPLOYMENT_TARGET="12.0"
+
+# 架构
+IOS_ARCHS="arm64"
+MACOS_ARCHS="x86_64 arm64"
 
 # 日志函数
 log_info() {
@@ -27,6 +34,7 @@ log_warning() {
 # 错误处理
 handle_error() {
     log_error "An error occurred on line $1"
+    cleanup
     exit 1
 }
 
@@ -36,106 +44,151 @@ trap 'handle_error $LINENO' ERR
 cleanup() {
     if [ "$1" = "success" ]; then
         log_info "Cleaning up build files after successful build..."
-        rm -rf "$DEPS_ROOT/build"
+        rm -rf "$DEPS_ROOT/$LIB_NAME/build"
     else
         log_info "Keeping build files for debugging..."
     fi
 }
 
-# 构建 shadowsocks-rust
+# 创建必要的目录
+mkdir -p "$DEPS_ROOT/$LIB_NAME"
+mkdir -p "$SCRIPT_DIR/backup"
+
+# 构建 shadowsocks-libev
 build_shadowsocks() {
-    local BUILD_DIR="$DEPS_ROOT/build"
-    local INSTALL_DIR="$DEPS_ROOT/install"
+    local BUILD_DIR="$DEPS_ROOT/$LIB_NAME/build"
+    local INSTALL_DIR="$DEPS_ROOT/$LIB_NAME/install"
+    local DOWNLOAD_URL="https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$VERSION/shadowsocks-libev-$VERSION.tar.gz"
+    local ARCHIVE="$BUILD_DIR/shadowsocks-libev.tar.gz"
     
-    log_info "Building shadowsocks-rust $VERSION..."
+    rm -rf "$BUILD_DIR"
+    rm -rf "$INSTALL_DIR"
+    mkdir -p "$BUILD_DIR"
+    mkdir -p "$INSTALL_DIR"
     
-    # 创建构建目录
-    mkdir -p "$BUILD_DIR" "$INSTALL_DIR"
     cd "$BUILD_DIR"
     
-    # 下载预编译的二进制文件
-    log_info "Downloading pre-built binaries..."
-    if ! curl -L --http1.1 -o "$ARCHIVE_NAME" "$DOWNLOAD_URL"; then
-        log_error "Failed to download shadowsocks-rust binary"
+    # 下载源码
+    log_info "Downloading shadowsocks-libev..."
+    if ! curl -L --retry 3 --retry-delay 2 -o "$ARCHIVE" "$DOWNLOAD_URL"; then
+        log_error "Failed to download shadowsocks-libev"
         return 1
     fi
     
-    # 检查文件是否存在和大小是否正确
-    if [ ! -f "$ARCHIVE_NAME" ] || [ ! -s "$ARCHIVE_NAME" ]; then
-        log_error "Downloaded file is missing or empty"
+    # 解压源码
+    log_info "Extracting shadowsocks-libev..."
+    if ! tar xzf "$ARCHIVE"; then
+        log_error "Failed to extract shadowsocks-libev"
         return 1
     fi
     
-    # 解压文件
-    log_info "Extracting archive..."
-    if ! tar xf "$ARCHIVE_NAME"; then
-        log_error "Failed to extract archive"
+    cd "shadowsocks-libev-$VERSION"
+    
+    # 检查依赖库
+    if [ ! -f "$DEPS_ROOT/libsodium/install/ios/lib/libsodium_ios.a" ]; then
+        log_error "libsodium not found. Please build libsodium first."
+        return 1
+    fi
+    if [ ! -f "$DEPS_ROOT/openssl/install/ios/lib/libssl_ios.a" ]; then
+        log_error "OpenSSL not found. Please build OpenSSL first."
         return 1
     fi
     
-    # 创建输出目录
-    mkdir -p "$INSTALL_DIR/bin"
-    mkdir -p "$INSTALL_DIR/lib"
-    mkdir -p "$INSTALL_DIR/include"
+    # iOS 构建
+    log_info "Building for iOS (arm64)..."
     
-    # 复制文件
-    log_info "Installing files..."
-    for binary in sslocal ssserver ssurl ssmanager; do
-        if [ -f "$binary" ]; then
-            cp "$binary" "$INSTALL_DIR/bin/" || {
-                log_error "Failed to copy $binary"
-                return 1
-            }
+    export CC="$(xcrun -find -sdk iphoneos clang)"
+    export CXX="$(xcrun -find -sdk iphoneos clang++)"
+    export CFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -mios-version-min=$IPHONEOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/ios/include -I$DEPS_ROOT/openssl/install/ios/include"
+    export CXXFLAGS="$CFLAGS"
+    export LDFLAGS="-arch arm64 -isysroot $(xcrun -sdk iphoneos --show-sdk-path) -L$DEPS_ROOT/libsodium/install/ios/lib -L$DEPS_ROOT/openssl/install/ios/lib"
+    export LIBS="-lsodium -lssl -lcrypto"
+    export PKG_CONFIG_PATH="$DEPS_ROOT/libsodium/install/ios/lib/pkgconfig:$DEPS_ROOT/openssl/install/ios/lib/pkgconfig"
+    
+    # 运行自动工具链
+    ./autogen.sh
+    
+    ./configure --prefix="$INSTALL_DIR/ios" \
+                --host=arm-apple-darwin \
+                --enable-static \
+                --disable-shared \
+                --disable-documentation \
+                --with-sodium="$DEPS_ROOT/libsodium/install/ios" \
+                --with-openssl="$DEPS_ROOT/openssl/install/ios" \
+                || (log_error "iOS configure failed" && return 1)
+    
+    make clean || true
+    make -j$(sysctl -n hw.ncpu) || (log_error "iOS make failed" && return 1)
+    make install || (log_error "iOS make install failed" && return 1)
+    
+    # macOS 构建
+    for ARCH in $MACOS_ARCHS; do
+        log_info "Building for macOS architecture: $ARCH"
+        
+        export CC="$(xcrun -find -sdk macosx clang)"
+        export CXX="$(xcrun -find -sdk macosx clang++)"
+        export CFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -mmacosx-version-min=$MACOS_DEPLOYMENT_TARGET -I$DEPS_ROOT/libsodium/install/macos/include -I$DEPS_ROOT/openssl/install/macos/include"
+        export CXXFLAGS="$CFLAGS"
+        export LDFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -L$DEPS_ROOT/libsodium/install/macos/lib -L$DEPS_ROOT/openssl/install/macos/lib"
+        export LIBS="-lsodium -lssl -lcrypto"
+        export PKG_CONFIG_PATH="$DEPS_ROOT/libsodium/install/macos/lib/pkgconfig:$DEPS_ROOT/openssl/install/macos/lib/pkgconfig"
+        
+        local HOST_ARCH
+        if [ "$ARCH" = "arm64" ]; then
+            HOST_ARCH="aarch64-apple-darwin"
         else
-            log_error "Binary $binary not found in archive"
-            return 1
+            HOST_ARCH="x86_64-apple-darwin"
         fi
+        
+        ./configure --prefix="$INSTALL_DIR/macos/$ARCH" \
+                    --host="$HOST_ARCH" \
+                    --enable-static \
+                    --disable-shared \
+                    --disable-documentation \
+                    --with-sodium="$DEPS_ROOT/libsodium/install/macos" \
+                    --with-openssl="$DEPS_ROOT/openssl/install/macos" \
+                    || (log_error "macOS $ARCH configure failed" && return 1)
+        
+        make clean || true
+        make -j$(sysctl -n hw.ncpu) || (log_error "macOS $ARCH make failed" && return 1)
+        make install || (log_error "macOS $ARCH make install failed" && return 1)
     done
     
-    # 设置权限
-    chmod +x "$INSTALL_DIR/bin/"* || {
-        log_error "Failed to set executable permissions"
-        return 1
-    }
-    
-    # 生成简单的 C 头文件
-    log_info "Generating header file..."
-    cat > "$INSTALL_DIR/include/shadowsocks.h" << 'EOF'
-#ifndef SHADOWSOCKS_H
-#define SHADOWSOCKS_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// Shadowsocks configuration structure
-typedef struct {
-    const char* server;
-    const char* server_port;
-    const char* password;
-    const char* method;
-    const char* local_address;
-    const char* local_port;
-} shadowsocks_config;
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // SHADOWSOCKS_H
-EOF
-    
-    log_info "Installation completed successfully"
-    log_info "Binaries installed to: $INSTALL_DIR/bin"
-    log_info "Header file installed to: $INSTALL_DIR/include"
-    
     return 0
+}
+
+# 创建通用库
+create_universal_library() {
+    local INSTALL_DIR="$DEPS_ROOT/$LIB_NAME/install"
+    mkdir -p "$INSTALL_DIR/lib"
+    
+    # iOS 库
+    cp "$INSTALL_DIR/ios/lib/libshadowsocks-libev.a" "$INSTALL_DIR/lib/libshadowsocks_ios.a"
+    
+    # macOS 通用库
+    xcrun lipo -create \
+        "$INSTALL_DIR/macos/arm64/lib/libshadowsocks-libev.a" \
+        "$INSTALL_DIR/macos/x86_64/lib/libshadowsocks-libev.a" \
+        -output "$INSTALL_DIR/lib/libshadowsocks_macos.a"
+    
+    # 复制头文件
+    cp -R "$INSTALL_DIR/ios/include" "$INSTALL_DIR/"
+    
+    # 验证库
+    xcrun lipo -info "$INSTALL_DIR/lib/libshadowsocks_ios.a"
+    xcrun lipo -info "$INSTALL_DIR/lib/libshadowsocks_macos.a"
+    
+    # 清理不需要的文件
+    rm -rf "$INSTALL_DIR/ios"
+    rm -rf "$INSTALL_DIR/macos"
+    rm -rf "$INSTALL_DIR/share"
+    rm -rf "$INSTALL_DIR/lib/pkgconfig"
 }
 
 # 主函数
 main() {
     # 检查必要工具
-    local REQUIRED_TOOLS="curl tar"
+    local REQUIRED_TOOLS="autoconf automake libtool pkg-config"
     local MISSING_TOOLS=()
     
     for tool in $REQUIRED_TOOLS; do
@@ -151,11 +204,11 @@ main() {
     fi
     
     # 构建流程
-    if build_shadowsocks; then
-        cleanup success
+    if build_shadowsocks && create_universal_library; then
+        cleanup "success"
         log_info "Build completed successfully!"
-        log_info "Binaries available at: $DEPS_ROOT/install/bin"
-        log_info "Headers available at: $DEPS_ROOT/install/include"
+        log_info "Libraries available at: $DEPS_ROOT/$LIB_NAME/install/lib"
+        log_info "Headers available at: $DEPS_ROOT/$LIB_NAME/install/include"
         return 0
     else
         log_error "Build failed"
