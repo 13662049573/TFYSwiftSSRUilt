@@ -1,6 +1,6 @@
 # Package Information for pkg-config
 
-prefix=/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/Scripts/../TFYSwiftSSRKit/pcre/install/macos/arm64
+prefix=/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/Scripts/../TFYSwiftSSRKit/pcre/install
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

@@ -52,7 +52,7 @@ sure both macros are undefined; an emulation function will then be used. */
    EBCDIC_NL25, the adjustment of NEWLINE is automatic. */
 /* #undef EBCDIC_NL25 */
 
-/* Define to 1 if you have the `bcopy' function. */
+/* Define to 1 if you have the 'bcopy' function. */
 #define HAVE_BCOPY 1
 
 /* Define to 1 if you have the <bits/type_traits.h> header file. */
@@ -79,10 +79,10 @@ sure both macros are undefined; an emulation function will then be used. */
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
 
-/* Define to 1 if the system has the type `long long'. */
+/* Define to 1 if the system has the type 'long long'. */
 /* #undef HAVE_LONG_LONG */
 
-/* Define to 1 if you have the `memmove' function. */
+/* Define to 1 if you have the 'memmove' function. */
 #define HAVE_MEMMOVE 1
 
 /* Define if you have POSIX threads libraries and header files. */
@@ -106,7 +106,7 @@ sure both macros are undefined; an emulation function will then be used. */
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
 
-/* Define to 1 if you have the `strerror' function. */
+/* Define to 1 if you have the 'strerror' function. */
 #define HAVE_STRERROR 1
 
 /* Define to 1 if you have the <string> header file. */
@@ -139,7 +139,7 @@ sure both macros are undefined; an emulation function will then be used. */
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
-/* Define to 1 if the system has the type `unsigned long long'. */
+/* Define to 1 if the system has the type 'unsigned long long'. */
 /* #undef HAVE_UNSIGNED_LONG_LONG */
 
 /* Define to 1 if the compiler supports simple visibility declarations. */
@@ -180,7 +180,7 @@ sure both macros are undefined; an emulation function will then be used. */
    match(). To have any useful effect, it must be less than the value of
    MATCH_LIMIT. The default is to use the same value as MATCH_LIMIT. There is
    a runtime method for setting a different limit. */
-#define MATCH_LIMIT_RECURSION MATCH_LIMIT
+#define MATCH_LIMIT_RECURSION 10000000
 
 /* This limit is parameterized just in case anybody ever wants to change it.
    Care must be taken if it is increased, because it guards against integer
@@ -209,7 +209,7 @@ sure both macros are undefined; an emulation function will then be used. */
    steam using pcre_recurse_malloc() to obtain memory from the heap. For more
    detail, see the comments and other stuff just above the match() function.
    */
-/* #undef NO_RECURSE */
+#define NO_RECURSE /**/
 
 /* Name of package */
 #define PACKAGE "pcre"
@@ -290,7 +290,7 @@ sure both macros are undefined; an emulation function will then be used. */
    your system. */
 /* #undef PTHREAD_CREATE_JOINABLE */
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #define STDC_HEADERS 1
@@ -339,12 +339,12 @@ sure both macros are undefined; an emulation function will then be used. */
 /* Version number of package */
 #define VERSION "8.45"
 
-/* Define to empty if `const' does not conform to ANSI C. */
+/* Define to empty if 'const' does not conform to ANSI C. */
 /* #undef const */
 
 /* Define to the type of a signed integer type of width exactly 64 bits if
    such a type exists and the standard includes do not define it. */
 /* #undef int64_t */
 
-/* Define to `unsigned int' if <sys/types.h> does not define. */
+/* Define as 'unsigned int' if <stddef.h> doesn't define. */
 /* #undef size_t */

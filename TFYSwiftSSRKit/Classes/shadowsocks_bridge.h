@@ -2,8 +2,12 @@
 #define shadowsocks_bridge_h
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include "shadowsocks.h"
+
+// 防止重复定义
+#ifndef SHADOWSOCKS_H
+#define SHADOWSOCKS_H
 
 // 定义profile_t结构体
 typedef struct {
@@ -43,4 +47,5 @@ static inline char* strdup_safe(const char* str) {
 }
 #endif
 
+#endif /* SHADOWSOCKS_H */
 #endif /* shadowsocks_bridge_h */ 

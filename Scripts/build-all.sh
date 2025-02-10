@@ -246,4 +246,18 @@ main() {
 trap 'echo "Error on line $LINENO"' ERR
 
 # 运行脚本
-main "$@" 
+main "$@"
+
+# 构建 mbedtls
+echo "Building mbedtls..."
+$SCRIPT_DIR/build-mbedtls.sh
+
+# 构建 pcre
+echo "Building pcre..."
+$SCRIPT_DIR/build-pcre.sh
+
+# 构建 shadowsocks
+echo "Building shadowsocks..."
+$SCRIPT_DIR/build-shadowsocks.sh
+
+echo "All components built successfully!" 
