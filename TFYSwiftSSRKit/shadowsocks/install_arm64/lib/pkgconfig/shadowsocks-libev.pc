@@ -1,0 +1,12 @@
+prefix=/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/shadowsocks/install_arm64
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: shadowsocks-libev
+Description: a lightweight secured socks5 proxy
+URL: https://shadowsocks.org
+Version: 3.3.5
+Requires:
+Cflags: -I${includedir}
+Libs: -L${libdir} -lshadowsocks-libev

@@ -1,147 +1,81 @@
 # TFYSwiftSSRKit
 
-A powerful iOS/macOS shadowsocks client library written in Objective-C.
+TFYSwiftSSRKit 是一个用于 iOS 的 Shadowsocks-libev 封装库，提供了简单的 Swift API 来管理 Shadowsocks 代理连接。
 
-## Features
+## 功能特性
 
-* Multiple encryption methods support (OpenSSL & libsodium)
-* GeoIP based routing
-* TLS support
-* Automatic network monitoring and reconnection
-* Rule-based proxy configuration
-* Traffic statistics
+- 支持 Shadowsocks 所有加密方法
+- 简单的 API 接口
+- 自动内存管理
+- 支持后台运行
+- 支持 TCP 和 UDP 代理
 
-## Requirements
+## 安装要求
 
-* iOS 15.0+ / macOS 12.0+
-* Xcode 14.0+
+- iOS 15.0+
+- Xcode 13.0+
+- Swift 5.0+
 
-## Installation
+## 使用方法
 
-### CocoaPods
+1. 初始化 SSRManager：
 
-```ruby
-pod 'TFYSwiftSSRKit'
+```swift
+let ssrManager = SSRManager()
 ```
 
-## Project Structure
+2. 创建配置：
 
-```
-TFYSwiftSSRKit
-├── Classes
-│   ├── TFYShadowsocksManager.h/m
-│   ├── TFYConfigurationManager.h/m
-│   ├── TFYNetworkMonitor.h/m
-│   ├── TFYShadowsocksError.h/m
-├── Resources
-│   ├── default_rules.json
-│   ├── GeoLite2-Country.mmdb
-│   └── user_rules.json
-└── Libraries
-    ├── libmaxminddb
-    ├── libsodium
-    ├── openssl
-    └── shadowsocks
+```swift
+let config = SSRManager.Configuration(
+    remoteHost: "your.server.com",
+    remotePort: 8388,
+    localAddress: "127.0.0.1",
+    localPort: 1080,
+    password: "your_password",
+    method: "aes-256-cfb",
+    timeout: 600
+)
 ```
 
-## Usage
+3. 启动代理服务：
 
-### Basic Setup
-
-```objc
-#import <TFYSwiftSSRKit/TFYShadowsocksManager.h>
-
-// Configure and start the shadowsocks client
-NSDictionary *config = @{
-    @"server": @"example.com",
-    @"server_port": @8388,
-    @"password": @"password",
-    @"method": @"aes-256-gcm",
-    @"local_port": @1080
-};
-
-[[TFYShadowsocksManager sharedManager] startWithConfiguration:config completion:^(NSError * _Nullable error) {
-    if (error) {
-        NSLog(@"Failed to start shadowsocks: %@", error);
-        return;
-    }
-    NSLog(@"Shadowsocks started successfully");
-}];
-```
-
-### Network Monitoring
-
-```objc
-#import <TFYSwiftSSRKit/TFYNetworkMonitor.h>
-
-@interface YourClass () <TFYNetworkMonitorDelegate>
-@end
-
-@implementation YourClass
-
-- (void)startMonitoring {
-    [TFYNetworkMonitor sharedMonitor].delegate = self;
-    [[TFYNetworkMonitor sharedMonitor] startMonitoring];
+```swift
+let success = ssrManager.start(with: config)
+if success {
+    print("SSR代理服务已启动")
+} else {
+    print("SSR代理服务启动失败")
 }
-
-- (void)networkStatusDidChange:(TFYNetworkStatus)status {
-    switch (status) {
-        case TFYNetworkStatusReachableViaWiFi:
-            NSLog(@"Connected via WiFi");
-            break;
-        case TFYNetworkStatusReachableViaCellular:
-            NSLog(@"Connected via Cellular");
-            break;
-        case TFYNetworkStatusNotReachable:
-            NSLog(@"Network not reachable");
-            break;
-        default:
-            break;
-    }
-}
-
-@end
 ```
 
-### Configuration Management
+4. 停止代理服务：
 
-```objc
-#import <TFYSwiftSSRKit/TFYConfigurationManager.h>
-
-// Save a configuration
-NSDictionary *config = @{
-    @"server": @"example.com",
-    @"server_port": @8388,
-    @"password": @"password",
-    @"method": @"aes-256-gcm",
-    @"local_port": @1080
-};
-
-[[TFYConfigurationManager sharedManager] saveConfiguration:config completion:^(NSError * _Nullable error) {
-    if (error) {
-        NSLog(@"Failed to save configuration: %@", error);
-        return;
-    }
-    NSLog(@"Configuration saved successfully");
-}];
-
-// Load saved configurations
-[[TFYConfigurationManager sharedManager] loadConfigurationWithCompletion:^(NSDictionary * _Nullable configuration, NSError * _Nullable error) {
-    if (error) {
-        NSLog(@"Failed to load configuration: %@", error);
-        return;
-    }
-    if (configuration) {
-        NSLog(@"Loaded configuration: %@", configuration);
-    }
-}];
+```swift
+ssrManager.stop()
 ```
 
-## Dependencies
+## 示例代码
 
-* [CocoaAsyncSocket](https://github.com/robbiehanson/CocoaAsyncSocket) - For asynchronous socket communications
-* [MMWormhole](https://github.com/mutualmobile/MMWormhole) - For inter-process communication
+查看 `SSRExample.swift` 文件获取完整的使用示例。
 
-## License
+## 注意事项
 
-TFYSwiftSSRKit is available under the MIT license. See the LICENSE file for more info. 
+- 确保在使用前正确配置服务器信息
+- 建议在后台任务中启动代理服务
+- 注意内存管理，使用完毕后调用 stop() 方法
+
+## 支持的加密方法
+
+- aes-256-cfb
+- aes-128-cfb
+- chacha20
+- chacha20-ietf
+- aes-256-gcm
+- aes-128-gcm
+- chacha20-ietf-poly1305
+- xchacha20-ietf-poly1305
+
+## 许可证
+
+本项目基于 GPLv3 许可证开源。 

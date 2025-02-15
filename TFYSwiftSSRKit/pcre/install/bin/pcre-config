@@ -1,6 +1,6 @@
 #!/bin/sh
 
-prefix=/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/Scripts/../TFYSwiftSSRKit/pcre/install
+prefix=/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/install
 exec_prefix=${prefix}
 exec_prefix_set=no
 

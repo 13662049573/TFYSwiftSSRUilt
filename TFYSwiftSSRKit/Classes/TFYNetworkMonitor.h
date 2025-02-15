@@ -1,11 +1,9 @@
 #import <Foundation/Foundation.h>
-#import <Network/Network.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, TFYNetworkStatus) {
-    TFYNetworkStatusUnknown,
-    TFYNetworkStatusNotReachable,
+    TFYNetworkStatusNotReachable = 0,
     TFYNetworkStatusReachableViaWiFi,
     TFYNetworkStatusReachableViaCellular
 };
@@ -14,12 +12,19 @@ typedef NS_ENUM(NSInteger, TFYNetworkStatus) {
 
 - (void)networkStatusDidChange:(TFYNetworkStatus)status;
 
+@optional
+- (void)networkDidBecomeReachable;
+- (void)networkDidBecomeUnreachable;
+
 @end
 
 @interface TFYNetworkMonitor : NSObject
 
-@property (nonatomic, readonly) TFYNetworkStatus currentStatus;
 @property (nonatomic, weak) id<TFYNetworkMonitorDelegate> delegate;
+@property (nonatomic, assign, readonly) TFYNetworkStatus currentStatus;
+@property (nonatomic, assign, readonly) BOOL isReachable;
+@property (nonatomic, assign, readonly) BOOL isReachableViaWiFi;
+@property (nonatomic, assign, readonly) BOOL isReachableViaCellular;
 
 + (instancetype)sharedMonitor;
 

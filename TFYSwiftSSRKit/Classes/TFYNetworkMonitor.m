@@ -1,12 +1,24 @@
 #import "TFYNetworkMonitor.h"
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <netinet/in.h>
+#import <arpa/inet.h>
+#import <ifaddrs.h>
+#import <netdb.h>
+#import <sys/socket.h>
+#import <CoreFoundation/CoreFoundation.h>
 
-@interface TFYNetworkMonitor ()
+@interface TFYNetworkMonitor()
 
-@property (nonatomic, strong) nw_path_monitor_t monitor;
-@property (nonatomic, strong) dispatch_queue_t monitorQueue;
-@property (nonatomic, assign) TFYNetworkStatus status;
+@property (nonatomic, assign) SCNetworkReachabilityRef reachabilityRef;
+@property (nonatomic, assign) TFYNetworkStatus currentStatus;
+@property (nonatomic, strong) dispatch_queue_t reachabilityQueue;
 
 @end
+
+static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void* info) {
+    TFYNetworkMonitor *monitor = (__bridge TFYNetworkMonitor *)info;
+    [monitor reachabilityChanged:flags];
+}
 
 @implementation TFYNetworkMonitor
 
@@ -14,7 +26,7 @@
     static TFYNetworkMonitor *instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        instance = [[self alloc] init];
+        instance = [[TFYNetworkMonitor alloc] init];
     });
     return instance;
 }
@@ -22,64 +34,114 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _status = TFYNetworkStatusUnknown;
-        _monitorQueue = dispatch_queue_create("com.tfy.shadowsocks.network_monitor", DISPATCH_QUEUE_SERIAL);
+        _reachabilityQueue = dispatch_queue_create("com.tfy.network.reachability", DISPATCH_QUEUE_SERIAL);
+        [self setupReachability];
     }
     return self;
 }
 
-- (void)dealloc {
-    [self stopMonitoring];
+- (void)setupReachability {
+    struct sockaddr_in zeroAddress;
+    bzero(&zeroAddress, sizeof(zeroAddress));
+    zeroAddress.sin_len = sizeof(zeroAddress);
+    zeroAddress.sin_family = AF_INET;
+    
+    self.reachabilityRef = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr *)&zeroAddress);
+    
+    if (self.reachabilityRef != NULL) {
+        SCNetworkReachabilityContext context = {0, (__bridge void *)(self), NULL, NULL, NULL};
+        if (SCNetworkReachabilitySetCallback(self.reachabilityRef, ReachabilityCallback, &context)) {
+            if (!SCNetworkReachabilitySetDispatchQueue(self.reachabilityRef, self.reachabilityQueue)) {
+                SCNetworkReachabilitySetCallback(self.reachabilityRef, NULL, NULL);
+            }
+        }
+    }
 }
 
-#pragma mark - Public Methods
-
 - (void)startMonitoring {
-    if (self.monitor) {
-        return;
-    }
-    
-    self.monitor = nw_path_monitor_create();
-    nw_path_monitor_set_queue(self.monitor, self.monitorQueue);
-    
-    __weak typeof(self) weakSelf = self;
-    nw_path_monitor_set_update_handler(self.monitor, ^(nw_path_t _Nonnull path) {
-        TFYNetworkStatus newStatus = TFYNetworkStatusUnknown;
-        
-        if (nw_path_get_status(path) == nw_path_status_satisfied) {
-            if (nw_path_uses_interface_type(path, nw_interface_type_wifi)) {
-                newStatus = TFYNetworkStatusReachableViaWiFi;
-            } else if (nw_path_uses_interface_type(path, nw_interface_type_cellular)) {
-                newStatus = TFYNetworkStatusReachableViaCellular;
-            }
-        } else {
-            newStatus = TFYNetworkStatusNotReachable;
+    dispatch_async(self.reachabilityQueue, ^{
+        SCNetworkReachabilityFlags flags;
+        if (SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags)) {
+            [self reachabilityChanged:flags];
         }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (weakSelf.status != newStatus) {
-                weakSelf.status = newStatus;
-                if ([weakSelf.delegate respondsToSelector:@selector(networkStatusDidChange:)]) {
-                    [weakSelf.delegate networkStatusDidChange:newStatus];
-                }
-            }
-        });
     });
-    
-    nw_path_monitor_start(self.monitor);
 }
 
 - (void)stopMonitoring {
-    if (self.monitor) {
-        nw_path_monitor_cancel(self.monitor);
-        self.monitor = nil;
+    if (self.reachabilityRef != NULL) {
+        SCNetworkReachabilitySetCallback(self.reachabilityRef, NULL, NULL);
+        SCNetworkReachabilitySetDispatchQueue(self.reachabilityRef, NULL);
     }
 }
 
-#pragma mark - Properties
+- (void)reachabilityChanged:(SCNetworkReachabilityFlags)flags {
+    TFYNetworkStatus newStatus = [self networkStatusForFlags:flags];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BOOL wasReachable = self.isReachable;
+        self.currentStatus = newStatus;
+        BOOL isReachable = self.isReachable;
+        
+        if ([self.delegate respondsToSelector:@selector(networkStatusDidChange:)]) {
+            [self.delegate networkStatusDidChange:newStatus];
+        }
+        
+        if (wasReachable != isReachable) {
+            if (isReachable) {
+                if ([self.delegate respondsToSelector:@selector(networkDidBecomeReachable)]) {
+                    [self.delegate networkDidBecomeReachable];
+                }
+            } else {
+                if ([self.delegate respondsToSelector:@selector(networkDidBecomeUnreachable)]) {
+                    [self.delegate networkDidBecomeUnreachable];
+                }
+            }
+        }
+    });
+}
 
-- (TFYNetworkStatus)currentStatus {
-    return self.status;
+- (TFYNetworkStatus)networkStatusForFlags:(SCNetworkReachabilityFlags)flags {
+    if ((flags & kSCNetworkReachabilityFlagsReachable) == 0) {
+        return TFYNetworkStatusNotReachable;
+    }
+    
+    TFYNetworkStatus status = TFYNetworkStatusNotReachable;
+    
+    if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0) {
+        status = TFYNetworkStatusReachableViaWiFi;
+    }
+    
+    if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand) != 0) ||
+         (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0)) {
+        if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0) {
+            status = TFYNetworkStatusReachableViaWiFi;
+        }
+    }
+    
+    if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN) {
+        status = TFYNetworkStatusReachableViaCellular;
+    }
+    
+    return status;
+}
+
+- (BOOL)isReachable {
+    return self.currentStatus != TFYNetworkStatusNotReachable;
+}
+
+- (BOOL)isReachableViaWiFi {
+    return self.currentStatus == TFYNetworkStatusReachableViaWiFi;
+}
+
+- (BOOL)isReachableViaCellular {
+    return self.currentStatus == TFYNetworkStatusReachableViaCellular;
+}
+
+- (void)dealloc {
+    [self stopMonitoring];
+    if (self.reachabilityRef != NULL) {
+        CFRelease(self.reachabilityRef);
+    }
 }
 
 @end 
