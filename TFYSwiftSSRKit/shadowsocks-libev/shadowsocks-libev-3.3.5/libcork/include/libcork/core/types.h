@@ -11,72 +11,64 @@
 #ifndef LIBCORK_CORE_TYPES_H
 #define LIBCORK_CORE_TYPES_H
 
-/* For now, we assume that the C99 integer types are available using the
- * standard headers. */
+#include <libcork/config.h>
+#include <libcork/core/api.h>
 
-#include <limits.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <stddef.h>
+/* Basic integer types */
+#if defined(__APPLE__)
 #include <stdint.h>
-
-
-/* Define preprocessor macros that contain the size of several built-in
- * types.  Again, we assume that we have the C99 definitions available. */
-
-#if SHRT_MAX == INT8_MAX
-#define CORK_SIZEOF_SHORT  1
-#elif SHRT_MAX == INT16_MAX
-#define CORK_SIZEOF_SHORT  2
-#elif SHRT_MAX == INT32_MAX
-#define CORK_SIZEOF_SHORT  4
-#elif SHRT_MAX == INT64_MAX
-#define CORK_SIZEOF_SHORT  8
 #else
-#error "Cannot determine size of short"
+typedef signed char  int8_t;
+typedef unsigned char  uint8_t;
+typedef signed short  int16_t;
+typedef unsigned short  uint16_t;
+typedef signed int  int32_t;
+typedef unsigned int  uint32_t;
+typedef signed long long  int64_t;
+typedef unsigned long long  uint64_t;
 #endif
 
-#if INT_MAX == INT8_MAX
-#define CORK_SIZEOF_INT  1
-#elif INT_MAX == INT16_MAX
-#define CORK_SIZEOF_INT  2
-#elif INT_MAX == INT32_MAX
-#define CORK_SIZEOF_INT  4
-#elif INT_MAX == INT64_MAX
-#define CORK_SIZEOF_INT  8
+/* Boolean type */
+#if defined(__APPLE__)
+#include <stdbool.h>
 #else
-#error "Cannot determine size of int"
+typedef int  bool;
+#define true  1
+#define false  0
 #endif
 
-#if LONG_MAX == INT8_MAX
-#define CORK_SIZEOF_LONG  1
-#elif LONG_MAX == INT16_MAX
-#define CORK_SIZEOF_LONG  2
-#elif LONG_MAX == INT32_MAX
-#define CORK_SIZEOF_LONG  4
-#elif LONG_MAX == INT64_MAX
-#define CORK_SIZEOF_LONG  8
+/* Size type */
+#if defined(__APPLE__)
+#include <stddef.h>
 #else
-#error "Cannot determine size of long"
+typedef unsigned long  size_t;
+typedef signed long  ssize_t;
 #endif
 
-#if INTPTR_MAX == INT8_MAX
-#define CORK_SIZEOF_POINTER  1
-#elif INTPTR_MAX == INT16_MAX
-#define CORK_SIZEOF_POINTER  2
-#elif INTPTR_MAX == INT32_MAX
-#define CORK_SIZEOF_POINTER  4
-#elif INTPTR_MAX == INT64_MAX
-#define CORK_SIZEOF_POINTER  8
-#else
-#error "Cannot determine size of void *"
-#endif
+/* IP version constants */
+#define CORK_IP_VERSION_4  4
+#define CORK_IP_VERSION_6  6
 
+/* IP address types */
+struct cork_ipv4 {
+    uint32_t  addr;
+};
 
-/* Return a pointer to a @c struct, given a pointer to one of its
- * fields. */
-#define cork_container_of(field, struct_type, field_name) \
-    ((struct_type *) (- offsetof(struct_type, field_name) + \
-                      (void *) (field)))
+struct cork_ipv6 {
+    uint8_t  addr[16];
+};
+
+struct cork_ip {
+    unsigned int  version;
+    union {
+        struct cork_ipv4  v4;
+        struct cork_ipv6  v6;
+    } ip;
+};
+
+/* String length constants */
+#define CORK_IPV4_STRING_LENGTH  16
+#define CORK_IPV6_STRING_LENGTH  40
+#define CORK_IP_STRING_LENGTH  CORK_IPV6_STRING_LENGTH
 
 #endif /* LIBCORK_CORE_TYPES_H */

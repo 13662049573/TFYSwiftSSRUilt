@@ -191,6 +191,8 @@ ss_local-plugin.o: plugin.c ../config.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/__stdarg___va_copy.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/__stdarg_va_copy.h \
   ../libcork/include/libcork/core/gc.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/stdatomic.h \
+  ../libcork/include/libcork/ds/dllist.h \
   ../libcork/include/libcork/core/id.h \
   ../libcork/include/libcork/core/mempool.h \
   ../libcork/include/libcork/core/net-addresses.h \
@@ -203,7 +205,6 @@ ss_local-plugin.o: plugin.c ../config.h \
   ../libcork/include/libcork/os/process.h \
   ../libcork/include/libcork/os/subprocess.h \
   ../libcork/include/libcork/threads/basics.h \
-  ../libcork/include/libcork/threads/atomics.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/pthread.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/pthread/sched.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/pthread/pthread_impl.h \
@@ -212,7 +213,7 @@ ss_local-plugin.o: plugin.c ../config.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/pthread/qos.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/qos.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/_types/_mach_port_t.h \
-  utils.h \
+  ../libcork/include/libcork/threads/atomics.h utils.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/syslog.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/syslog.h \
   plugin.h winsock.h
@@ -409,6 +410,8 @@ ss_local-plugin.o: plugin.c ../config.h \
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/__stdarg___va_copy.h:
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/__stdarg_va_copy.h:
 ../libcork/include/libcork/core/gc.h:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/stdatomic.h:
+../libcork/include/libcork/ds/dllist.h:
 ../libcork/include/libcork/core/id.h:
 ../libcork/include/libcork/core/mempool.h:
 ../libcork/include/libcork/core/net-addresses.h:
@@ -422,7 +425,6 @@ ss_local-plugin.o: plugin.c ../config.h \
 ../libcork/include/libcork/os/process.h:
 ../libcork/include/libcork/os/subprocess.h:
 ../libcork/include/libcork/threads/basics.h:
-../libcork/include/libcork/threads/atomics.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/pthread.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/pthread/sched.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/pthread/pthread_impl.h:
@@ -431,6 +433,7 @@ ss_local-plugin.o: plugin.c ../config.h \
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/pthread/qos.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/qos.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/_types/_mach_port_t.h:
+../libcork/include/libcork/threads/atomics.h:
 utils.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/syslog.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/syslog.h:

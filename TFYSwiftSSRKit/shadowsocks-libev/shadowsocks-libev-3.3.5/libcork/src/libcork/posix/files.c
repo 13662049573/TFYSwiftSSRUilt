@@ -10,26 +10,38 @@
 #ifdef __GNU__
 #define _GNU_SOURCE
 #endif
-#include <assert.h>
-#include <dirent.h>
+
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <sys/types.h>
+
+#include "libcork/core/types.h"
+#include "libcork/ds/buffer.h"
+#include "libcork/os/files.h"
+#include "libcork/os/subprocess.h"
+#include "libcork/helpers/errors.h"
+#include "libcork/helpers/posix.h"
 
 #include "libcork/core/attributes.h"
 #include "libcork/core/error.h"
-#include "libcork/core/types.h"
 #include "libcork/ds/array.h"
-#include "libcork/ds/buffer.h"
-#include "libcork/helpers/errors.h"
-#include "libcork/helpers/posix.h"
 #include "libcork/helpers/mingw.h"
-#include "libcork/os/files.h"
-#include "libcork/os/subprocess.h"
+#include "libcork/posix/env.h"
 
+#if defined(__APPLE__)
+#include <sys/syslimits.h>
+#include <sys/dirent.h>
+#endif
+
+/* Directory iteration function type */
+typedef int (*cork_file_directory_iterator)(struct cork_file *file,
+                                          const char *rel_name,
+                                          void *user_data);
 
 #if !defined(CORK_DEBUG_FILES)
 #define CORK_DEBUG_FILES  0

@@ -1,0 +1,12 @@
+@@ -1,6 +1,10 @@
+ VERSION_INFO = 2:0:0
+ 
+-AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -fPIC
++if APPLE
++AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -fPIC -fvisibility=hidden
++else
++AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -fPIC -fvisibility=hidden
++endif
+ 
+ AM_CFLAGS += $(PTHREAD_CFLAGS)
+ if !USE_SYSTEM_SHARED_LIB

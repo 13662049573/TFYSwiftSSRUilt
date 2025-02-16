@@ -88,7 +88,7 @@ cork_ipv4_parse(struct cork_ipv4 *addr, const char *str)
 #endif
         DEBUG("octet %u = %u\n", octets, digit);
         result[octets] = digit;
-        cork_ipv4_copy(addr, result);
+        addr->addr = *(uint32_t *)result;
 #if CORK_IP_ADDRESS_DEBUG
         cork_ipv4_to_raw_string(addr, parsed_ipv4);
         DEBUG("\tParsed address: %s\n", parsed_ipv4);
@@ -108,17 +108,24 @@ cork_ipv4_init(struct cork_ipv4 *addr, const char *str)
     return cork_ipv4_parse(addr, str) == NULL? -1: 0;
 }
 
+void
+cork_ipv4_copy(struct cork_ipv4 *dest, const void *src)
+{
+    dest->addr = *(const uint32_t *)src;
+}
+
 bool
 cork_ipv4_equal_(const struct cork_ipv4 *addr1, const struct cork_ipv4 *addr2)
 {
-    return cork_ipv4_equal(addr1, addr2);
+    return addr1->addr == addr2->addr;
 }
 
 void
 cork_ipv4_to_raw_string(const struct cork_ipv4 *addr, char *dest)
 {
+    uint8_t  *bytes = (uint8_t *) &addr->addr;
     snprintf(dest, CORK_IPV4_STRING_LENGTH, "%u.%u.%u.%u",
-             addr->_.u8[0], addr->_.u8[1], addr->_.u8[2], addr->_.u8[3]);
+             bytes[0], bytes[1], bytes[2], bytes[3]);
 }
 
 bool
@@ -136,7 +143,7 @@ cork_ipv4_is_valid_network(const struct cork_ipv4 *addr,
         cidr_mask = 0xffffffff >> cidr_prefix;
     }
 
-    return (CORK_UINT32_BIG_TO_HOST(addr->_.u32) & cidr_mask) == 0;
+    return (CORK_UINT32_BIG_TO_HOST(addr->addr) & cidr_mask) == 0;
 }
 
 /*** IPv6 ***/
@@ -149,131 +156,103 @@ cork_ipv6_init(struct cork_ipv6 *addr, const char *str)
     uint16_t  digit = 0;
     unsigned int  before_count = 0;
     uint16_t  before_double_colon[8];
-    uint16_t  after_double_colon[8];
-    uint16_t  *dest = before_double_colon;
-
-    unsigned int  digits_seen = 0;
-    unsigned int  hextets_seen = 0;
-    bool  another_required = true;
-    bool  digit_allowed = true;
-    bool  colon_allowed = true;
-    bool  double_colon_allowed = true;
-    bool  just_saw_colon = false;
+    bool  seen_digit_in_component = false;
+    bool  seen_double_colon = false;
+    bool  seen_ipv4 = false;
+    struct cork_ipv4  ipv4;
 
     for (ch = str; *ch != '\0'; ch++) {
         DEBUG("%2u: %c\t", (unsigned int) (ch-str), *ch);
         switch (*ch) {
-#define process_digit(base) \
-                /* Make sure a digit is allowed here. */ \
-                if (CORK_UNLIKELY(!digit_allowed)) { \
-                    goto parse_error; \
-                } \
-                /* If we've already seen 4 digits, it's a parse error. */ \
-                if (CORK_UNLIKELY(digits_seen == 4)) { \
-                    goto parse_error; \
-                } \
-                \
-                digits_seen++; \
-                colon_allowed = true; \
-                just_saw_colon = false; \
-                digit <<= 4; \
-                digit |= (*ch - (base)); \
-                DEBUG("digit = %04x\n", digit);
-
             case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
-                process_digit('0');
+                seen_digit_in_component = true;
+                digit *= 16;
+                digit += (*ch - '0');
+                DEBUG("digit = %u\n", digit);
+                if (CORK_UNLIKELY(digit > 0xffff)) {
+                    DEBUG("\t");
+                    goto parse_error;
+                }
                 break;
 
             case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-                process_digit('a'-10);
+                seen_digit_in_component = true;
+                digit *= 16;
+                digit += (*ch - 'a' + 10);
+                DEBUG("digit = %u\n", digit);
+                if (CORK_UNLIKELY(digit > 0xffff)) {
+                    DEBUG("\t");
+                    goto parse_error;
+                }
                 break;
 
             case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
-                process_digit('A'-10);
+                seen_digit_in_component = true;
+                digit *= 16;
+                digit += (*ch - 'A' + 10);
+                DEBUG("digit = %u\n", digit);
+                if (CORK_UNLIKELY(digit > 0xffff)) {
+                    DEBUG("\t");
+                    goto parse_error;
+                }
                 break;
 
-#undef process_digit
-
             case ':':
-                /* We can only see a colon immediately after a hextet or as part
-                 * of a double-colon. */
-                if (CORK_UNLIKELY(!colon_allowed)) {
-                    goto parse_error;
-                }
+                if (ch[1] == ':') {
+                    /* We've found a double colon.  This is a valid separator, but
+                     * we can only have one in an IPv6 address. */
+                    DEBUG("double colon\n");
+                    if (CORK_UNLIKELY(seen_double_colon)) {
+                        DEBUG("\t");
+                        goto parse_error;
+                    }
 
-                /* If this is a double-colon, start parsing hextets into our
-                 * second array. */
-                if (just_saw_colon) {
-                    DEBUG("double-colon\n");
-                    colon_allowed = false;
-                    digit_allowed = true;
-                    another_required = false;
-                    double_colon_allowed = false;
-                    before_count = hextets_seen;
-                    dest = after_double_colon;
-                    continue;
-                }
+                    if (seen_digit_in_component) {
+                        DEBUG("component %u = %u\n", before_count, digit);
+                        before_double_colon[before_count] = digit;
+                        digit = 0;
+                        before_count++;
+                    }
 
-                /* If this would end the eighth hextet (regardless of the
-                 * placement of a double-colon), then there can't be a trailing
-                 * colon. */
-                if (CORK_UNLIKELY(hextets_seen == 8)) {
-                    goto parse_error;
-                }
+                    seen_double_colon = true;
+                    seen_digit_in_component = false;
+                    ch++;
+                } else {
+                    /* We've found a single colon.  This is only valid if we've
+                     * already seen a digit in this component. */
+                    DEBUG("single colon\n");
+                    if (CORK_UNLIKELY(!seen_digit_in_component)) {
+                        DEBUG("\t");
+                        goto parse_error;
+                    }
 
-                /* If this is the very beginning of the string, then we can only
-                 * have a double-colon, not a single colon. */
-                if (digits_seen == 0 && hextets_seen == 0) {
-                    DEBUG("initial colon\n");
-                    colon_allowed = true;
-                    digit_allowed = false;
-                    just_saw_colon = true;
-                    another_required = true;
-                    continue;
+                    DEBUG("component %u = %u\n", before_count, digit);
+                    if (!seen_double_colon) {
+                        before_double_colon[before_count] = digit;
+                        before_count++;
+                    }
+                    digit = 0;
+                    seen_digit_in_component = false;
                 }
-
-                /* Otherwise this ends the current hextet. */
-                DEBUG("hextet %u = %04x\n", hextets_seen, digit);
-                *(dest++) = CORK_UINT16_HOST_TO_BIG(digit);
-                digit = 0;
-                hextets_seen++;
-                digits_seen = 0;
-                colon_allowed = double_colon_allowed;
-                just_saw_colon = true;
-                another_required = true;
                 break;
 
             case '.':
-            {
-                /* If we see a period, then we must be in the middle of an IPv4
-                 * address at the end of the IPv6 address. */
-                struct cork_ipv4  *ipv4 = (struct cork_ipv4 *) dest;
-                DEBUG("Detected IPv4 address %s\n", ch-digits_seen);
-
-                /* Ensure that we have space for the two hextets that the IPv4
-                 * address will take up. */
-                if (CORK_UNLIKELY(hextets_seen >= 7)) {
+                /* If we see a dot, then we've got an embedded IPv4 address. */
+                DEBUG("IPv4 address\n");
+                ch--;
+                if (CORK_UNLIKELY(seen_ipv4)) {
+                    DEBUG("\t");
                     goto parse_error;
                 }
-
-                /* Parse the IPv4 address directly into our current hextet
-                 * buffer. */
-                ch = cork_ipv4_parse(ipv4, ch - digits_seen);
-                if (CORK_LIKELY(ch != NULL)) {
-                    hextets_seen += 2;
-                    digits_seen = 0;
-                    another_required = false;
-
-                    /* ch now points at the NUL terminator, but we're about to
-                     * increment ch. */
-                    ch--;
-                    break;
+                seen_ipv4 = true;
+                const char  *ipv4_ch = cork_ipv4_parse(&ipv4, ch);
+                if (CORK_UNLIKELY(ipv4_ch == NULL)) {
+                    DEBUG("\t");
+                    goto parse_error;
                 }
-
-                /* The IPv4 parse failed, so we have an IPv6 parse error. */
-                goto parse_error;
-            }
+                ch = ipv4_ch - 1;
+                break;
 
             default:
                 /* Any other character is a parse error. */
@@ -281,57 +260,56 @@ cork_ipv6_init(struct cork_ipv6 *addr, const char *str)
         }
     }
 
-    /* If we have a valid hextet at the end, and we've either seen a
-     * double-colon, or we have eight hextets in total, then we've got a valid
-     * final parse. */
+    /* If we've seen a digit in this component, then it's a valid final
+     * component. */
     DEBUG("%2u:\t", (unsigned int) (ch-str));
-    if (CORK_LIKELY(digits_seen > 0)) {
-        /* If there are trailing digits that would form a ninth hextet
-         * (regardless of the placement of a double-colon), then we have a parse
-         * error. */
-        if (CORK_UNLIKELY(hextets_seen == 8)) {
+    if (CORK_LIKELY(seen_digit_in_component)) {
+        DEBUG("component %u = %u\n", before_count, digit);
+        if (!seen_double_colon) {
+            before_double_colon[before_count] = digit;
+            before_count++;
+        }
+    }
+
+    /* The components that we've parsed are valid; now let's figure out if we have
+     * a valid address. */
+    if (seen_ipv4) {
+        /* If we saw an IPv4 address, it takes up the last 32 bits of the IPv6
+         * address, which means we can only have at most 6 16-bit components
+         * before it.  (If we saw a double-colon, then we can have fewer than
+         * that.) */
+        if (CORK_UNLIKELY(before_count > 6)) {
+            DEBUG("\t");
             goto parse_error;
         }
-
-        DEBUG("hextet %u = %04x\n\t", hextets_seen, digit);
-        *(dest++) = CORK_UINT16_HOST_TO_BIG(digit);
-        hextets_seen++;
-    } else if (CORK_UNLIKELY(another_required)) {
-        goto parse_error;
+    } else {
+        /* If we didn't see an IPv4 address, then we must have exactly 8 16-bit
+         * components, or we must have seen a double-colon. */
+        if (CORK_UNLIKELY(before_count == 8 && !seen_double_colon)) {
+            DEBUG("\t");
+            goto parse_error;
+        }
+        if (CORK_UNLIKELY(before_count > 8)) {
+            DEBUG("\t");
+            goto parse_error;
+        }
     }
 
-    if (!double_colon_allowed) {
-        /* We've seen a double-colon, so use 0000 for any hextets that weren't
-         * present. */
-#if CORK_IP_ADDRESS_DEBUG
-        char  parsed_result[CORK_IPV6_STRING_LENGTH];
-#endif
-        unsigned int  after_count = hextets_seen - before_count;
-        DEBUG("Saw double-colon; %u hextets before, %u after\n",
-              before_count, after_count);
-        memset(addr, 0, sizeof(struct cork_ipv6));
-        memcpy(addr, before_double_colon,
-               sizeof(uint16_t) * before_count);
-        memcpy(&addr->_.u16[8-after_count], after_double_colon,
-               sizeof(uint16_t) * after_count);
-#if CORK_IP_ADDRESS_DEBUG
-        cork_ipv6_to_raw_string(addr, parsed_result);
-        DEBUG("\tParsed address: %s\n", parsed_result);
-#endif
-        return 0;
-    } else if (hextets_seen == 8) {
-        /* No double-colon, so we must have exactly eight hextets. */
-#if CORK_IP_ADDRESS_DEBUG
-        char  parsed_result[CORK_IPV6_STRING_LENGTH];
-#endif
-        DEBUG("No double-colon\n");
-        cork_ipv6_copy(addr, before_double_colon);
-#if CORK_IP_ADDRESS_DEBUG
-        cork_ipv6_to_raw_string(addr, parsed_result);
-        DEBUG("\tParsed address: %s\n", parsed_result);
-#endif
-        return 0;
+    /* If we've gotten here, then we have a valid IPv6 address.  The components
+     * that appear before the double-colon (or all components, if there isn't a
+     * double-colon) are in before_double_colon.  If there was an IPv4 address,
+     * it's in ipv4. */
+
+    /* First, fill in all of the components that appeared before the
+     * double-colon. */
+    memcpy(addr->addr, before_double_colon, before_count * 2);
+
+    /* Then fill in the IPv4 address if one was present. */
+    if (seen_ipv4) {
+        memcpy(addr->addr + 12, &ipv4.addr, 4);
     }
+
+    return 0;
 
 parse_error:
     DEBUG("parse error\n");
@@ -339,94 +317,113 @@ parse_error:
     return -1;
 }
 
+void
+cork_ipv6_copy(struct cork_ipv6 *dest, const void *src)
+{
+    memcpy(dest->addr, src, sizeof(dest->addr));
+}
+
 bool
 cork_ipv6_equal_(const struct cork_ipv6 *addr1, const struct cork_ipv6 *addr2)
 {
-    return cork_ipv6_equal(addr1, addr2);
+    return memcmp(addr1->addr, addr2->addr, sizeof(addr1->addr)) == 0;
 }
-
-#define NS_IN6ADDRSZ 16
-#define NS_INT16SZ 2
 
 void
 cork_ipv6_to_raw_string(const struct cork_ipv6 *addr, char *dest)
 {
-    const uint8_t  *src = addr->_.u8;
+    const uint8_t  *src = addr->addr;
+    unsigned int  i;
+    unsigned int  in_zeros = 0;
+    unsigned int  zeros_start = 0;
+    unsigned int  max_zeros_start = 0;
+    unsigned int  max_zeros_len = 0;
 
-    /*
-     * Note that int32_t and int16_t need only be "at least" large enough
-     * to contain a value of the specified size.  On some systems, like
-     * Crays, there is no such thing as an integer variable with 16 bits.
-     * Keep this in mind if you think this function should have been coded
-     * to use pointer overlays.  All the world's not a VAX.
-     */
-    char *tp;
-    struct { int base, len; } best, cur;
-    unsigned int words[NS_IN6ADDRSZ / NS_INT16SZ];
-    int i;
-
-    /*
-     * Preprocess:
-     *      Copy the input (bytewise) array into a wordwise array.
-     *      Find the longest run of 0x00's in src[] for :: shorthanding.
-     */
-    memset(words, '\0', sizeof words);
-    for (i = 0; i < NS_IN6ADDRSZ; i++)
-        words[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
-    best.base = -1;
-    best.len = 0;
-    cur.base = -1;
-    cur.len = 0;
-    for (i = 0; i < (NS_IN6ADDRSZ / NS_INT16SZ); i++) {
-        if (words[i] == 0) {
-            if (cur.base == -1)
-                cur.base = i, cur.len = 1;
-            else
-                cur.len++;
+    /* First find the longest run of zeros in the address.  We do this before
+     * starting to fill in the result string, since we need the longest run of
+     * zeros to decide whether we want to use :: compression or not. */
+    for (i = 0; i < 8; i++) {
+        uint16_t  curr = CORK_UINT16_BIG_TO_HOST(*(uint16_t *) (src + 2*i));
+        if (curr == 0) {
+            if (in_zeros) {
+                /* This component is zero, and we're already in a run of zeros.
+                 * Don't need to do anything. */
+            } else {
+                /* We've found a new run of zeros. */
+                zeros_start = i;
+                in_zeros = true;
+            }
         } else {
-            if (cur.base != -1) {
-                if (best.base == -1 || cur.len > best.len)
-                    best = cur;
-                cur.base = -1;
+            if (in_zeros) {
+                /* We've found the end of a run of zeros.  See if it's the longest
+                 * so far. */
+                unsigned int  zeros_len = i - zeros_start;
+                if (zeros_len > max_zeros_len) {
+                    max_zeros_start = zeros_start;
+                    max_zeros_len = zeros_len;
+                }
+                in_zeros = false;
             }
         }
     }
-    if (cur.base != -1) {
-        if (best.base == -1 || cur.len > best.len)
-            best = cur;
-    }
-    if (best.base != -1 && best.len < 2)
-        best.base = -1;
 
-    /*
-     * Format the result.
-     */
-    tp = dest;
-    for (i = 0; i < (NS_IN6ADDRSZ / NS_INT16SZ); i++) {
-        /* Are we inside the best run of 0x00's? */
-        if (best.base != -1 && i >= best.base &&
-            i < (best.base + best.len)) {
-            if (i == best.base)
-                *tp++ = ':';
-            continue;
+    /* If we were still in a run of zeros when we ended, then we need to check
+     * once more whether we've found a new maximum run of zeros. */
+    if (in_zeros) {
+        unsigned int  zeros_len = i - zeros_start;
+        if (zeros_len > max_zeros_len) {
+            max_zeros_start = zeros_start;
+            max_zeros_len = zeros_len;
         }
-        /* Are we following an initial run of 0x00s or any real hex? */
-        if (i != 0)
-            *tp++ = ':';
-        /* Is this address an encapsulated IPv4? */
-        if (i == 6 && best.base == 0 &&
-            (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
-            tp += sprintf(tp, "%u.%u.%u.%u",
-                          src[12], src[13], src[14], src[15]);
-            break;
-        }
-        tp += sprintf(tp, "%x", words[i]);
     }
-    /* Was it a trailing run of 0x00's? */
-    if (best.base != -1 && (best.base + best.len) ==
-        (NS_IN6ADDRSZ / NS_INT16SZ))
-        *tp++ = ':';
-    *tp++ = '\0';
+
+    /* If there was more than one zero in the longest run of zeros, then we want
+     * to use :: compression.  Otherwise, we'll just write out the address in
+     * long form. */
+    if (max_zeros_len > 1) {
+        unsigned int  pos = 0;
+        /* Write out the components before the run of zeros */
+        for (i = 0; i < max_zeros_start; i++) {
+            uint16_t  curr = CORK_UINT16_BIG_TO_HOST(*(uint16_t *) (src + 2*i));
+            pos += snprintf(dest + pos, CORK_IPV6_STRING_LENGTH - pos,
+                          "%x:", curr);
+        }
+
+        /* Write out the :: */
+        if (max_zeros_start == 0) {
+            pos += snprintf(dest + pos, CORK_IPV6_STRING_LENGTH - pos,
+                          ":");
+        }
+        pos += snprintf(dest + pos, CORK_IPV6_STRING_LENGTH - pos,
+                      ":");
+
+        /* Write out the components after the run of zeros */
+        for (i = max_zeros_start + max_zeros_len; i < 8; i++) {
+            uint16_t  curr = CORK_UINT16_BIG_TO_HOST(*(uint16_t *) (src + 2*i));
+            pos += snprintf(dest + pos, CORK_IPV6_STRING_LENGTH - pos,
+                          "%x", curr);
+            if (i < 7) {
+                pos += snprintf(dest + pos, CORK_IPV6_STRING_LENGTH - pos,
+                              ":");
+            }
+        }
+
+        if (max_zeros_start + max_zeros_len == 8) {
+            pos += snprintf(dest + pos, CORK_IPV6_STRING_LENGTH - pos,
+                          ":");
+        }
+    } else {
+        unsigned int  pos = 0;
+        for (i = 0; i < 8; i++) {
+            uint16_t  curr = CORK_UINT16_BIG_TO_HOST(*(uint16_t *) (src + 2*i));
+            pos += snprintf(dest + pos, CORK_IPV6_STRING_LENGTH - pos,
+                          "%x", curr);
+            if (i < 7) {
+                pos += snprintf(dest + pos, CORK_IPV6_STRING_LENGTH - pos,
+                              ":");
+            }
+        }
+    }
 }
 
 bool
@@ -439,86 +436,90 @@ cork_ipv6_is_valid_network(const struct cork_ipv6 *addr,
         return false;
     } else if (cidr_prefix == 128) {
         /* This handles undefined behavior for overflow bit shifts. */
-        cidr_mask[0] = cidr_mask[1] = 0;
-    } else if (cidr_prefix == 64) {
-        /* This handles undefined behavior for overflow bit shifts. */
         cidr_mask[0] = 0;
-        cidr_mask[1] = UINT64_C(0xffffffffffffffff);
+        cidr_mask[1] = 0;
     } else if (cidr_prefix > 64) {
+        /* high order bits all 0, low order bits depend on prefix */
         cidr_mask[0] = 0;
-        cidr_mask[1] = UINT64_C(0xffffffffffffffff) >> (cidr_prefix-64);
+        cidr_mask[1] = 0xffffffffffffffffULL >> (cidr_prefix - 64);
     } else {
-        cidr_mask[0] = UINT64_C(0xffffffffffffffff) >> cidr_prefix;
-        cidr_mask[1] = UINT64_C(0xffffffffffffffff);
+        /* low order bits all 1, high order bits depend on prefix */
+        cidr_mask[0] = 0xffffffffffffffffULL >> cidr_prefix;
+        cidr_mask[1] = 0xffffffffffffffffULL;
     }
 
-    return (CORK_UINT64_BIG_TO_HOST(addr->_.u64[0] & cidr_mask[0]) == 0) &&
-           (CORK_UINT64_BIG_TO_HOST(addr->_.u64[1] & cidr_mask[1]) == 0);
+    const uint64_t  *addr_bits = (const uint64_t *) addr->addr;
+    return (CORK_UINT64_BIG_TO_HOST(addr_bits[0] & cidr_mask[0]) == 0) &&
+           (CORK_UINT64_BIG_TO_HOST(addr_bits[1] & cidr_mask[1]) == 0);
 }
 
-
-/*** IP ***/
+/*** Generic IP addresses ***/
 
 void
 cork_ip_from_ipv4_(struct cork_ip *addr, const void *src)
 {
-    cork_ip_from_ipv4(addr, src);
+    addr->version = CORK_IP_VERSION_4;
+    cork_ipv4_copy(&addr->ip.v4, src);
 }
 
 void
 cork_ip_from_ipv6_(struct cork_ip *addr, const void *src)
 {
-    cork_ip_from_ipv6(addr, src);
+    addr->version = CORK_IP_VERSION_6;
+    cork_ipv6_copy(&addr->ip.v6, src);
 }
 
 int
 cork_ip_init(struct cork_ip *addr, const char *str)
 {
-    int  rc;
-
-    /* Try IPv4 first */
-    rc = cork_ipv4_init(&addr->ip.v4, str);
-    if (rc == 0) {
-        /* successful parse */
-        addr->version = 4;
-        return 0;
+    const char  *ch;
+    bool  contains_colon = false;
+    for (ch = str; *ch != '\0'; ch++) {
+        if (*ch == ':') {
+            contains_colon = true;
+            break;
+        }
     }
 
-    /* Then try IPv6 */
-    cork_error_clear();
-    rc = cork_ipv6_init(&addr->ip.v6, str);
-    if (rc == 0) {
-        /* successful parse */
-        addr->version = 6;
-        return 0;
+    if (contains_colon) {
+        addr->version = CORK_IP_VERSION_6;
+        return cork_ipv6_init(&addr->ip.v6, str);
+    } else {
+        addr->version = CORK_IP_VERSION_4;
+        return cork_ipv4_init(&addr->ip.v4, str);
     }
-
-    /* Parse error for both address types */
-    cork_parse_error("Invalid IP address: \"%s\"", str);
-    return -1;
 }
 
 bool
 cork_ip_equal_(const struct cork_ip *addr1, const struct cork_ip *addr2)
 {
-    return cork_ip_equal(addr1, addr2);
+    if (addr1->version != addr2->version) {
+        return false;
+    }
+
+    switch (addr1->version) {
+        case CORK_IP_VERSION_4:
+            return cork_ipv4_equal_(&addr1->ip.v4, &addr2->ip.v4);
+        case CORK_IP_VERSION_6:
+            return cork_ipv6_equal_(&addr1->ip.v6, &addr2->ip.v6);
+        default:
+            return false;
+    }
 }
 
 void
 cork_ip_to_raw_string(const struct cork_ip *addr, char *dest)
 {
     switch (addr->version) {
-        case 4:
+        case CORK_IP_VERSION_4:
             cork_ipv4_to_raw_string(&addr->ip.v4, dest);
-            return;
-
-        case 6:
+            break;
+        case CORK_IP_VERSION_6:
             cork_ipv6_to_raw_string(&addr->ip.v6, dest);
-            return;
-
+            break;
         default:
-            strncpy(dest, "<INVALID>", CORK_IP_STRING_LENGTH);
-            return;
+            strcpy(dest, "<INVALID>");
+            break;
     }
 }
 
@@ -526,11 +527,11 @@ bool
 cork_ip_is_valid_network(const struct cork_ip *addr, unsigned int cidr_prefix)
 {
     switch (addr->version) {
-        case 4:
+        case CORK_IP_VERSION_4:
             return cork_ipv4_is_valid_network(&addr->ip.v4, cidr_prefix);
-        case 6:
+        case CORK_IP_VERSION_6:
             return cork_ipv6_is_valid_network(&addr->ip.v6, cidr_prefix);
         default:
             return false;
     }
-}
+} 

@@ -11,6 +11,8 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <string.h>
+#include <pthread.h>
+#include <stdatomic.h>
 
 #include "libcork/config.h"
 #include "libcork/core/allocator.h"
@@ -42,6 +44,7 @@ cork_error_new(void)
     cork_buffer_init(&error->buf2);
     error->message = &error->buf1;
     error->other = &error->buf2;
+    error->next = NULL;
     return error;
 }
 
@@ -53,17 +56,15 @@ cork_error_free(struct cork_error *error)
     cork_delete(struct cork_error, error);
 }
 
-
-static struct cork_error * volatile  errors;
-
-cork_once_barrier(cork_error_list);
+static _Atomic(struct cork_error *) errors;
+static pthread_once_t cork_error_once = PTHREAD_ONCE_INIT;
 
 static void
 cork_error_list_done(void)
 {
     struct cork_error  *curr;
     struct cork_error  *next;
-    for (curr = errors; curr != NULL; curr = next) {
+    for (curr = atomic_load(&errors); curr != NULL; curr = next) {
         next = curr->next;
         cork_error_free(curr);
     }
@@ -75,26 +76,31 @@ cork_error_list_init(void)
     cork_cleanup_at_exit(0, cork_error_list_done);
 }
 
+static pthread_key_t cork_error_key;
+static pthread_once_t cork_error_key_once = PTHREAD_ONCE_INIT;
 
-cork_tls(struct cork_error *, cork_error_);
+static void
+cork_error_key_init(void)
+{
+    pthread_key_create(&cork_error_key, NULL);
+}
 
 static struct cork_error *
 cork_error_get(void)
 {
-    struct cork_error  **error_ptr = cork_error__get();
-    if (CORK_UNLIKELY(*error_ptr == NULL)) {
-        struct cork_error  *old_head;
-        struct cork_error  *error = cork_error_new();
-        cork_once(cork_error_list, cork_error_list_init());
+    pthread_once(&cork_error_key_once, cork_error_key_init);
+    struct cork_error *error = pthread_getspecific(cork_error_key);
+    if (CORK_UNLIKELY(error == NULL)) {
+        struct cork_error *old_head;
+        error = cork_error_new();
+        pthread_once(&cork_error_once, cork_error_list_init);
         do {
-            old_head = errors;
+            old_head = atomic_load(&errors);
             error->next = old_head;
-        } while (cork_ptr_cas(&errors, old_head, error) != old_head);
-        *error_ptr = error;
-        return error;
-    } else {
-        return *error_ptr;
+        } while (!atomic_compare_exchange_strong(&errors, &old_head, error));
+        pthread_setspecific(cork_error_key, error);
     }
+    return error;
 }
 
 

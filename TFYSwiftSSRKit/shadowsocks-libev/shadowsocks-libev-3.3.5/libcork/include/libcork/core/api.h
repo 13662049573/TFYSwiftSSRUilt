@@ -1,6 +1,6 @@
 /* -*- coding: utf-8 -*-
  * ----------------------------------------------------------------------
- * Copyright © 2012-2015, RedJack, LLC.
+ * Copyright © 2011, RedJack, LLC.
  * All rights reserved.
  *
  * Please see the COPYING file in this distribution for license details.
@@ -13,20 +13,41 @@
 #include <libcork/config.h>
 #include <libcork/core/attributes.h>
 
-
 /*-----------------------------------------------------------------------
- * Calling conventions
+ * Visibility macros
  */
 
-/* If you're using libcork as a shared library, you don't need to do anything
- * special; the following will automatically set things up so that libcork's
- * public symbols are imported from the library.  When we build the shared
- * library, we define this ourselves to export the symbols. */
-
-#if !defined(CORK_API)
-#define CORK_API  CORK_IMPORT
+#if !defined(CORK_EXPORT)
+#if defined(__GNUC__) && __GNUC__ >= 4
+    #define CORK_EXPORT  __attribute__((visibility("default")))
+    #define CORK_IMPORT  __attribute__((visibility("default")))
+    #define CORK_LOCAL   __attribute__((visibility("hidden")))
+#elif defined(__GNUC__)
+    #define CORK_EXPORT
+    #define CORK_IMPORT
+    #define CORK_LOCAL
+#elif defined(_WIN32) || defined(_WIN64)
+    #define CORK_EXPORT  __declspec(dllexport)
+    #define CORK_IMPORT  __declspec(dllimport)
+    #define CORK_LOCAL
+#else
+    #define CORK_EXPORT
+    #define CORK_IMPORT
+    #define CORK_LOCAL
+#endif
 #endif
 
+#if !defined(CORK_API)
+#ifdef CORK_CONFIG_IS_STATIC
+    #define CORK_API
+#else
+    #ifdef CORK_CONFIG_IS_LIBRARY
+        #define CORK_API  CORK_EXPORT
+    #else
+        #define CORK_API  CORK_IMPORT
+    #endif
+#endif
+#endif
 
 /*-----------------------------------------------------------------------
  * Library version

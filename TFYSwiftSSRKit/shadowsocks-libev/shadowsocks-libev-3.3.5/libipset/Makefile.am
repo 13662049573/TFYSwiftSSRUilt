@@ -1,6 +1,10 @@
 VERSION_INFO = 1:0:0
 
-AM_CFLAGS = -I$(top_srcdir)/libipset/include -I$(top_srcdir)/libcork/include
+if platform_suffix_ios
+AM_CFLAGS = -I$(top_srcdir)/libipset/include -I$(top_srcdir)/libcork/include -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
+else
+AM_CFLAGS = -I$(top_srcdir)/libipset/include -I$(top_srcdir)/libcork/include -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
+endif
 
 lib_LTLIBRARIES = libipset.la
 

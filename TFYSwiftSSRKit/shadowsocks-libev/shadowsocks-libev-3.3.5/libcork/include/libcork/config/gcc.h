@@ -54,9 +54,7 @@
 /* __int128 seems to be available on 64-bit platforms as of GCC 4.6.  The
  * attribute((mode(TI))) syntax seems to be available as of 4.1. */
 
-#if CORK_CONFIG_ARCH_X64 && CORK_CONFIG_GCC_VERSION >= 40600
-#define CORK_CONFIG_HAVE_GCC_INT128  1
-#else
+#if !defined(CORK_CONFIG_HAVE_GCC_INT128)
 #define CORK_CONFIG_HAVE_GCC_INT128  0
 #endif
 

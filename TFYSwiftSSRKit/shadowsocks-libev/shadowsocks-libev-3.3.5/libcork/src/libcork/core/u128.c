@@ -9,6 +9,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "libcork/core/types.h"
 #include "libcork/core/u128.h"
@@ -68,9 +69,13 @@ cork_u128_to_hex(char *buf, cork_u128 val)
     uint64_t  hi = val._.be64.hi;
     uint64_t  lo = val._.be64.lo;
     if (hi == 0) {
-        snprintf(buf, CORK_U128_HEX_LENGTH, "%" PRIx64, lo);
+        char format[32];
+        snprintf(format, sizeof(format), "%%%s", PRIx64);
+        snprintf(buf, CORK_U128_HEX_LENGTH, format, lo);
     } else {
-        snprintf(buf, CORK_U128_HEX_LENGTH, "%" PRIx64 "%016" PRIx64, hi, lo);
+        char format[32];
+        snprintf(format, sizeof(format), "%%%s%%016%s", PRIx64, PRIx64);
+        snprintf(buf, CORK_U128_HEX_LENGTH, format, hi, lo);
     }
     return buf;
 }
@@ -80,6 +85,8 @@ cork_u128_to_padded_hex(char *buf, cork_u128 val)
 {
     uint64_t  hi = val._.be64.hi;
     uint64_t  lo = val._.be64.lo;
-    snprintf(buf, CORK_U128_HEX_LENGTH, "%016" PRIx64 "%016" PRIx64, hi, lo);
+    char format[32];
+    snprintf(format, sizeof(format), "%%016%s%%016%s", PRIx64, PRIx64);
+    snprintf(buf, CORK_U128_HEX_LENGTH, format, hi, lo);
     return buf;
 }

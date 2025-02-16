@@ -1,0 +1,102 @@
+diff --git a/configure.ac b/configure.ac
+index 123456..789012 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,6 +1,7 @@
+ AC_PREREQ([2.67])
+ AC_INIT([shadowsocks-libev], [3.3.5], [max.c.lv@gmail.com])
+ AC_CONFIG_HEADERS([config.h])
++AC_CONFIG_AUX_DIR([build-aux])
+ AC_CONFIG_MACRO_DIR([m4])
+ AC_USE_SYSTEM_EXTENSIONS
+ 
+@@ -8,6 +9,7 @@ AM_INIT_AUTOMAKE([foreign -Wall -Werror subdir-objects])
+ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+ AM_MAINTAINER_MODE
++AM_DEP_TRACK
+ 
+ # Define conditional flags
+ AM_CONDITIONAL([USE_SYSTEM_SHARED_LIB], [test "x$enable_system_shared_lib" = "xyes"])
+@@ -15,6 +17,9 @@ AM_CONDITIONAL([ENABLE_DOCUMENTATION], [test "x$enable_documentation" = "xyes"])
+ AM_CONDITIONAL([BUILD_WINCOMPAT], [test "x$build_wincompat" = "xyes"])
+ AM_CONDITIONAL([BUILD_REDIRECTOR], [test "x$build_redirector" = "xyes"])
+ 
++# Platform specific flags
++AM_CONDITIONAL([APPLE], [test "x$build_vendor" = "xapple"])
++
+ dnl Checks for programs.
+ AC_PROG_CC
+ AM_PROG_CC_C_O
+@@ -22,6 +27,9 @@ AC_PROG_INSTALL
+ LT_INIT([disable-shared])
+ AC_PROG_LN_S
+ AC_PROG_MAKE_SET
++AC_PROG_RANLIB
++AC_PROG_MKDIR_P
++AC_PROG_SED
+ 
+ dnl Checks for header files.
+ AC_CHECK_HEADERS([limits.h stdint.h inttypes.h stdlib.h string.h unistd.h])
+@@ -29,6 +37,7 @@ AC_CHECK_HEADERS([sys/time.h time.h])
+ AC_CHECK_HEADERS([sys/socket.h])
+ AC_CHECK_HEADERS([netdb.h netinet/in.h])
+ AC_CHECK_HEADERS([arpa/inet.h])
++AC_CHECK_HEADERS([sys/ioctl.h])
+ AC_CHECK_HEADERS([linux/tcp.h linux/udp.h])
+ AC_CHECK_HEADERS([netinet/tcp.h])
+ 
+@@ -42,6 +51,7 @@ AC_TYPE_UINT16_T
+ AC_TYPE_UINT32_T
+ AC_TYPE_UINT64_T
+ AC_TYPE_UINT8_T
++AC_TYPE_PID_T
+ 
+ dnl Checks for library functions.
+ AC_CHECK_FUNCS([malloc memset socket])
+@@ -49,6 +59,7 @@ AC_CHECK_FUNCS([select])
+ AC_CHECK_FUNCS([clock_gettime])
+ AC_CHECK_FUNCS([gettimeofday])
+ AC_CHECK_FUNCS([inet_ntoa])
++AC_CHECK_FUNCS([memmove])
+ AC_CHECK_FUNCS([memset])
+ AC_CHECK_FUNCS([select])
+ AC_CHECK_FUNCS([socket])
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 123456..789012 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -1,6 +1,10 @@
+ VERSION_INFO = 2:0:0
+ 
+-AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -fPIC
++if APPLE
++AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -fPIC -fvisibility=hidden
++else
++AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -fPIC -fvisibility=hidden
++endif
+ 
+ AM_CFLAGS += $(PTHREAD_CFLAGS)
+ if !USE_SYSTEM_SHARED_LIB
+@@ -8,6 +12,7 @@ AM_CFLAGS += -I$(top_srcdir)/libbloom
+ AM_CFLAGS += -I$(top_srcdir)/libcork/include
+ AM_CFLAGS += -I$(top_srcdir)/libipset/include
+ endif
++AM_CFLAGS += -I$(top_srcdir)/src
+ 
+ SS_COMMON_LIBS = $(INET_NTOP_LIB)
+ if !USE_SYSTEM_SHARED_LIB
+@@ -15,6 +20,13 @@ SS_COMMON_LIBS += $(top_builddir)/libbloom/libbloom.la \
+                   $(top_builddir)/libcork/libcork.la \
+                   $(top_builddir)/libipset/libipset.la
+ endif
++SS_COMMON_LIBS += -lev -lsodium -lmbedtls -lmbedcrypto -lpcre
++
++if APPLE
++SS_COMMON_LIBS += -framework Security -framework CoreFoundation
++endif
++
++SS_COMMON_LIBS += $(DEPS_LIBS)
+ 
+ bin_PROGRAMS = ss-local ss-tunnel ss-server ss-manager
+ 

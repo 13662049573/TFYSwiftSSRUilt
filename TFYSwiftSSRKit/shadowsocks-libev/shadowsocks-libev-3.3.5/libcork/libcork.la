@@ -23,9 +23,9 @@ dependency_libs=' -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwif
 weak_library_names=''
 
 # Version information for libcork.
-current=
-age=
-revision=
+current=1
+age=0
+revision=0
 
 # Is this an already installed library?
 installed=no
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir=''
+libdir='/usr/local/lib'

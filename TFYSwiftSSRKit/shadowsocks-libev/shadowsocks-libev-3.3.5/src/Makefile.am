@@ -5,6 +5,22 @@ AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasi
 else
 AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -fPIC -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
 endif
+AM_CFLAGS += -I$(top_srcdir)/src
+SS_COMMON_LIBS += -lev -lsodium -lmbedtls -lmbedcrypto -lpcre
+
+if APPLE
+SS_COMMON_LIBS += -framework Security -framework CoreFoundation
+endif
+AM_CFLAGS += -I$(top_srcdir)/src
+SS_COMMON_LIBS += -lev -lsodium -lmbedtls -lmbedcrypto -lpcre
+
+if APPLE
+SS_COMMON_LIBS += -framework Security -framework CoreFoundation
+endif
+
+SS_COMMON_LIBS += $(DEPS_LIBS)
+
+SS_COMMON_LIBS += $(DEPS_LIBS)
 
 AM_CFLAGS += $(PTHREAD_CFLAGS)
 if !USE_SYSTEM_SHARED_LIB
@@ -113,15 +129,15 @@ ss_server_LDADD = $(SS_COMMON_LIBS)
 ss_manager_LDADD = $(SS_COMMON_LIBS)
 
 if platform_suffix_ios
-ss_local_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
-ss_tunnel_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
-ss_server_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
-ss_manager_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
+ss_local_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
+ss_tunnel_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
+ss_server_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
+ss_manager_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
 else
-ss_local_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
-ss_tunnel_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
-ss_server_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
-ss_manager_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
+ss_local_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
+ss_tunnel_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
+ss_server_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
+ss_manager_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
 endif
 
 ss_local_CFLAGS = $(AM_CFLAGS) -DMODULE_LOCAL

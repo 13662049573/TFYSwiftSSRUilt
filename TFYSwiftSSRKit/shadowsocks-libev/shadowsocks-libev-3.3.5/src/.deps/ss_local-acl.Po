@@ -137,6 +137,8 @@ ss_local-acl.o: acl.c ../config.h acl.h ../libipset/include/ipset/ipset.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/__stdarg___va_copy.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/__stdarg_va_copy.h \
   ../libcork/include/libcork/core/gc.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/stdatomic.h \
+  ../libcork/include/libcork/ds/dllist.h \
   ../libcork/include/libcork/core/id.h \
   ../libcork/include/libcork/core/mempool.h \
   ../libcork/include/libcork/core/net-addresses.h \
@@ -147,7 +149,6 @@ ss_local-acl.o: acl.c ../config.h acl.h ../libipset/include/ipset/ipset.h \
   ../libcork/include/libcork/ds/stream.h ../libcork/include/libcork/ds.h \
   ../libcork/include/libcork/ds/array.h \
   ../libcork/include/libcork/ds/bitset.h \
-  ../libcork/include/libcork/ds/dllist.h \
   ../libcork/include/libcork/ds/hash-table.h \
   ../libcork/include/libcork/ds/ring-buffer.h \
   ../libipset/include/ipset/bdd/nodes.h utils.h \
@@ -316,6 +317,8 @@ acl.h:
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/__stdarg___va_copy.h:
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/__stdarg_va_copy.h:
 ../libcork/include/libcork/core/gc.h:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include/stdatomic.h:
+../libcork/include/libcork/ds/dllist.h:
 ../libcork/include/libcork/core/id.h:
 ../libcork/include/libcork/core/mempool.h:
 ../libcork/include/libcork/core/net-addresses.h:
@@ -327,7 +330,6 @@ acl.h:
 ../libcork/include/libcork/ds.h:
 ../libcork/include/libcork/ds/array.h:
 ../libcork/include/libcork/ds/bitset.h:
-../libcork/include/libcork/ds/dllist.h:
 ../libcork/include/libcork/ds/hash-table.h:
 ../libcork/include/libcork/ds/ring-buffer.h:
 ../libipset/include/ipset/bdd/nodes.h:

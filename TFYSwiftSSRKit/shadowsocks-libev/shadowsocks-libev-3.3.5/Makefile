@@ -188,7 +188,7 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-DIST_SUBDIRS = libbloom libcork libipset src doc
+DIST_SUBDIRS = libcork libbloom libipset src doc
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(srcdir)/shadowsocks-libev.pc.in $(top_srcdir)/auto/ar-lib \
 	$(top_srcdir)/auto/compile $(top_srcdir)/auto/config.guess \
@@ -370,7 +370,7 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-SUBDIRS = libbloom libcork libipset src \
+SUBDIRS = libcork libbloom libipset src \
 	$(am__append_1)
 #SUBDIRS = src $(am__append_1)
 ACLOCAL_AMFLAGS = -I m4

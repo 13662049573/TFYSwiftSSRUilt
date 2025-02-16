@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+#include "libcork/core/container.h"
 #include "libcork/ds/stream.h"
 #include "libcork/helpers/errors.h"
 #include "libcork/helpers/posix.h"

@@ -358,7 +358,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 VERSION_INFO = 1:0:0
-AM_CFLAGS = -I$(top_srcdir)/libipset/include
+@platform_suffix_ios_FALSE@AM_CFLAGS = -I$(top_srcdir)/libipset/include -I$(top_srcdir)/libcork/include -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
+@platform_suffix_ios_TRUE@AM_CFLAGS = -I$(top_srcdir)/libipset/include -I$(top_srcdir)/libcork/include -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
 lib_LTLIBRARIES = libipset.la
 libipset_la_SOURCES = \
     src/libipset/general.c \

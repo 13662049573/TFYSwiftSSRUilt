@@ -10,6 +10,7 @@
 #include <string.h>
 #include <time.h>
 #include <sys/time.h>
+#include <inttypes.h>
 
 #include "libcork/core/timestamp.h"
 #include "libcork/core/types.h"
@@ -55,7 +56,9 @@ append_fractional(const cork_timestamp ts, unsigned int width,
     } else {
         uint64_t  denom = power_of_10(width);
         uint64_t  frac = cork_timestamp_gsec_to_units(ts, denom);
-        cork_buffer_append_printf(dest, "%0*" PRIu64, width, frac);
+        char format[32];
+        snprintf(format, sizeof(format), "%%0%d%s", width, PRIu64);
+        cork_buffer_append_printf(dest, format, frac);
         return 0;
     }
 }
@@ -115,10 +118,12 @@ cork_timestamp_format_parts(const cork_timestamp ts, struct tm *tm,
                 cork_buffer_append_printf(dest, "%02d", tm->tm_sec);
                 break;
 
-            case 's':
-                cork_buffer_append_printf
-                    (dest, "%" PRIu32, cork_timestamp_sec(ts));
+            case 's': {
+                char format[32];
+                snprintf(format, sizeof(format), "%%%s", PRIu32);
+                cork_buffer_append_printf(dest, format, cork_timestamp_sec(ts));
                 break;
+            }
 
             case 'f':
                 rii_check(append_fractional(ts, width, dest));

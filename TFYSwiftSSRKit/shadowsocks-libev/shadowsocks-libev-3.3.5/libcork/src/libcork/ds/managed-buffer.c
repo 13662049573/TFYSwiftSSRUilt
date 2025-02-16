@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "libcork/core/allocator.h"
+#include "libcork/core/container.h"
 #include "libcork/core/error.h"
 #include "libcork/core/types.h"
 #include "libcork/ds/managed-buffer.h"

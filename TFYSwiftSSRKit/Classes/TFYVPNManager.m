@@ -119,7 +119,6 @@
             NEProxySettings *proxySettings = [[NEProxySettings alloc] init];
             proxySettings.HTTPEnabled = YES;
             proxySettings.HTTPSEnabled = YES;
-            proxySettings.proxyAutoConfigurationEnabled = NO;
             proxySettings.HTTPServer = [[NEProxyServer alloc] initWithAddress:configuration.proxyServerAddress
                                                                        port:configuration.proxyServerPort];
             proxySettings.HTTPSServer = [[NEProxyServer alloc] initWithAddress:configuration.proxyServerAddress

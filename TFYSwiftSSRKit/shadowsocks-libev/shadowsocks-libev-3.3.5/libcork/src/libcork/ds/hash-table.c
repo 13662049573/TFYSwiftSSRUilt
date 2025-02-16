@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "libcork/core/callbacks.h"
+#include "libcork/core/container.h"
 #include "libcork/core/hash.h"
 #include "libcork/core/types.h"
 #include "libcork/ds/dllist.h"

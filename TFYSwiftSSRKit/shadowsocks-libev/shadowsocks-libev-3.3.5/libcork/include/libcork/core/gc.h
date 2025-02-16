@@ -8,60 +8,51 @@
  * ----------------------------------------------------------------------
  */
 
-#ifndef LIBCORK_GC_REFCOUNT_H
-#define LIBCORK_GC_REFCOUNT_H
+#ifndef LIBCORK_CORE_GC_H
+#define LIBCORK_CORE_GC_H
 
-
+#include <stdatomic.h>
 #include <libcork/core/api.h>
+#include <libcork/core/attributes.h>
 #include <libcork/core/types.h>
+#include <libcork/ds/dllist.h>
 
-
-struct cork_gc;
-
-/* A callback for recursing through the children of a garbage-collected
- * object. */
-typedef void
-(*cork_gc_recurser)(struct cork_gc *gc, void *obj, void *ud);
-
-typedef void
-(*cork_gc_free_func)(void *obj);
-
-typedef void
-(*cork_gc_recurse_func)(struct cork_gc *gc, void *self,
-                        cork_gc_recurser recurser, void *ud);
-
-/* An interface that each garbage-collected object must implement. */
-struct cork_gc_obj_iface {
-    /* Perform additional cleanup; does *NOT* need to deallocate the
-     * object itself, or release any child references */
-    cork_gc_free_func  free;
-    cork_gc_recurse_func  recurse;
+struct cork_gc_object {
+    /* The reference count for this object */
+    _Atomic unsigned int ref_count;
+    /* A list of all incoming references to this object */
+    struct cork_dllist incoming;
+    /* Used to track this object in the garbage collector's lists */
+    struct cork_dllist_item allocation;
 };
 
+struct cork_gc_edge {
+    /* The source object of this edge */
+    struct cork_gc_object *source;
+    /* Used to include this edge in a target object's incoming list */
+    struct cork_dllist_item edge;
+};
 
+/* Initialize a new garbage-collected object */
 CORK_API void
-cork_gc_init(void);
+cork_gc_init_object(struct cork_gc_object *obj);
 
+/* Increment an object's reference count */
+CORK_API struct cork_gc_object *
+cork_gc_incref(struct cork_gc_object *obj);
+
+/* Decrement an object's reference count */
 CORK_API void
-cork_gc_done(void);
+cork_gc_decref(struct cork_gc_object *obj);
 
-
-CORK_API void *
-cork_gc_alloc(size_t instance_size, struct cork_gc_obj_iface *iface);
-
-#define cork_gc_new_iface(obj_type, iface) \
-    ((obj_type *) \
-     (cork_gc_alloc(sizeof(obj_type), (iface))))
-
-#define cork_gc_new(struct_name) \
-    (cork_gc_new_iface(struct struct_name, &struct_name##__gc))
-
-
-CORK_API void *
-cork_gc_incref(void *obj);
-
+/* Add a new edge between two objects */
 CORK_API void
-cork_gc_decref(void *obj);
+cork_gc_add_edge(struct cork_gc_edge *edge,
+                struct cork_gc_object *source,
+                struct cork_gc_object *target);
 
+/* Remove an edge between two objects */
+CORK_API void
+cork_gc_remove_edge(struct cork_gc_edge *edge);
 
-#endif /* LIBCORK_GC_REFCOUNT_H */
+#endif /* LIBCORK_CORE_GC_H */

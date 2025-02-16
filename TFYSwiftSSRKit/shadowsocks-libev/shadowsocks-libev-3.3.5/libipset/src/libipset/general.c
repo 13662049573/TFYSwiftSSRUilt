@@ -19,3 +19,15 @@ ipset_init_library()
 {
     return 0;
 }
+
+void
+ipset_init(void)
+{
+    /* Nothing to do */
+}
+
+void
+ipset_done(void)
+{
+    /* Nothing to do */
+}

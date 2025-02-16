@@ -5,259 +5,192 @@ set -e
 
 # 基础配置
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$SCRIPT_DIR/.."
-LOG_DIR="$PROJECT_ROOT/build_logs"
+PROJECT_ROOT="$( cd "${SCRIPT_DIR}/.." && pwd )"
+DEPS_ROOT="${PROJECT_ROOT}/TFYSwiftSSRKit"
 
-# 创建必要的目录
-mkdir -p "$PROJECT_ROOT/TFYSwiftSSRKit"
-mkdir -p "$LOG_DIR"
-
-# 颜色定义
+# 颜色输出
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+BLUE='\033[0;34m'
+NC='\033[0m'
 
 # 日志函数
 log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
+    echo -e "${BLUE}[INFO] $1${NC}"
+}
+
+log_success() {
+    echo -e "${GREEN}[SUCCESS] $1${NC}"
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1" >&2
+    echo -e "${RED}[ERROR] $1${NC}" >&2
 }
 
 log_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
+    echo -e "${YELLOW}[WARNING] $1${NC}"
 }
 
-# 下载函数，支持多个镜像源
-download_with_mirrors() {
-    local url=$1
-    local output=$2
-    local max_retries=3
-    local retry_count=0
-    
-    local mirrors=(
-        "https://mirror.ghproxy.com/"
-        "https://ghproxy.com/"
-        ""  # 原始URL
-    )
-    
-    for mirror in "${mirrors[@]}"; do
-        local full_url="${mirror}${url}"
-        log_info "Trying to download from: $full_url"
-        if curl -L --http1.1 --retry 3 --retry-delay 2 --connect-timeout 30 \
-            --progress-bar -o "$output" "$full_url" && [ -f "$output" ] && [ -s "$output" ]; then
-            if file "$output" | grep -q "gzip compressed data"; then
-                log_info "Successfully downloaded and verified $output"
-                return 0
-            else
-                log_warning "Downloaded file is not a valid gzip archive"
-                rm -f "$output"
-            fi
-        fi
-        log_warning "Failed to download from $full_url"
-    done
-    log_error "All download attempts failed"
-    return 1
+# 错误处理
+handle_error() {
+    log_error "构建过程中发生错误!"
+    log_error "错误发生在: $1"
+    log_error "错误行号: $2"
+    exit 1
 }
 
-# 导出所有函数和颜色变量
-export RED GREEN YELLOW NC
-export -f log_info log_error log_warning download_with_mirrors
+trap 'handle_error "${BASH_SOURCE[0]}" $LINENO' ERR
 
-# 构建单个库
-build_library() {
-    local script_name=$1
-    local lib_name=$(echo $script_name | sed 's/build-//;s/.sh//')
-    local log_file="$LOG_DIR/${lib_name}_build.log"
+# 检查构建环境
+check_build_env() {
+    log_info "检查构建环境..."
     
-    # 确保脚本有执行权限
-    chmod +x "$SCRIPT_DIR/$script_name"
-    
-    log_info "Building $lib_name..."
-    
-    # 创建一个临时脚本来导出函数
-    local tmp_script=$(mktemp)
-    declare -f download_with_mirrors log_info log_error log_warning > "$tmp_script"
-    echo "export RED='$RED' GREEN='$GREEN' YELLOW='$YELLOW' NC='$NC'" >> "$tmp_script"
-    echo "export CROSS_COMPILING=yes" >> "$tmp_script"
-    echo "source \"$SCRIPT_DIR/$script_name\"" >> "$tmp_script"
-    
-    # 使用临时文件来捕获退出状态
-    local exit_status_file=$(mktemp)
-    (cd "$PROJECT_ROOT" && CROSS_COMPILING=yes bash "$tmp_script" 2>&1; echo $? > "$exit_status_file") | tee "$log_file"
-    local exit_status=$(cat "$exit_status_file")
-    rm -f "$exit_status_file"
-    
-    if [ "$exit_status" -eq 0 ]; then
-        log_info "$lib_name build completed successfully"
-        rm -f "$tmp_script"
-        return 0
-    else
-        log_error "$lib_name build failed"
-        log_error "Check $log_file for details"
-        rm -f "$tmp_script"
+    # 检查 Xcode Command Line Tools
+    if ! xcode-select -p &>/dev/null; then
+        log_error "未安装 Xcode Command Line Tools"
+        log_info "请运行: xcode-select --install"
         return 1
     fi
-}
-
-# 检查依赖工具
-check_prerequisites() {
-    local missing_tools=()
     
-    for tool in autoconf automake libtool cmake perl; do
-        if ! command -v $tool >/dev/null 2>&1; then
-            missing_tools+=($tool)
+    # 检查必要的工具
+    local tools=(
+        "curl" "tar" "git" "make" "cmake" 
+        "autoconf" "automake" "libtool" "pkg-config"
+    )
+    
+    local missing_tools=()
+    for tool in "${tools[@]}"; do
+        if ! command -v "$tool" >/dev/null 2>&1; then
+            missing_tools+=("$tool")
         fi
     done
     
     if [ ${#missing_tools[@]} -ne 0 ]; then
-        log_error "The following tools are required but not installed:"
-        for tool in "${missing_tools[@]}"; do
-            echo "  - $tool"
-        done
-        echo "Install with: brew install ${missing_tools[@]}"
-        exit 1
+        log_error "缺少必要的工具: ${missing_tools[*]}"
+        log_info "请使用 brew install 安装缺失的工具"
+        return 1
     fi
     
-    # 检查 Xcode 命令行工具
-    if ! xcode-select -p >/dev/null 2>&1; then
-        log_error "Xcode Command Line Tools are not installed"
-        echo "Install with: xcode-select --install"
-        exit 1
-    fi
+    log_success "构建环境检查通过"
+    return 0
 }
 
 # 清理函数
-cleanup() {
-    local clean_all=$1
+clean_build() {
+    log_info "清理旧的构建文件..."
     
-    if [ "$clean_all" = true ]; then
-        log_info "Cleaning all build artifacts..."
-        rm -rf "$PROJECT_ROOT/TFYSwiftSSRKit/"{libsodium,libmaxminddb,openssl,shadowsocks-libev,antinat,privoxy}
-        rm -rf "$LOG_DIR"
-    else
-        log_info "Cleaning build logs..."
-        rm -rf "$LOG_DIR"
-    fi
-    
-    # 重新创建目录
-    mkdir -p "$PROJECT_ROOT/TFYSwiftSSRKit"
-    mkdir -p "$LOG_DIR"
-}
-
-# 显示帮助
-show_help() {
-    cat << EOF
-Usage: $0 [options]
-
-Options:
-    --clean         Clean build logs before building
-    --clean-all    Clean all build artifacts and logs before building
-    --help         Show this help message
-    
-Example:
-    $0              # Build all libraries
-    $0 --clean     # Clean logs and build
-    $0 --clean-all # Clean everything and build
-EOF
-}
-
-# 主函数
-main() {
-    local start_time=$(date +%s)
-    local clean_all=false
-    local failed_builds=()
-    
-    # 检查是否有参数
-    if [ $# -gt 0 ]; then
-        case "$1" in
-            --clean)
-                cleanup false
-                ;;
-            --clean-all)
-                cleanup true
-                ;;
-            --help)
-                show_help
-                exit 0
-                ;;
-            *)
-                log_error "Unknown option: $1"
-                show_help
-                exit 1
-                ;;
-        esac
-    fi
-    
-    # 检查依赖工具
-    check_prerequisites
-    
-    # 构建所有库
-    local build_scripts=(
-        "build-libsodium.sh"
-        "build-libmaxminddb.sh"
-        "build-openssl.sh"
-        "build-shadowsocks.sh"
-        "build-antinat.sh"
-        "build-privoxy.sh"
+    # 清理各个库的构建目录
+    local libs=(
+        "libev" "libmaxminddb" "libsodium" "mbedtls" 
+        "openssl" "pcre" "c-ares" "shadowsocks-libev"
     )
     
-    for script in "${build_scripts[@]}"; do
-        log_info "Starting build of $script..."
-        if ! build_library "$script"; then
-            failed_builds+=("$script")
-            log_error "Build of $script failed"
-            # 如果是依赖库失败，就停止构建
-            case "$script" in
-                "build-libsodium.sh"|"build-openssl.sh")
-                    log_error "Critical dependency failed, stopping build process"
-                    break
-                    ;;
-            esac
+    for lib in "${libs[@]}"; do
+        if [ -d "${DEPS_ROOT}/${lib}/build" ]; then
+            rm -rf "${DEPS_ROOT}/${lib}/build"
         fi
     done
     
-    # 计算构建时间
-    local end_time=$(date +%s)
-    local duration=$((end_time - start_time))
-    local hours=$((duration / 3600))
-    local minutes=$(((duration % 3600) / 60))
-    local seconds=$((duration % 60))
+    log_success "清理完成"
+}
+
+# 验证构建结果
+verify_build() {
+    log_info "验证构建结果..."
     
-    log_info "Build completed in ${hours}h ${minutes}m ${seconds}s"
+    # 检查所有必要的库文件
+    local required_libs=(
+        "libev/lib/libev_ios.a"
+        "libev/lib/libev_macos.a"
+        "libmaxminddb/lib/libmaxminddb_ios.a"
+        "libmaxminddb/lib/libmaxminddb_macos.a"
+        "libsodium/lib/libsodium_ios.a"
+        "libsodium/lib/libsodium_macos.a"
+        "mbedtls/lib/libmbedcrypto_ios.a"
+        "mbedtls/lib/libmbedcrypto_macos.a"
+        "mbedtls/lib/libmbedtls_ios.a"
+        "mbedtls/lib/libmbedtls_macos.a"
+        "mbedtls/lib/libmbedx509_ios.a"
+        "mbedtls/lib/libmbedx509_macos.a"
+        "openssl/lib/libssl_ios.a"
+        "openssl/lib/libssl_macos.a"
+        "openssl/lib/libcrypto_ios.a"
+        "openssl/lib/libcrypto_macos.a"
+        "pcre/lib/libpcre_ios.a"
+        "pcre/lib/libpcre_macos.a"
+        "c-ares/lib/libcares_ios.a"
+        "c-ares/lib/libcares_macos.a"
+    )
     
-    if [ ${#failed_builds[@]} -eq 0 ]; then
-        log_info "All libraries built successfully"
-        return 0
-    else
-        log_error "The following builds failed:"
-        for script in "${failed_builds[@]}"; do
-            local lib_name=$(echo $script | sed 's/build-//;s/.sh//')
-            echo "  - $lib_name"
+    local missing_libs=()
+    for lib in "${required_libs[@]}"; do
+        if [ ! -f "${DEPS_ROOT}/${lib}" ]; then
+            missing_libs+=("${lib}")
+        fi
+    done
+    
+    if [ ${#missing_libs[@]} -ne 0 ]; then
+        log_error "以下库文件缺失:"
+        for lib in "${missing_libs[@]}"; do
+            log_error "  - ${lib}"
         done
         return 1
     fi
+    
+    log_success "所有必要的库文件验证通过"
+    return 0
 }
 
-# 设置错误处理
-trap 'echo "Error on line $LINENO"' ERR
+# 主构建流程
+main() {
+    log_info "开始构建流程..."
+    
+    # 检查构建环境
+    check_build_env || exit 1
+    
+    # 清理旧的构建文件
+    clean_build
+    
+    # 按顺序构建各个依赖库
+    log_info "构建 libev..."
+    "${SCRIPT_DIR}/build-libev.sh" || exit 1
+    log_success "libev 构建完成"
+    
+    log_info "构建 libmaxminddb..."
+    "${SCRIPT_DIR}/build-libmaxminddb.sh" || exit 1
+    log_success "libmaxminddb 构建完成"
+    
+    log_info "构建 libsodium..."
+    "${SCRIPT_DIR}/build-libsodium.sh" || exit 1
+    log_success "libsodium 构建完成"
+    
+    log_info "构建 mbedtls..."
+    "${SCRIPT_DIR}/build-mbedtls.sh" || exit 1
+    log_success "mbedtls 构建完成"
+    
+    log_info "构建 openssl..."
+    "${SCRIPT_DIR}/build-openssl.sh" || exit 1
+    log_success "openssl 构建完成"
+    
+    log_info "构建 pcre..."
+    "${SCRIPT_DIR}/build-pcre.sh" || exit 1
+    log_success "pcre 构建完成"
+    
+    log_info "构建 c-ares..."
+    "${SCRIPT_DIR}/build-c-ares.sh" || exit 1
+    log_success "c-ares 构建完成"
+    
+    log_info "构建 shadowsocks-libev..."
+    "${SCRIPT_DIR}/build-shadowsocks-libev.sh" || exit 1
+    log_success "shadowsocks-libev 构建完成"
+    
+    # 验证构建结果
+    verify_build || exit 1
+    
+    log_success "所有组件构建完成!"
+    return 0
+}
 
-# 运行脚本
-main "$@"
-
-# 构建 mbedtls
-echo "Building mbedtls..."
-$SCRIPT_DIR/build-mbedtls.sh
-
-# 构建 pcre
-echo "Building pcre..."
-$SCRIPT_DIR/build-pcre.sh
-
-# 构建 shadowsocks
-echo "Building shadowsocks..."
-$SCRIPT_DIR/build-shadowsocks.sh
-
-echo "All components built successfully!" 
+# 执行主函数
+main 

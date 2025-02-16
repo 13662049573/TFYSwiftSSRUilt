@@ -1,6 +1,5 @@
 AC_PREREQ([2.67])
 AC_INIT([shadowsocks-libev], [3.3.5], [max.c.lv@gmail.com])
-AC_CONFIG_SRCDIR([src/crypto.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([auto])
 AC_CONFIG_MACRO_DIR([m4])
@@ -19,8 +18,11 @@ AM_CONDITIONAL([BUILD_WINCOMPAT], [test "x$build_wincompat" = "xyes"])
 AM_CONDITIONAL([BUILD_REDIRECTOR], [test "x$build_redirector" = "xyes"])
 AM_CONDITIONAL(platform_suffix_ios, test "x$platform_suffix" = "xios")
 
-dnl Checks for platform
-AC_CANONICAL_HOST
+# Platform specific flags
+AM_CONDITIONAL([APPLE], [test "x$build_vendor" = "xapple"])
+
+# Platform specific flags
+AM_CONDITIONAL([APPLE], [test "x$build_vendor" = "xapple"])
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -29,6 +31,9 @@ AC_PROG_INSTALL
 LT_INIT([disable-shared])
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+AC_PROG_MKDIR_P
+AC_PROG_SED
 
 # Set platform-specific flags and SDK paths
 if test "x$platform_suffix" = "xios"; then

@@ -14,37 +14,42 @@
 #include <libcork/config.h>
 #include <libcork/core/types.h>
 
-/*-----------------------------------------------------------------------
- * GCC intrinsics
- */
+#if defined(__APPLE__)
+#include <stdatomic.h>
 
-/* Ideally we can use GCC's intrinsics to define everything */
-#if defined(CORK_CONFIG_HAVE_GCC_ATOMICS)
+/* Integer atomic operations */
+#define cork_int_atomic_add(dest, val) \
+    atomic_fetch_add((atomic_int*)(dest), (val))
 
-#define cork_int_atomic_add        __sync_add_and_fetch
-#define cork_uint_atomic_add       __sync_add_and_fetch
-#define cork_size_atomic_add       __sync_add_and_fetch
-#define cork_int_atomic_pre_add    __sync_fetch_and_add
-#define cork_uint_atomic_pre_add   __sync_fetch_and_add
-#define cork_size_atomic_pre_add   __sync_fetch_and_add
-#define cork_int_atomic_sub        __sync_sub_and_fetch
-#define cork_uint_atomic_sub       __sync_sub_and_fetch
-#define cork_size_atomic_sub       __sync_sub_and_fetch
-#define cork_int_atomic_pre_sub    __sync_fetch_and_sub
-#define cork_uint_atomic_pre_sub   __sync_fetch_and_sub
-#define cork_size_atomic_pre_sub   __sync_fetch_and_sub
-#define cork_int_cas               __sync_val_compare_and_swap
-#define cork_uint_cas              __sync_val_compare_and_swap
-#define cork_size_cas              __sync_val_compare_and_swap
-#define cork_ptr_cas               __sync_val_compare_and_swap
+#define cork_int_atomic_pre_add(dest, val) \
+    atomic_fetch_add((atomic_int*)(dest), (val))
 
+#define cork_int_atomic_sub(dest, val) \
+    atomic_fetch_sub((atomic_int*)(dest), (val))
 
-/*-----------------------------------------------------------------------
- * End of atomic implementations
- */
+#define cork_int_atomic_pre_sub(dest, val) \
+    atomic_fetch_sub((atomic_int*)(dest), (val))
+
+#define cork_int_cas(dest, old, new) \
+    atomic_compare_exchange_strong((atomic_int*)(dest), &(old), (new))
+
+/* Pointer atomic operations */
+#define cork_ptr_cas(dest, old, new) \
+    atomic_compare_exchange_strong((atomic_uintptr_t*)(dest), (uintptr_t*)&(old), (uintptr_t)(new))
+
+/* Atomic initialization */
+#define cork_int_atomic_new() \
+    ATOMIC_VAR_INIT(0)
+
+#define cork_ptr_atomic_new() \
+    ATOMIC_VAR_INIT(NULL)
+
+/* Memory barriers */
+#define cork_memory_barrier() \
+    atomic_thread_fence(memory_order_seq_cst)
+
 #else
 #error "No atomics implementation!"
 #endif
-
 
 #endif /* LIBCORK_THREADS_ATOMICS_H */
