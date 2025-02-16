@@ -34,10 +34,10 @@ MACOS_DEPLOYMENT_TARGET="12.0"
 
 # Dependencies paths
 LIBEV_PATH="$SOURCE_DIR/libev"
-LIBMAXMINDDB_PATH="$SOURCE_DIR/libmaxminddb/install"
+LIBMAXMINDDB_PATH="$SOURCE_DIR/libmaxminddb"
 LIBSODIUM_PATH="$SOURCE_DIR/libsodium"
 MBEDTLS_PATH="$SOURCE_DIR/mbedtls"
-OPENSSL_PATH="$SOURCE_DIR/openssl/install"
+OPENSSL_PATH="$SOURCE_DIR/openssl"
 PCRE_PATH="$SOURCE_DIR/pcre"
 CARES_PATH="$SOURCE_DIR/c-ares"
 
@@ -59,40 +59,32 @@ warning() {
 # Function to verify dependencies
 verify_dependencies() {
     # 检查依赖库文件
-    if [ ! -f "$LIBEV_PATH/lib/libev_ios.a" ] || [ ! -f "$LIBEV_PATH/lib/libev_macos.a" ]; then
-        error "libev 库文件不存在"
-        return 1
-    fi
+    local libs=(
+        "$LIBEV_PATH/lib/libev_ios.a"
+        "$LIBEV_PATH/lib/libev_macos.a"
+        "$LIBMAXMINDDB_PATH/lib/libmaxminddb_ios.a"
+        "$LIBMAXMINDDB_PATH/lib/libmaxminddb_macos.a"
+        "$LIBSODIUM_PATH/lib/libsodium_ios.a"
+        "$LIBSODIUM_PATH/lib/libsodium_macos.a"
+        "$MBEDTLS_PATH/lib/libmbedcrypto_ios.a"
+        "$MBEDTLS_PATH/lib/libmbedcrypto_macos.a"
+        "$OPENSSL_PATH/lib/libssl_ios.a"
+        "$OPENSSL_PATH/lib/libssl_macos.a"
+        "$OPENSSL_PATH/lib/libcrypto_ios.a"
+        "$OPENSSL_PATH/lib/libcrypto_macos.a"
+        "$PCRE_PATH/lib/libpcre_ios.a"
+        "$PCRE_PATH/lib/libpcre_macos.a"
+        "$CARES_PATH/lib/libcares_ios.a"
+        "$CARES_PATH/lib/libcares_macos.a"
+    )
     
-    if [ ! -f "$LIBMAXMINDDB_PATH/lib/libmaxminddb_ios.a" ] || [ ! -f "$LIBMAXMINDDB_PATH/lib/libmaxminddb_macos.a" ]; then
-        error "libmaxminddb 库文件不存在"
-        return 1
-    fi
-    
-    if [ ! -f "$LIBSODIUM_PATH/lib/libsodium_ios.a" ] || [ ! -f "$LIBSODIUM_PATH/lib/libsodium_macos.a" ]; then
-        error "libsodium 库文件不存在"
-        return 1
-    fi
-    
-    if [ ! -f "$MBEDTLS_PATH/lib/libmbedcrypto_ios.a" ] || [ ! -f "$MBEDTLS_PATH/lib/libmbedcrypto_macos.a" ]; then
-        error "mbedtls 库文件不存在"
-        return 1
-    fi
-    
-    if [ ! -f "$OPENSSL_PATH/lib/libssl_ios.a" ] || [ ! -f "$OPENSSL_PATH/lib/libssl_macos.a" ]; then
-        error "openssl 库文件不存在"
-        return 1
-    fi
-    
-    if [ ! -f "$PCRE_PATH/lib/libpcre_ios.a" ] || [ ! -f "$PCRE_PATH/lib/libpcre_macos.a" ]; then
-        error "pcre 库文件不存在"
-        return 1
-    fi
-    
-    if [ ! -f "$CARES_PATH/lib/libcares_ios.a" ] || [ ! -f "$CARES_PATH/lib/libcares_macos.a" ]; then
-        error "c-ares 库文件不存在"
-        return 1
-    fi
+    for lib in "${libs[@]}"; do
+        if [ ! -f "$lib" ]; then
+            error "库文件不存在: $lib"
+            return 1
+        fi
+        info "验证库文件: $lib - 存在"
+    done
     
     # 检查头文件
     local header_dirs=(
@@ -110,6 +102,7 @@ verify_dependencies() {
             error "头文件目录不存在: $dir"
             return 1
         fi
+        info "验证头文件目录: $dir - 存在"
     done
     
     return 0
@@ -240,20 +233,25 @@ build_shadowsocks() {
     fi
     
     local install_dir
+    local sdk_path
     if [ "$platform" = "ios" ]; then
         install_dir="$INSTALL_DIR_IOS"
-        export SDKROOT=$(xcrun --sdk $IOS_SDK --show-sdk-path)
+        sdk_path="$(xcrun --sdk iphoneos --show-sdk-path)"
+        export SDKROOT="$sdk_path"
         export DEPLOYMENT_TARGET="$IOS_DEPLOYMENT_TARGET"
         host="arm-apple-darwin"
         export CROSS_TOP="$(xcrun --sdk iphoneos --show-sdk-platform-path)/Developer"
         export CROSS_SDK="iPhoneOS.sdk"
         export PLATFORM_DIR="$(xcrun --sdk iphoneos --show-sdk-platform-path)"
+        platform_suffix="ios"
     else
         install_dir="$INSTALL_DIR_MACOS"
-        export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
+        sdk_path="$(xcrun --sdk macosx --show-sdk-path)"
+        export SDKROOT="$sdk_path"
         export DEPLOYMENT_TARGET="$MACOS_DEPLOYMENT_TARGET"
         host="aarch64-apple-darwin"
         unset CROSS_TOP CROSS_SDK PLATFORM_DIR
+        platform_suffix="macos"
     fi
     
     mkdir -p "$install_dir"
@@ -275,9 +273,9 @@ build_shadowsocks() {
     export LD="$(xcrun -f ld)"
     
     # Set basic flags
-    export CFLAGS="-arch $arch -isysroot $SDKROOT -O2 -fPIC"
-    export CXXFLAGS="$CFLAGS"
-    export LDFLAGS="$CFLAGS"
+    export CFLAGS="-arch ${arch} -isysroot ${sdk_path} -O2 -fPIC"
+    export CPPFLAGS="${CFLAGS}"
+    export LDFLAGS="${CFLAGS}"
     
     if [ "$platform" = "ios" ]; then
         CFLAGS="$CFLAGS -mios-version-min=$DEPLOYMENT_TARGET -fembed-bitcode"
@@ -289,20 +287,28 @@ build_shadowsocks() {
         LDFLAGS="$LDFLAGS -mmacosx-version-min=$DEPLOYMENT_TARGET"
     fi
     
-    # Add libev-related configuration
-    export ac_cv_header_ev_h=yes
-    export ac_cv_header_libev_ev_h=yes
-    export ac_cv_search_ev_time="-lev_${platform}"
-    export ac_cv_lib_ev_ev_time=yes
+    # Add include paths
+    CFLAGS="$CFLAGS -I$LIBEV_PATH/include"
+    CFLAGS="$CFLAGS -I$LIBMAXMINDDB_PATH/include"
+    CFLAGS="$CFLAGS -I$LIBSODIUM_PATH/include"
+    CFLAGS="$CFLAGS -I$MBEDTLS_PATH/include"
+    CFLAGS="$CFLAGS -I$OPENSSL_PATH/include"
+    CFLAGS="$CFLAGS -I$PCRE_PATH/include"
+    CFLAGS="$CFLAGS -I$CARES_PATH/include"
     
-    # Add library linking flags
-    export LIBS="-lev_${platform} -lmaxminddb_${platform} -lsodium_${platform} -lmbedcrypto_${platform} -lssl_${platform} -lpcre_${platform} -lcares_${platform}"
+    # Add library paths
+    LDFLAGS="$LDFLAGS -L$LIBEV_PATH/lib"
+    LDFLAGS="$LDFLAGS -L$LIBMAXMINDDB_PATH/lib"
+    LDFLAGS="$LDFLAGS -L$LIBSODIUM_PATH/lib"
+    LDFLAGS="$LDFLAGS -L$MBEDTLS_PATH/lib"
+    LDFLAGS="$LDFLAGS -L$OPENSSL_PATH/lib"
+    LDFLAGS="$LDFLAGS -L$PCRE_PATH/lib"
+    LDFLAGS="$LDFLAGS -L$CARES_PATH/lib"
     
-    # Add library header file paths
-    CFLAGS="$CFLAGS -I$LIBEV_PATH/include -I$LIBMAXMINDDB_PATH/include -I$LIBSODIUM_PATH/include -I$MBEDTLS_PATH/include -I$OPENSSL_PATH/include -I$PCRE_PATH/include -I$CARES_PATH/include"
-    LDFLAGS="$LDFLAGS -L$LIBEV_PATH/lib -L$LIBMAXMINDDB_PATH/lib -L$LIBSODIUM_PATH/lib -L$MBEDTLS_PATH/lib -L$OPENSSL_PATH/lib -L$PCRE_PATH/lib -L$CARES_PATH/lib"
+    # Add library dependencies
+    export LIBS="-lev_${platform_suffix} -lmaxminddb_${platform_suffix} -lsodium_${platform_suffix} -lmbedcrypto_${platform_suffix} -lssl_${platform_suffix} -lcrypto_${platform_suffix} -lpcre_${platform_suffix} -lcares_${platform_suffix}"
     
-    # Set cross-compilation cache variables
+    # Configure cache variables
     export ac_cv_func_malloc_0_nonnull=yes
     export ac_cv_func_realloc_0_nonnull=yes
     export ac_cv_func_mmap=yes
@@ -325,22 +331,23 @@ build_shadowsocks() {
     export ac_cv_header_unistd_h=yes
     export cross_compiling=yes
     
-    # Configure and build
+    # Set environment variables for configure
+    export ac_cv_lib_ev_ev_time=yes
+    export ac_cv_search_ev_time="-lev_ios"
+    export ac_cv_lib_sodium_sodium_init=yes
+    export ac_cv_search_sodium_init="-lsodium_ios"
+    
+    # Configure with correct library paths and names
     ./configure \
         --prefix="$install_dir" \
         --host="$host" \
         --build="$(./build-aux/config.guess)" \
         --enable-static \
         --disable-shared \
-        --disable-documentation \
         --disable-ssp \
-        --disable-assert \
-        --disable-silent-rules \
-        --with-mbedtls="$MBEDTLS_PATH" \
-        --with-sodium="$LIBSODIUM_PATH" \
-        --with-cares="$CARES_PATH" \
-        --with-pcre="$PCRE_PATH" \
+        --disable-documentation \
         --with-ev="$LIBEV_PATH" \
+        --with-sodium="$LIBSODIUM_PATH" \
         CC="$CC" \
         CXX="$CXX" \
         AR="$AR" \
@@ -351,8 +358,7 @@ build_shadowsocks() {
         CFLAGS="$CFLAGS" \
         CXXFLAGS="$CXXFLAGS" \
         LDFLAGS="$LDFLAGS" \
-        LIBS="$LIBS" \
-        || {
+        LIBS="$LIBS" || {
             error "Configure failed for $platform ($arch)"
             cat config.log
             return 1
@@ -373,7 +379,7 @@ build_shadowsocks() {
     cd "$install_dir/lib"
     for lib in *.a; do
         if [ -f "$lib" ]; then
-            mv "$lib" "${lib%.a}_${platform}.a"
+            mv "$lib" "${lib%.a}_${platform_suffix}.a"
         fi
     done
     

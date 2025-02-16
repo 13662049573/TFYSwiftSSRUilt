@@ -77,6 +77,10 @@
 #define EWOULDBLOCK EAGAIN
 #endif
 
+#ifndef CONNECT_IN_PROGRESS
+#define CONNECT_IN_PROGRESS EINPROGRESS
+#endif
+
 int verbose    = 0;
 int reuse_port = 0;
 

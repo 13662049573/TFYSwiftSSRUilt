@@ -11,34 +11,17 @@ VERSION="3.5.1"
 LIB_NAME="mbedtls"
 SOURCE_DIR="${DEPS_ROOT}/${LIB_NAME}"
 
-# 创建必要的目录
-create_directories() {
-    local dirs=(
-        "${SOURCE_DIR}"
-        "${SOURCE_DIR}/build"
-        "${SOURCE_DIR}/src"
-        "${SOURCE_DIR}/install_arm64_ios/lib"
-        "${SOURCE_DIR}/install_arm64_ios/include"
-        "${SOURCE_DIR}/install_arm64_macos/lib"
-        "${SOURCE_DIR}/install_arm64_macos/include"
-    )
-    
-    for dir in "${dirs[@]}"; do
-        mkdir -p "${dir}"
-    done
-}
-
 # 设置编译环境
 export DEVELOPER_DIR="$(xcode-select -p)"
-export IPHONEOS_SDK_VERSION=$(xcrun -sdk iphoneos --show-sdk-version)
 export IPHONEOS_DEPLOYMENT_TARGET="15.0"
 export MACOSX_DEPLOYMENT_TARGET="13.0"
 
 # 设置SDK路径
-export IOS_SDK_PATH="${DEVELOPER_DIR}/Platforms/iPhoneOS.platform/Developer"
-export IOS_SDK="${IOS_SDK_PATH}/SDKs/iPhoneOS.sdk"
-export MACOS_SDK_PATH="${DEVELOPER_DIR}/Platforms/MacOSX.platform/Developer"
-export MACOS_SDK="${MACOS_SDK_PATH}/SDKs/MacOSX.sdk"
+export IOS_SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
+export MACOS_SDK="$(xcrun --sdk macosx --show-sdk-path)"
+
+# 创建目录
+mkdir -p "${SOURCE_DIR}"/{include,lib}
 
 # 日志函数
 log_info() {
@@ -57,12 +40,12 @@ prepare_source() {
         curl -LO "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v${VERSION}.tar.gz"
     fi
     
-    # 清理并重新解压源码
-    rm -rf build/*
-    tar xzf "v${VERSION}.tar.gz" --strip-components=1 -C .
+    rm -rf build
+    mkdir -p build
+    tar xzf "v${VERSION}.tar.gz" --strip-components=1 -C build
 
-    # 创建自定义配置文件
-    cat > include/mbedtls/config.h << EOF
+    # 创建配置文件
+    cat > build/include/mbedtls/config.h << EOF
 #ifndef MBEDTLS_CONFIG_H
 #define MBEDTLS_CONFIG_H
 
@@ -71,15 +54,14 @@ prepare_source() {
 #define MBEDTLS_AES_C
 #define MBEDTLS_CIPHER_C
 #define MBEDTLS_CIPHER_MODE_GCM
+#define MBEDTLS_CIPHER_MODE_CFB
 #define MBEDTLS_GCM_C
+#define MBEDTLS_MD5_C
 
 #include "check_config.h"
 
 #endif /* MBEDTLS_CONFIG_H */
 EOF
-
-    # 复制配置文件到 mbedtls_config.h
-    cp include/mbedtls/config.h include/mbedtls/mbedtls_config.h
 }
 
 # 构建函数
@@ -87,38 +69,24 @@ build_for_platform() {
     local platform=$1
     local arch=$2
     local min_version=$3
+    local sdk=$4
     
-    log_info "Building for ${platform} (${arch})..."
+    echo "[INFO] Building for ${platform} (${arch})..."
     
-    # 清理之前的构建
-    rm -rf build_${platform}
-    mkdir -p build_${platform}
-    cd build_${platform}
+    local build_dir="${SOURCE_DIR}/build/_${platform}"
+    mkdir -p "${build_dir}"
+    cd "${build_dir}"
     
-    # 设置编译器和标志
-    if [ "${platform}" = "ios" ]; then
-        export CC="${DEVELOPER_DIR}/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang"
-        export CFLAGS="-arch ${arch} -isysroot ${IOS_SDK} -miphoneos-version-min=${min_version} -fembed-bitcode"
-        export LDFLAGS="-arch ${arch} -isysroot ${IOS_SDK}"
-        local install_dir="${SOURCE_DIR}/install_${arch}_ios"
-        local sysroot="${IOS_SDK}"
-        local system_name="iOS"
-    else
-        export CC="${DEVELOPER_DIR}/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang"
-        export CFLAGS="-arch ${arch} -isysroot ${MACOS_SDK} -mmacosx-version-min=${min_version}"
-        export LDFLAGS="-arch ${arch} -isysroot ${MACOS_SDK}"
-        local install_dir="${SOURCE_DIR}/install_${arch}_macos"
-        local sysroot="${MACOS_SDK}"
-        local system_name="Darwin"
-    fi
+    export CC="$(xcrun -find -sdk ${platform} clang)"
+    export CFLAGS="-arch ${arch} -isysroot ${sdk} -m${platform}-version-min=${min_version}"
+    [ "${platform}" = "iphoneos" ] && CFLAGS="${CFLAGS} -fembed-bitcode"
+    export LDFLAGS="${CFLAGS}"
     
-    # 配置构建
-    cmake -S "${SOURCE_DIR}" -B . \
-        -DCMAKE_INSTALL_PREFIX="${install_dir}" \
-        -DCMAKE_SYSTEM_NAME=${system_name} \
-        -DCMAKE_OSX_SYSROOT="${sysroot}" \
-        -DCMAKE_OSX_ARCHITECTURES=${arch} \
-        -DCMAKE_OSX_DEPLOYMENT_TARGET="${min_version}" \
+    cmake -S "${SOURCE_DIR}/build" -B . \
+        -DCMAKE_INSTALL_PREFIX="${build_dir}/install" \
+        -DCMAKE_SYSTEM_NAME="$([ "${platform}" = "iphoneos" ] && echo "iOS" || echo "Darwin")" \
+        -DCMAKE_OSX_SYSROOT="${sdk}" \
+        -DCMAKE_OSX_ARCHITECTURES="${arch}" \
         -DCMAKE_C_COMPILER="${CC}" \
         -DCMAKE_C_FLAGS="${CFLAGS}" \
         -DCMAKE_BUILD_TYPE=Release \
@@ -126,48 +94,36 @@ build_for_platform() {
         -DENABLE_TESTING=OFF \
         -DUSE_SHARED_MBEDTLS_LIBRARY=OFF \
         -DUSE_STATIC_MBEDTLS_LIBRARY=ON \
-        -DINSTALL_MBEDTLS_HEADERS=ON \
-        -DMBEDTLS_CONFIG_FILE="${SOURCE_DIR}/include/mbedtls/config.h" || {
-            log_error "Configure failed for ${platform}"
-            return 1
-        }
+        -DINSTALL_MBEDTLS_HEADERS=ON || return 1
     
-    # 编译
-    cmake --build . -j$(sysctl -n hw.ncpu) || {
-        log_error "Build failed for ${platform}"
-        return 1
-    }
+    cmake --build . -j$(sysctl -n hw.ncpu) || return 1
+    cmake --install . || return 1
     
-    # 安装
-    cmake --install . || {
-        log_error "Install failed for ${platform}"
-        return 1
-    }
+    # 复制库文件
+    cp install/lib/libmbedcrypto.a "${SOURCE_DIR}/lib/libmbedcrypto_${platform}.a"
     
-    # 重命名库文件
-    if [ -f "${install_dir}/lib/libmbedcrypto.a" ]; then
-        mv "${install_dir}/lib/libmbedcrypto.a" "${install_dir}/lib/libmbedcrypto_${platform}.a"
-    fi
-    if [ -f "${install_dir}/lib/libmbedtls.a" ]; then
-        mv "${install_dir}/lib/libmbedtls.a" "${install_dir}/lib/libmbedtls_${platform}.a"
-    fi
-    if [ -f "${install_dir}/lib/libmbedx509.a" ]; then
-        mv "${install_dir}/lib/libmbedx509.a" "${install_dir}/lib/libmbedx509_${platform}.a"
+    # 首次构建时复制头文件
+    if [ ! -d "${SOURCE_DIR}/include/mbedtls" ]; then
+        cp -R install/include/mbedtls "${SOURCE_DIR}/include/"
     fi
 }
 
 # 主函数
 main() {
-    create_directories
     prepare_source
     
     # 构建 iOS 版本
-    build_for_platform "ios" "arm64" "${IPHONEOS_DEPLOYMENT_TARGET}"
+    build_for_platform "iphoneos" "arm64" "${IPHONEOS_DEPLOYMENT_TARGET}" "${IOS_SDK}" || exit 1
+    mv "${SOURCE_DIR}/lib/libmbedcrypto_iphoneos.a" "${SOURCE_DIR}/lib/libmbedcrypto_ios.a"
     
     # 构建 macOS 版本
-    build_for_platform "macos" "arm64" "${MACOSX_DEPLOYMENT_TARGET}"
+    build_for_platform "macosx" "arm64" "${MACOSX_DEPLOYMENT_TARGET}" "${MACOS_SDK}" || exit 1
+    mv "${SOURCE_DIR}/lib/libmbedcrypto_macosx.a" "${SOURCE_DIR}/lib/libmbedcrypto_macos.a"
     
-    log_info "Build completed successfully"
+    # 清理构建目录
+    rm -rf "${SOURCE_DIR}/build"
+    
+    echo "[INFO] Build completed successfully"
 }
 
 # 执行主函数
