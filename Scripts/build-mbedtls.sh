@@ -99,12 +99,16 @@ build_for_platform() {
     cmake --build . -j$(sysctl -n hw.ncpu) || return 1
     cmake --install . || return 1
     
-    # 复制库文件
-    cp install/lib/libmbedcrypto.a "${SOURCE_DIR}/lib/libmbedcrypto_${platform}.a"
+    # 复制所有库文件
+    local platform_suffix=$([ "${platform}" = "iphoneos" ] && echo "ios" || echo "macos")
+    cp install/lib/libmbedcrypto.a "${SOURCE_DIR}/lib/libmbedcrypto_${platform_suffix}.a"
+    cp install/lib/libmbedtls.a "${SOURCE_DIR}/lib/libmbedtls_${platform_suffix}.a"
+    cp install/lib/libmbedx509.a "${SOURCE_DIR}/lib/libmbedx509_${platform_suffix}.a"
     
     # 首次构建时复制头文件
     if [ ! -d "${SOURCE_DIR}/include/mbedtls" ]; then
         cp -R install/include/mbedtls "${SOURCE_DIR}/include/"
+        cp -R install/include/psa "${SOURCE_DIR}/include/"
     fi
 }
 
@@ -114,11 +118,9 @@ main() {
     
     # 构建 iOS 版本
     build_for_platform "iphoneos" "arm64" "${IPHONEOS_DEPLOYMENT_TARGET}" "${IOS_SDK}" || exit 1
-    mv "${SOURCE_DIR}/lib/libmbedcrypto_iphoneos.a" "${SOURCE_DIR}/lib/libmbedcrypto_ios.a"
     
     # 构建 macOS 版本
     build_for_platform "macosx" "arm64" "${MACOSX_DEPLOYMENT_TARGET}" "${MACOS_SDK}" || exit 1
-    mv "${SOURCE_DIR}/lib/libmbedcrypto_macosx.a" "${SOURCE_DIR}/lib/libmbedcrypto_macos.a"
     
     # 清理构建目录
     rm -rf "${SOURCE_DIR}/build"
