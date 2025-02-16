@@ -34,10 +34,10 @@ MACOS_DEPLOYMENT_TARGET="12.0"
 
 # Dependencies paths
 LIBEV_PATH="$SOURCE_DIR/libev"
-LIBMAXMINDDB_PATH="$SOURCE_DIR/libmaxminddb"
+LIBMAXMINDDB_PATH="$SOURCE_DIR/libmaxminddb/install"
 LIBSODIUM_PATH="$SOURCE_DIR/libsodium"
 MBEDTLS_PATH="$SOURCE_DIR/mbedtls"
-OPENSSL_PATH="$SOURCE_DIR/openssl"
+OPENSSL_PATH="$SOURCE_DIR/openssl/install"
 PCRE_PATH="$SOURCE_DIR/pcre"
 CARES_PATH="$SOURCE_DIR/c-ares"
 
@@ -58,31 +58,56 @@ warning() {
 
 # Function to verify dependencies
 verify_dependencies() {
-    local deps=(
-        "$LIBEV_PATH"
-        "$LIBMAXMINDDB_PATH"
-        "$LIBSODIUM_PATH"
-        "$MBEDTLS_PATH"
-        "$OPENSSL_PATH"
-        "$PCRE_PATH"
-        "$CARES_PATH"
+    # 检查依赖库文件
+    if [ ! -f "$LIBEV_PATH/lib/libev_ios.a" ] || [ ! -f "$LIBEV_PATH/lib/libev_macos.a" ]; then
+        error "libev 库文件不存在"
+        return 1
+    fi
+    
+    if [ ! -f "$LIBMAXMINDDB_PATH/lib/libmaxminddb_ios.a" ] || [ ! -f "$LIBMAXMINDDB_PATH/lib/libmaxminddb_macos.a" ]; then
+        error "libmaxminddb 库文件不存在"
+        return 1
+    fi
+    
+    if [ ! -f "$LIBSODIUM_PATH/lib/libsodium_ios.a" ] || [ ! -f "$LIBSODIUM_PATH/lib/libsodium_macos.a" ]; then
+        error "libsodium 库文件不存在"
+        return 1
+    fi
+    
+    if [ ! -f "$MBEDTLS_PATH/lib/libmbedcrypto_ios.a" ] || [ ! -f "$MBEDTLS_PATH/lib/libmbedcrypto_macos.a" ]; then
+        error "mbedtls 库文件不存在"
+        return 1
+    fi
+    
+    if [ ! -f "$OPENSSL_PATH/lib/libssl_ios.a" ] || [ ! -f "$OPENSSL_PATH/lib/libssl_macos.a" ]; then
+        error "openssl 库文件不存在"
+        return 1
+    fi
+    
+    if [ ! -f "$PCRE_PATH/lib/libpcre_ios.a" ] || [ ! -f "$PCRE_PATH/lib/libpcre_macos.a" ]; then
+        error "pcre 库文件不存在"
+        return 1
+    fi
+    
+    if [ ! -f "$CARES_PATH/lib/libcares_ios.a" ] || [ ! -f "$CARES_PATH/lib/libcares_macos.a" ]; then
+        error "c-ares 库文件不存在"
+        return 1
+    fi
+    
+    # 检查头文件
+    local header_dirs=(
+        "$LIBEV_PATH/include"
+        "$LIBMAXMINDDB_PATH/include"
+        "$LIBSODIUM_PATH/include"
+        "$MBEDTLS_PATH/include"
+        "$OPENSSL_PATH/include"
+        "$PCRE_PATH/include"
+        "$CARES_PATH/include"
     )
     
-    for dep in "${deps[@]}"; do
-        if [ ! -d "$dep" ]; then
-            error "依赖库目录不存在: $dep"
-            return 1
-        fi
-        
-        # 检查lib目录
-        if [ ! -d "$dep/lib" ]; then
-            error "依赖库文件目录不存在: $dep/lib"
-            return 1
-        fi
-        
-        # 检查include目录
-        if [ ! -d "$dep/include" ]; then
-            error "依赖库头文件目录不存在: $dep/include"
+    for dir in "${header_dirs[@]}"; do
+        if [ ! -d "$dir" ]; then
+            error "头文件目录不存在: $dir"
             return 1
         fi
     done
@@ -150,44 +175,46 @@ build_shadowsocks() {
         CFLAGS="$CFLAGS -mios-version-min=$DEPLOYMENT_TARGET -fembed-bitcode"
         CXXFLAGS="$CXXFLAGS -mios-version-min=$DEPLOYMENT_TARGET -fembed-bitcode"
         LDFLAGS="$LDFLAGS -mios-version-min=$DEPLOYMENT_TARGET"
+        host="arm-apple-darwin"
     else
         CFLAGS="$CFLAGS -mmacosx-version-min=$DEPLOYMENT_TARGET"
         CXXFLAGS="$CXXFLAGS -mmacosx-version-min=$DEPLOYMENT_TARGET"
         LDFLAGS="$LDFLAGS -mmacosx-version-min=$DEPLOYMENT_TARGET"
+        host="aarch64-apple-darwin"
     fi
     
     # Add dependencies to flags
     CFLAGS="$CFLAGS -I$LIBEV_PATH/include -I$LIBMAXMINDDB_PATH/include -I$LIBSODIUM_PATH/include -I$MBEDTLS_PATH/include -I$OPENSSL_PATH/include -I$PCRE_PATH/include -I$CARES_PATH/include"
     LDFLAGS="$LDFLAGS -L$LIBEV_PATH/lib -L$LIBMAXMINDDB_PATH/lib -L$LIBSODIUM_PATH/lib -L$MBEDTLS_PATH/lib -L$OPENSSL_PATH/lib -L$PCRE_PATH/lib -L$CARES_PATH/lib"
     
-    # Configure and build
-    cmake -S "$SOURCE_DIR/$LIB_NAME/${LIB_NAME}-${VERSION}" -B . \
-          -DCMAKE_INSTALL_PREFIX="$install_dir" \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_SYSTEM_NAME=$platform \
-          -DCMAKE_OSX_SYSROOT="$SDKROOT" \
-          -DCMAKE_OSX_ARCHITECTURES="$arch" \
-          -DCMAKE_C_FLAGS="$CFLAGS" \
-          -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
-          -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
-          -DWITH_STATIC=ON \
-          -DWITH_EMBEDDED_SRC=ON \
-          -DUSE_SYSTEM_SHARED_LIB=OFF \
-          -DWITH_STATIC_LINK=ON \
-          -DWITH_MBEDTLS=ON \
-          -DWITH_OPENSSL=ON \
-          -DWITH_SODIUM=ON \
-          -DWITH_CARES=ON \
-          -DWITH_PCRE=ON \
-          -DWITH_MAXMINDDB=ON \
-          -DWITH_LIBEV=ON \
-          -DWITH_DOC=OFF \
-          -DWITH_DOCUMENTATION=OFF \
-          -DWITH_CONNTRACK=OFF \
-          -DWITH_COVERAGE=OFF \
-          -DWITH_PROFILE=OFF \
-          -DWITH_DEBUGGING=OFF
+    # Copy source to build directory
+    cp -R "$SOURCE_DIR/$LIB_NAME/${LIB_NAME}-${VERSION}/"* .
     
+    # Run autoreconf
+    autoreconf -if
+    
+    # Configure and build
+    ./configure \
+        --prefix="$install_dir" \
+        --host="$host" \
+        --enable-static \
+        --disable-shared \
+        --disable-documentation \
+        --disable-dependency-tracking \
+        --with-mbedtls="$MBEDTLS_PATH" \
+        --with-openssl="$OPENSSL_PATH" \
+        --with-sodium="$LIBSODIUM_PATH" \
+        --with-cares="$CARES_PATH" \
+        --with-pcre="$PCRE_PATH" \
+        --with-ev="$LIBEV_PATH" \
+        --with-maxminddb="$LIBMAXMINDDB_PATH" \
+        CC="$CC" \
+        CXX="$CXX" \
+        CFLAGS="$CFLAGS" \
+        CXXFLAGS="$CXXFLAGS" \
+        LDFLAGS="$LDFLAGS"
+    
+    make clean
     make -j$(sysctl -n hw.ncpu)
     make install
     
