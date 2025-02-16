@@ -1,0 +1,7 @@
+[[package]]
+name = "shadowsocks-rust"
+version = "1.22.0"
+source = "registry+https://mirrors.ustc.edu.cn/crates.io-index/"
+dependencies = [
+ "libc 0.2.155",
+] 

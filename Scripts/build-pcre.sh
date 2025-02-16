@@ -16,7 +16,7 @@ export MACOS_DEPLOYMENT_TARGET="12.0"
 
 # 架构
 IOS_ARCHS="arm64"
-MACOS_ARCHS="x86_64 arm64"
+MACOS_ARCHS="arm64"
 
 # 设置SDK路径
 export DEVELOPER_DIR="$(xcode-select -p)"

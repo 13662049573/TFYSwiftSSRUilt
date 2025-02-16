@@ -16,7 +16,7 @@ export MACOS_DEPLOYMENT_TARGET="12.0"
 
 # 架构
 IOS_ARCHS="arm64"
-MACOS_ARCHS="x86_64 arm64"
+MACOS_ARCHS="arm64"
 
 # 日志函数
 log_info() {
@@ -153,8 +153,6 @@ build_libsodium() {
         local HOST_ARCH
         if [ "$ARCH" = "arm64" ]; then
             HOST_ARCH="aarch64-apple-darwin"
-        else
-            HOST_ARCH="x86_64-apple-darwin"
         fi
         
         if ! ./configure --prefix="$INSTALL_DIR/macos/$ARCH" \
@@ -182,31 +180,29 @@ build_libsodium() {
 
 # 创建通用库
 create_universal_library() {
-    local INSTALL_DIR="$DEPS_ROOT/install"
+    local INSTALL_DIR="$DEPS_ROOT"
     mkdir -p "$INSTALL_DIR/lib"
+    mkdir -p "$INSTALL_DIR/include"
     
-    log_info "Creating universal libraries..."
+    log_info "Creating libraries..."
     
-    # iOS 通用库
-    log_info "Creating iOS universal library..."
-    if ! cp "$INSTALL_DIR/ios/lib/libsodium.a" "$INSTALL_DIR/lib/libsodium_ios.a"; then
-        log_error "Failed to create iOS universal library"
+    # iOS 库
+    log_info "Creating iOS library..."
+    if ! cp "$INSTALL_DIR/install/ios/lib/libsodium.a" "$INSTALL_DIR/lib/libsodium_ios.a"; then
+        log_error "Failed to create iOS library"
         return 1
     fi
     
-    # macOS 通用库
-    log_info "Creating macOS universal library..."
-    if ! xcrun lipo -create \
-        "$INSTALL_DIR/macos/arm64/lib/libsodium.a" \
-        "$INSTALL_DIR/macos/x86_64/lib/libsodium.a" \
-        -output "$INSTALL_DIR/lib/libsodium_macos.a"; then
-        log_error "Failed to create macOS universal library"
+    # macOS 库
+    log_info "Creating macOS library..."
+    if ! cp "$INSTALL_DIR/install/macos/arm64/lib/libsodium.a" "$INSTALL_DIR/lib/libsodium_macos.a"; then
+        log_error "Failed to create macOS library"
         return 1
     fi
     
     # 复制头文件
     log_info "Copying headers..."
-    if ! cp -R "$INSTALL_DIR/ios/include" "$INSTALL_DIR/"; then
+    if ! cp -R "$INSTALL_DIR/install/ios/include/." "$INSTALL_DIR/include/"; then
         log_error "Failed to copy headers"
         return 1
     fi

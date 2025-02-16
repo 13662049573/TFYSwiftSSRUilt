@@ -16,7 +16,7 @@ export MACOS_DEPLOYMENT_TARGET="12.0"
 
 # 架构
 IOS_ARCHS="arm64"
-MACOS_ARCHS="x86_64 arm64"
+MACOS_ARCHS="arm64"
 
 # 设置SDK路径
 export DEVELOPER_DIR="$(xcode-select -p)"
@@ -56,6 +56,10 @@ check_xcode_env() {
     fi
     if [ ! -d "${IOS_SDK}" ]; then
         log_error "iOS SDK not found at: ${IOS_SDK}"
+        return 1
+    fi
+    if [ ! -d "${MACOS_SDK}" ]; then
+        log_error "macOS SDK not found at: ${MACOS_SDK}"
         return 1
     fi
     log_info "Xcode environment check passed"
@@ -101,22 +105,24 @@ build_libev() {
     local arch=$1
     local sdk=$2
     local min_version=$3
-    local platform_suffix=$4
+    local platform=$4
     
-    log_info "Building libev for ${arch} on ${sdk}..."
+    log_info "Building libev for ${platform} (${arch})..."
     
     # 设置构建目录
     local source_dir="${DEPS_ROOT}/libev/libev-${VERSION}"
-    local build_dir="${DEPS_ROOT}/libev/build_${arch}"
-    local install_dir="${DEPS_ROOT}/libev/install"
+    local build_dir="${DEPS_ROOT}/libev/build_${platform}_${arch}"
+    local install_dir="${DEPS_ROOT}/libev/install_${platform}_${arch}"
     
     mkdir -p "${build_dir}"
     mkdir -p "${install_dir}"
     
-    cd "${source_dir}"
+    # 复制源码到构建目录
+    cp -R "${source_dir}"/* "${build_dir}/"
+    cd "${build_dir}"
     
     # 设置编译器和工具链
-    if [[ "${sdk}" == *"iPhoneOS"* ]]; then
+    if [ "${platform}" = "ios" ]; then
         export CC="$(xcrun -sdk iphoneos -find clang)"
         export CXX="$(xcrun -sdk iphoneos -find clang++)"
         export AR="$(xcrun -sdk iphoneos -find ar)"
@@ -124,15 +130,8 @@ build_libev() {
         export STRIP="$(xcrun -sdk iphoneos -find strip)"
         export LIBTOOL="$(xcrun -sdk iphoneos -find libtool)"
         export NM="$(xcrun -sdk iphoneos -find nm)"
-        host_alias="aarch64-apple-darwin"
+        host="arm-apple-darwin"
         platform_flags="-miphoneos-version-min=${min_version}"
-        
-        # iOS 特定的交叉编译配置
-        export ac_cv_func_malloc_0_nonnull=yes
-        export ac_cv_func_realloc_0_nonnull=yes
-        export ac_cv_func_setrlimit=no
-        export ac_cv_func_clock_gettime=no
-        export ac_cv_func_mmap=no
     else
         export CC="$(xcrun -sdk macosx -find clang)"
         export CXX="$(xcrun -sdk macosx -find clang++)"
@@ -141,66 +140,100 @@ build_libev() {
         export STRIP="$(xcrun -sdk macosx -find strip)"
         export LIBTOOL="$(xcrun -sdk macosx -find libtool)"
         export NM="$(xcrun -sdk macosx -find nm)"
-        if [[ "${arch}" == "arm64" ]]; then
-            host_alias="aarch64-apple-darwin"
-        else
-            host_alias="x86_64-apple-darwin"
-        fi
+        host="arm-apple-darwin"
         platform_flags="-mmacosx-version-min=${min_version}"
     fi
     
-    # 基本编译标志
-    local base_cflags="-arch ${arch} -isysroot ${sdk} -O2 -fPIC ${platform_flags}"
-    local base_ldflags="-arch ${arch} -isysroot ${sdk} ${platform_flags}"
-    
-    # 设置最终的编译标志
-    export CFLAGS="${base_cflags}"
+    # 设置编译标志
+    export CFLAGS="-arch ${arch} -isysroot ${sdk} ${platform_flags} -O3 -fPIC"
     export CXXFLAGS="${CFLAGS}"
-    export LDFLAGS="${base_ldflags}"
+    export LDFLAGS="${CFLAGS}"
+    
+    # 预设所有可能的配置值
+    export ac_cv_func_malloc_0_nonnull=yes
+    export ac_cv_func_realloc_0_nonnull=yes
+    export ac_cv_func_mmap=yes
+    export ac_cv_func_munmap=yes
+    export ac_cv_func_clock_gettime=no
+    export ac_cv_func_epoll_ctl=no
+    export ac_cv_func_inotify_init=no
+    export ac_cv_func_kqueue=yes
+    export ac_cv_func_poll=yes
+    export ac_cv_func_select=yes
+    export ac_cv_func_timerfd_create=no
+    export ac_cv_func_eventfd=no
+    export ac_cv_func_port_create=no
+    export ac_cv_header_sys_epoll_h=no
+    export ac_cv_header_sys_inotify_h=no
+    export ac_cv_header_sys_timerfd_h=no
+    export ac_cv_header_sys_eventfd_h=no
+    export ac_cv_header_port_h=no
+    export ac_cv_header_sys_event_h=yes
+    export ac_cv_header_sys_queue_h=yes
+    export ac_cv_type_long_long=yes
+    export ac_cv_type_unsigned_long_long=yes
+    export ac_cv_sizeof_long=8
+    export ac_cv_sizeof_size_t=8
+    export ac_cv_sizeof_void_p=8
+    export ac_cv_alignof_void_p=8
+    export ac_cv_c_bigendian=no
+    export ac_cv_prog_cc_g=no
+    export ac_cv_prog_cc_c99=yes
+    export ac_cv_prog_cc_c11=yes
+    export ac_cv_prog_cc_static_works=yes
+    export ac_cv_prog_cc_pic_works=yes
+    
+    log_info "Configuring build..."
     
     # 运行配置脚本
-    cd "${build_dir}"
-    
-    # 更新 config.guess 和 config.sub
-    cp "/opt/homebrew/share/libtool/build-aux/config.guess" "${source_dir}/config.guess"
-    cp "/opt/homebrew/share/libtool/build-aux/config.sub" "${source_dir}/config.sub"
-    
-    "${source_dir}/configure" \
-        CC="${CC}" \
-        CFLAGS="${CFLAGS}" \
-        LDFLAGS="${LDFLAGS}" \
+    ./configure \
         --prefix="${install_dir}" \
-        --disable-shared \
+        --host="${host}" \
+        --build="$(./config.guess)" \
         --enable-static \
-        --host="${host_alias}" \
-        --build="$(${source_dir}/config.guess)"
+        --disable-shared \
+        --disable-dependency-tracking \
+        --disable-doc \
+        --disable-maintainer-mode \
+        CC="${CC}" \
+        CXX="${CXX}" \
+        CFLAGS="${CFLAGS}" \
+        CXXFLAGS="${CXXFLAGS}" \
+        LDFLAGS="${LDFLAGS}" || {
+            log_error "Configure failed for ${platform} (${arch})"
+            cat config.log
+            return 1
+        }
     
-    if [ $? -ne 0 ]; then
-        log_error "Configure failed for libev"
-        return 1
-    fi
+    log_info "Building..."
     
     make clean
-    make -j$(sysctl -n hw.ncpu)
+    make -j$(sysctl -n hw.ncpu) || {
+        log_error "Make failed for ${platform} (${arch})"
+        return 1
+    }
     
-    if [ $? -ne 0 ]; then
-        log_error "Build failed for libev"
+    log_info "Installing..."
+    
+    make install || {
+        log_error "Make install failed for ${platform} (${arch})"
+        return 1
+    }
+    
+    # 验证编译结果
+    if [ ! -f "${install_dir}/lib/libev.a" ]; then
+        log_error "Failed to build libev static library for ${platform} (${arch})"
         return 1
     fi
     
-    make install
-    
-    if [ $? -ne 0 ]; then
-        log_error "Install failed for libev"
-        return 1
-    fi
-    
-    log_info "Successfully built libev for ${arch}"
+    log_info "Successfully built libev for ${platform} (${arch})"
     return 0
 }
 
 # 主函数
 main() {
+    log_info "Starting libev build process..."
+    
     check_xcode_env
     check_dependencies
     download_source
@@ -208,8 +241,12 @@ main() {
     # 构建 iOS 版本
     build_libev "arm64" "${IOS_SDK}" "${IPHONEOS_DEPLOYMENT_TARGET}" "ios"
     
+    # 构建 macOS 版本
+    build_libev "arm64" "${MACOS_SDK}" "${MACOS_DEPLOYMENT_TARGET}" "macos"
+    
     log_info "All builds completed successfully"
     return 0
 }
 
+# 执行主函数
 main 
