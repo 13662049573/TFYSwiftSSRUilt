@@ -255,8 +255,8 @@ main() {
     if build_openssl && create_universal_library; then
         cleanup
         log_info "Build completed successfully!"
-        log_info "Libraries available at: $DEPS_ROOT/install/lib"
-        log_info "Headers available at: $DEPS_ROOT/install/include"
+        log_info "Libraries available at: $DEPS_ROOT/lib"
+        log_info "Headers available at: $DEPS_ROOT/include"
         return 0
     else
         log_error "Build failed"

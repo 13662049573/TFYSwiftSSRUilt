@@ -5,8 +5,8 @@ set -e
 
 # 基础配置
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$SCRIPT_DIR/.."
-DEPS_ROOT="$PROJECT_ROOT/TFYSwiftSSRKit/libmaxminddb"
+PROJECT_ROOT="$( cd "${SCRIPT_DIR}/.." && pwd )"
+DEPS_ROOT="${PROJECT_ROOT}/TFYSwiftSSRKit/libmaxminddb"
 VERSION="1.7.1"
 LIB_NAME="libmaxminddb"
 
@@ -118,6 +118,8 @@ build_libmaxminddb() {
     export ac_cv_func_munmap=yes
     export ac_cv_type_ssize_t=yes
     export ac_cv_type_size_t=yes
+    export ac_cv_func_memset=yes
+    export ac_cv_func_strdup=yes
     
     if ! ./configure --prefix="$INSTALL_DIR/ios" \
                     --host="arm-apple-darwin" \
@@ -140,73 +142,61 @@ build_libmaxminddb() {
     
     # macOS 构建
     log_info "Building for macOS..."
-    for ARCH in $MACOS_ARCHS; do
-        log_info "Building for macOS architecture: $ARCH"
-        
-        # 设置 macOS 编译环境
-        export CC="$(xcrun -find -sdk macosx clang)"
-        export CXX="$(xcrun -find -sdk macosx clang++)"
-        export CFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path) -mmacosx-version-min=$MACOS_DEPLOYMENT_TARGET"
-        export CXXFLAGS="$CFLAGS"
-        export LDFLAGS="-arch $ARCH -isysroot $(xcrun -sdk macosx --show-sdk-path)"
-        
-        local HOST_ARCH
-        if [ "$ARCH" = "arm64" ]; then
-            HOST_ARCH="aarch64-apple-darwin"
-        else
-            HOST_ARCH="x86_64-apple-darwin"
-        fi
-        
-        if ! ./configure --prefix="$INSTALL_DIR/macos/$ARCH" \
-                        --host="$HOST_ARCH" \
-                        --build="$(./config.guess)" \
-                        $COMMON_CONFIG_OPTS; then
-            log_error "macOS $ARCH configure failed"
-            return 1
-        fi
-        
-        make clean
-        if ! make -j$(sysctl -n hw.ncpu); then
-            log_error "macOS $ARCH make failed"
-            return 1
-        fi
-        
-        if ! make install; then
-            log_error "macOS $ARCH make install failed"
-            return 1
-        fi
-    done
+    
+    # 设置 macOS 编译环境
+    export CC="$(xcrun -find -sdk macosx clang)"
+    export CXX="$(xcrun -find -sdk macosx clang++)"
+    export CFLAGS="-arch arm64 -isysroot $(xcrun -sdk macosx --show-sdk-path) -mmacosx-version-min=$MACOS_DEPLOYMENT_TARGET"
+    export CXXFLAGS="$CFLAGS"
+    export LDFLAGS="-arch arm64 -isysroot $(xcrun -sdk macosx --show-sdk-path)"
+    
+    if ! ./configure --prefix="$INSTALL_DIR/macos" \
+                    --host="aarch64-apple-darwin" \
+                    --build="$(./config.guess)" \
+                    $COMMON_CONFIG_OPTS; then
+        log_error "macOS configure failed"
+        return 1
+    fi
+    
+    make clean
+    if ! make -j$(sysctl -n hw.ncpu); then
+        log_error "macOS make failed"
+        return 1
+    fi
+    
+    if ! make install; then
+        log_error "macOS make install failed"
+        return 1
+    fi
     
     return 0
 }
 
-# 创建通用库
-create_universal_library() {
-    local INSTALL_DIR="$DEPS_ROOT/install"
+# 创建最终库文件
+create_final_libraries() {
+    local INSTALL_DIR="$DEPS_ROOT"
     mkdir -p "$INSTALL_DIR/lib"
+    mkdir -p "$INSTALL_DIR/include"
     
-    log_info "Creating universal libraries..."
+    log_info "Creating final libraries..."
     
-    # iOS 通用库
-    log_info "Creating iOS universal library..."
-    if ! cp "$INSTALL_DIR/ios/lib/libmaxminddb.a" "$INSTALL_DIR/lib/libmaxminddb_ios.a"; then
-        log_error "Failed to create iOS universal library"
+    # iOS 库
+    log_info "Creating iOS library..."
+    if ! cp "$INSTALL_DIR/install/ios/lib/libmaxminddb.a" "$INSTALL_DIR/lib/libmaxminddb_ios.a"; then
+        log_error "Failed to create iOS library"
         return 1
     fi
     
-    # macOS 通用库
-    log_info "Creating macOS universal library..."
-    if ! xcrun lipo -create \
-        "$INSTALL_DIR/macos/arm64/lib/libmaxminddb.a" \
-        "$INSTALL_DIR/macos/x86_64/lib/libmaxminddb.a" \
-        -output "$INSTALL_DIR/lib/libmaxminddb_macos.a"; then
-        log_error "Failed to create macOS universal library"
+    # macOS 库
+    log_info "Creating macOS library..."
+    if ! cp "$INSTALL_DIR/install/macos/lib/libmaxminddb.a" "$INSTALL_DIR/lib/libmaxminddb_macos.a"; then
+        log_error "Failed to create macOS library"
         return 1
     fi
     
     # 复制头文件
     log_info "Copying headers..."
-    if ! cp -R "$INSTALL_DIR/ios/include" "$INSTALL_DIR/"; then
+    if ! cp -R "$INSTALL_DIR/install/ios/include/." "$INSTALL_DIR/include/"; then
         log_error "Failed to copy headers"
         return 1
     fi
@@ -246,15 +236,12 @@ main() {
         exit 1
     fi
     
-    # 清理旧的构建文件
-    cleanup
-    
     # 构建流程
-    if build_libmaxminddb && create_universal_library; then
-        cleanup
+    if build_libmaxminddb && create_final_libraries; then
+        cleanup "success"
         log_info "Build completed successfully!"
-        log_info "Libraries available at: $DEPS_ROOT/install/lib"
-        log_info "Headers available at: $DEPS_ROOT/install/include"
+        log_info "Libraries available at: $DEPS_ROOT/lib"
+        log_info "Headers available at: $DEPS_ROOT/include"
         return 0
     else
         log_error "Build failed"
