@@ -1,0 +1,12 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: shadowsocks-libev
+Description: lightweight secured socks5 proxy
+Version: 3.3.5
+Requires:
+Cflags: -I${includedir}
+Libs: -L${libdir} -lshadowsocks-libev
+Libs.private: -lev -lsodium -lmbedtls -lmbedcrypto -lpcre

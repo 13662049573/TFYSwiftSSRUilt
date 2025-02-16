@@ -218,12 +218,13 @@ ss_local-local.o: local.c ../config.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/_time.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/syslog.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/syslog.h \
-  socks5.h acl.h plugin.h local.h ../libcork/include/libcork/ds.h \
-  ../libcork/include/libcork/ds/array.h \
+  socks5.h acl.h ../libipset/include/ipset/ipset.h \
+  ../libcork/include/libcork/ds.h ../libcork/include/libcork/ds/array.h \
   ../libcork/include/libcork/ds/bitset.h \
   ../libcork/include/libcork/ds/dllist.h \
   ../libcork/include/libcork/ds/hash-table.h \
   ../libcork/include/libcork/ds/ring-buffer.h \
+  ../libipset/include/ipset/bdd/nodes.h plugin.h local.h \
   /Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/include/ev.h \
   crypto.h \
   /Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/include/sodium.h \
@@ -537,14 +538,16 @@ utils.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/syslog.h:
 socks5.h:
 acl.h:
-plugin.h:
-local.h:
+../libipset/include/ipset/ipset.h:
 ../libcork/include/libcork/ds.h:
 ../libcork/include/libcork/ds/array.h:
 ../libcork/include/libcork/ds/bitset.h:
 ../libcork/include/libcork/ds/dllist.h:
 ../libcork/include/libcork/ds/hash-table.h:
 ../libcork/include/libcork/ds/ring-buffer.h:
+../libipset/include/ipset/bdd/nodes.h:
+plugin.h:
+local.h:
 /Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/include/ev.h:
 crypto.h:
 /Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/include/sodium.h:

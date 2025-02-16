@@ -105,7 +105,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = shadowsocks-libev.pc
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
@@ -188,14 +188,15 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-DIST_SUBDIRS = libcork libipset libbloom src doc
+DIST_SUBDIRS = libbloom libcork libipset src doc
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/auto/ar-lib $(top_srcdir)/auto/compile \
-	$(top_srcdir)/auto/config.guess $(top_srcdir)/auto/config.sub \
-	$(top_srcdir)/auto/install-sh $(top_srcdir)/auto/ltmain.sh \
-	$(top_srcdir)/auto/missing AUTHORS COPYING INSTALL README.md \
-	auto/ar-lib auto/compile auto/config.guess auto/config.sub \
-	auto/install-sh auto/ltmain.sh auto/missing
+	$(srcdir)/shadowsocks-libev.pc.in $(top_srcdir)/auto/ar-lib \
+	$(top_srcdir)/auto/compile $(top_srcdir)/auto/config.guess \
+	$(top_srcdir)/auto/config.sub $(top_srcdir)/auto/install-sh \
+	$(top_srcdir)/auto/ltmain.sh $(top_srcdir)/auto/missing \
+	AUTHORS COPYING INSTALL README.md auto/ar-lib auto/compile \
+	auto/config.guess auto/config.sub auto/install-sh \
+	auto/ltmain.sh auto/missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -252,7 +253,7 @@ AUTOMAKE = ${SHELL} '/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwi
 AWK = awk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -mios-version-min=15.0
+CFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -mios-version-min=15.0 -fembed-bitcode
 CPPFLAGS = -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/include
 CSCOPE = cscope
 CTAGS = ctags
@@ -279,7 +280,7 @@ INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
 LDFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -mios-version-min=15.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
 LIBOBJS = 
-LIBS =  -lev_${platform_suffix} -lmaxminddb_${platform_suffix} -lsodium_${platform_suffix} -lmbedcrypto_${platform_suffix} -lmbedtls_${platform_suffix} -lmbedx509_${platform_suffix} -lssl_${platform_suffix} -lcrypto_${platform_suffix} -lpcre_${platform_suffix} -lcares_${platform_suffix}
+LIBS =  -lev_ios -lmaxminddb_ios -lsodium_ios -lmbedcrypto_ios -lmbedtls_ios -lmbedx509_ios -lssl_ios -lcrypto_ios -lpcre_ios -lcares_ios
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s
@@ -303,6 +304,11 @@ PACKAGE_TARNAME = shadowsocks-libev
 PACKAGE_URL = 
 PACKAGE_VERSION = 3.3.5
 PATH_SEPARATOR = :
+PCRE_CFLAGS = -I/opt/homebrew/Cellar/pcre/8.45/include
+PCRE_LIBS = -L/opt/homebrew/Cellar/pcre/8.45/lib -lpcre
+PKG_CONFIG = /opt/homebrew/bin/pkg-config
+PKG_CONFIG_LIBDIR = 
+PKG_CONFIG_PATH = 
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
@@ -364,16 +370,21 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-SUBDIRS = libcork libipset libbloom src \
+SUBDIRS = libbloom libcork libipset src \
 	$(am__append_1)
 #SUBDIRS = src $(am__append_1)
 ACLOCAL_AMFLAGS = -I m4
 pkgconfiglibdir = $(libdir)/pkgconfig
 pkgconfiglib_DATA = shadowsocks-libev.pc
-EXTRA_DIST = acl Changes completions debian docker rpm scripts \
-	README.md libbloom libcork/include libipset/include \
-	libipset/src/libipset/map/inspection-template.c.in \
-	libipset/src/libipset/set/inspection-template.c.in
+EXTRA_DIST = acl.h \
+             crypto.h \
+             include.am \
+             README.md \
+             Changes \
+             LICENSE \
+             COPYING \
+             shadowsocks-libev.pc.in
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -426,6 +437,8 @@ $(srcdir)/config.h.in: # $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+shadowsocks-libev.pc: $(top_builddir)/config.status $(srcdir)/shadowsocks-libev.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:
 	-rm -f *.lo

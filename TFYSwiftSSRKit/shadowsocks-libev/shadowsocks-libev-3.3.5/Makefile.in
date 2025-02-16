@@ -105,7 +105,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = shadowsocks-libev.pc
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -188,14 +188,15 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-DIST_SUBDIRS = libcork libipset libbloom src doc
+DIST_SUBDIRS = libbloom libcork libipset src doc
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/auto/ar-lib $(top_srcdir)/auto/compile \
-	$(top_srcdir)/auto/config.guess $(top_srcdir)/auto/config.sub \
-	$(top_srcdir)/auto/install-sh $(top_srcdir)/auto/ltmain.sh \
-	$(top_srcdir)/auto/missing AUTHORS COPYING INSTALL README.md \
-	auto/ar-lib auto/compile auto/config.guess auto/config.sub \
-	auto/install-sh auto/ltmain.sh auto/missing
+	$(srcdir)/shadowsocks-libev.pc.in $(top_srcdir)/auto/ar-lib \
+	$(top_srcdir)/auto/compile $(top_srcdir)/auto/config.guess \
+	$(top_srcdir)/auto/config.sub $(top_srcdir)/auto/install-sh \
+	$(top_srcdir)/auto/ltmain.sh $(top_srcdir)/auto/missing \
+	AUTHORS COPYING INSTALL README.md auto/ar-lib auto/compile \
+	auto/config.guess auto/config.sub auto/install-sh \
+	auto/ltmain.sh auto/missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -303,6 +304,11 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PCRE_CFLAGS = @PCRE_CFLAGS@
+PCRE_LIBS = @PCRE_LIBS@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -364,16 +370,21 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@USE_SYSTEM_SHARED_LIB_FALSE@SUBDIRS = libcork libipset libbloom src \
+@USE_SYSTEM_SHARED_LIB_FALSE@SUBDIRS = libbloom libcork libipset src \
 @USE_SYSTEM_SHARED_LIB_FALSE@	$(am__append_1)
 @USE_SYSTEM_SHARED_LIB_TRUE@SUBDIRS = src $(am__append_1)
 ACLOCAL_AMFLAGS = -I m4
 pkgconfiglibdir = $(libdir)/pkgconfig
 pkgconfiglib_DATA = shadowsocks-libev.pc
-EXTRA_DIST = acl Changes completions debian docker rpm scripts \
-	README.md libbloom libcork/include libipset/include \
-	libipset/src/libipset/map/inspection-template.c.in \
-	libipset/src/libipset/set/inspection-template.c.in
+EXTRA_DIST = acl.h \
+             crypto.h \
+             include.am \
+             README.md \
+             Changes \
+             LICENSE \
+             COPYING \
+             shadowsocks-libev.pc.in
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -426,6 +437,8 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+shadowsocks-libev.pc: $(top_builddir)/config.status $(srcdir)/shadowsocks-libev.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:
 	-rm -f *.lo

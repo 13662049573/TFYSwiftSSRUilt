@@ -1,27 +1,31 @@
-noinst_LTLIBRARIES = libipset.la
+VERSION_INFO = 1:0:0
 
-bdd_src = src/libipset/bdd/assignments.c \
-		  src/libipset/bdd/basics.c \
-		  src/libipset/bdd/bdd-iterator.c \
-		  src/libipset/bdd/expanded.c \
-		  src/libipset/bdd/reachable.c \
-		  src/libipset/bdd/read.c \
-		  src/libipset/bdd/write.c 
+AM_CFLAGS = -I$(top_srcdir)/libipset/include -I$(top_srcdir)/libcork/include
 
-map_src = src/libipset/map/allocation.c \
-		  src/libipset/map/inspection.c \
-		  src/libipset/map/ipv4_map.c \
-		  src/libipset/map/ipv6_map.c \
-		  src/libipset/map/storage.c
+lib_LTLIBRARIES = libipset.la
 
-set_src = src/libipset/set/allocation.c \
-		  src/libipset/set/inspection.c \
-		  src/libipset/set/ipv4_set.c \
-		  src/libipset/set/ipv6_set.c \
-		  src/libipset/set/iterator.c \
-		  src/libipset/set/storage.c
+libipset_la_SOURCES = \
+    src/libipset/general.c \
+    src/libipset/bdd/assignments.c \
+    src/libipset/bdd/basics.c \
+    src/libipset/bdd/bdd-iterator.c \
+    src/libipset/bdd/expanded.c \
+    src/libipset/bdd/reachable.c \
+    src/libipset/bdd/read.c \
+    src/libipset/bdd/write.c \
+    src/libipset/map/allocation.c \
+    src/libipset/map/inspection.c \
+    src/libipset/map/ipv4_map.c \
+    src/libipset/map/ipv6_map.c \
+    src/libipset/map/storage.c \
+    src/libipset/set/ipv4_set.c \
+    src/libipset/set/ipv6_set.c \
+    src/libipset/set/iterator.c
 
-libipset_la_SOURCES = src/libipset/general.c ${bdd_src} ${map_src} ${set_src}
-libipset_la_CFLAGS = -I$(top_srcdir)/libipset/include -I$(top_srcdir)/libcork/include
+libipset_la_LDFLAGS = -version-info $(VERSION_INFO)
 
-libipset_la_LDFLAGS = -static
+include_HEADERS = \
+    include/ipset/bdd/nodes.h \
+    include/ipset/bits.h \
+    include/ipset/errors.h \
+    include/ipset/ipset.h

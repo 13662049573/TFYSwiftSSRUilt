@@ -14903,9 +14903,10 @@ LDFLAGS="$LDFLAGS -L$PCRE_PATH/lib"
 LDFLAGS="$LDFLAGS -L$CARES_PATH/lib"
 
 # Add library dependencies with platform suffix
-LIBS="$LIBS -lev_\${platform_suffix} -lmaxminddb_\${platform_suffix} -lsodium_\${platform_suffix}"
-LIBS="$LIBS -lmbedcrypto_\${platform_suffix} -lmbedtls_\${platform_suffix} -lmbedx509_\${platform_suffix}"
-LIBS="$LIBS -lssl_\${platform_suffix} -lcrypto_\${platform_suffix} -lpcre_\${platform_suffix} -lcares_\${platform_suffix}"
+LIBS="$LIBS -lev_${platform_suffix} -lmaxminddb_${platform_suffix} -lsodium_${platform_suffix}"
+LIBS="$LIBS -lmbedcrypto_${platform_suffix} -lmbedtls_${platform_suffix} -lmbedx509_${platform_suffix}"
+LIBS="$LIBS -lssl_${platform_suffix} -lcrypto_${platform_suffix} -lpcre_${platform_suffix} -lcares_${platform_suffix}"
+LIBS="$LIBS -lresolv"
 
 # Export variables
 

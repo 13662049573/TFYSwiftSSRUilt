@@ -1,5 +1,6 @@
 AC_PREREQ([2.67])
 AC_INIT([shadowsocks-libev], [3.3.5], [max.c.lv@gmail.com])
+AC_CONFIG_SRCDIR([src/crypto.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([auto])
 AC_CONFIG_MACRO_DIR([m4])
@@ -16,7 +17,10 @@ AM_CONDITIONAL([USE_SYSTEM_SHARED_LIB], [test "x$enable_system_shared_lib" = "xy
 AM_CONDITIONAL([ENABLE_DOCUMENTATION], [test "x$enable_documentation" = "xyes"])
 AM_CONDITIONAL([BUILD_WINCOMPAT], [test "x$build_wincompat" = "xyes"])
 AM_CONDITIONAL([BUILD_REDIRECTOR], [test "x$build_redirector" = "xyes"])
-AM_CONDITIONAL([platform_suffix_ios], [test "x$platform_suffix" = "xios"])
+AM_CONDITIONAL(platform_suffix_ios, test "x$platform_suffix" = "xios")
+
+dnl Checks for platform
+AC_CANONICAL_HOST
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -26,20 +30,11 @@ LT_INIT([disable-shared])
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-# Add include paths for dependencies
-LIBEV_PATH="/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev"
-LIBMAXMINDDB_PATH="/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb"
-LIBSODIUM_PATH="/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium"
-MBEDTLS_PATH="/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls"
-OPENSSL_PATH="/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl"
-PCRE_PATH="/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre"
-CARES_PATH="/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares"
-
 # Set platform-specific flags and SDK paths
 if test "x$platform_suffix" = "xios"; then
     SDK_PATH=`xcrun --sdk iphoneos --show-sdk-path`
     CPPFLAGS="-I$SDK_PATH/usr/include"
-    CFLAGS="-arch arm64 -isysroot $SDK_PATH -mios-version-min=15.0"
+    CFLAGS="-arch arm64 -isysroot $SDK_PATH -mios-version-min=15.0 -fembed-bitcode"
     LDFLAGS="-arch arm64 -isysroot $SDK_PATH -mios-version-min=15.0"
 else
     SDK_PATH=`xcrun --sdk macosx --show-sdk-path`
@@ -49,27 +44,27 @@ else
 fi
 
 # Add dependency include paths
-CPPFLAGS="$CPPFLAGS -I$LIBEV_PATH/include"
-CPPFLAGS="$CPPFLAGS -I$LIBMAXMINDDB_PATH/include"
-CPPFLAGS="$CPPFLAGS -I$LIBSODIUM_PATH/include"
-CPPFLAGS="$CPPFLAGS -I$MBEDTLS_PATH/include"
-CPPFLAGS="$CPPFLAGS -I$OPENSSL_PATH/include"
-CPPFLAGS="$CPPFLAGS -I$PCRE_PATH/include"
-CPPFLAGS="$CPPFLAGS -I$CARES_PATH/include"
+CPPFLAGS="$CPPFLAGS -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/include"
+CPPFLAGS="$CPPFLAGS -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/include"
+CPPFLAGS="$CPPFLAGS -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/include"
+CPPFLAGS="$CPPFLAGS -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/include"
+CPPFLAGS="$CPPFLAGS -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/include"
+CPPFLAGS="$CPPFLAGS -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/include"
+CPPFLAGS="$CPPFLAGS -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/include"
 
-# Add library paths for dependencies
-LDFLAGS="$LDFLAGS -L$LIBEV_PATH/lib"
-LDFLAGS="$LDFLAGS -L$LIBMAXMINDDB_PATH/lib"
-LDFLAGS="$LDFLAGS -L$LIBSODIUM_PATH/lib"
-LDFLAGS="$LDFLAGS -L$MBEDTLS_PATH/lib"
-LDFLAGS="$LDFLAGS -L$OPENSSL_PATH/lib"
-LDFLAGS="$LDFLAGS -L$PCRE_PATH/lib"
-LDFLAGS="$LDFLAGS -L$CARES_PATH/lib"
+# Add library paths
+LDFLAGS="$LDFLAGS -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib"
+LDFLAGS="$LDFLAGS -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib"
+LDFLAGS="$LDFLAGS -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib"
+LDFLAGS="$LDFLAGS -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib"
+LDFLAGS="$LDFLAGS -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib"
+LDFLAGS="$LDFLAGS -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib"
+LDFLAGS="$LDFLAGS -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib"
 
-# Add library dependencies with platform suffix
-LIBS="$LIBS -lev_\${platform_suffix} -lmaxminddb_\${platform_suffix} -lsodium_\${platform_suffix}"
-LIBS="$LIBS -lmbedcrypto_\${platform_suffix} -lmbedtls_\${platform_suffix} -lmbedx509_\${platform_suffix}"
-LIBS="$LIBS -lssl_\${platform_suffix} -lcrypto_\${platform_suffix} -lpcre_\${platform_suffix} -lcares_\${platform_suffix}"
+# Add library dependencies
+LIBS="$LIBS -lev_${platform_suffix} -lmaxminddb_${platform_suffix} -lsodium_${platform_suffix}"
+LIBS="$LIBS -lmbedcrypto_${platform_suffix} -lmbedtls_${platform_suffix} -lmbedx509_${platform_suffix}"
+LIBS="$LIBS -lssl_${platform_suffix} -lcrypto_${platform_suffix} -lpcre_${platform_suffix} -lcares_${platform_suffix}"
 
 # Export variables
 AC_SUBST(CPPFLAGS)
@@ -99,17 +94,18 @@ ac_cv_type_uint8_t=yes
 ac_cv_type_pid_t=yes
 
 # Force all function checks to pass
-ac_cv_func_malloc=yes
-ac_cv_func_memset=yes
-ac_cv_func_socket=yes
+ac_cv_func_malloc_0_nonnull=yes
+ac_cv_func_realloc_0_nonnull=yes
+ac_cv_func_mmap=yes
+ac_cv_func_munmap=yes
 ac_cv_func_select=yes
-ac_cv_func_clock_gettime=yes
-ac_cv_func_gettimeofday=yes
-ac_cv_func_inet_ntoa=yes
-ac_cv_func_memmove=yes
-ac_cv_func_strchr=yes
-ac_cv_func_strrchr=yes
-ac_cv_func_strerror=yes
+ac_cv_func_socket=yes
+ac_cv_func_strndup=yes
+ac_cv_func_fork=no
+ac_cv_func_getpwnam=no
+ac_cv_func_getpwuid=no
+ac_cv_func_sigaction=yes
+ac_cv_func_syslog=no
 
 # Skip all header checks
 AC_CHECK_HEADERS([pcre.h], [], [], [])
@@ -127,9 +123,13 @@ AC_CHECK_TYPES([pid_t], [], [], [])
 # Skip all function checks
 AC_CHECK_FUNCS([malloc memset socket select clock_gettime gettimeofday inet_ntoa memmove strchr strrchr strerror], [], [], [])
 
+# Add library dependencies
+PKG_CHECK_MODULES([PCRE], [libpcre >= 8.20])
+
 AC_CONFIG_FILES([Makefile
                  libbloom/Makefile
                  libcork/Makefile
                  libipset/Makefile
-                 src/Makefile])
+                 src/Makefile
+                 shadowsocks-libev.pc])
 AC_OUTPUT

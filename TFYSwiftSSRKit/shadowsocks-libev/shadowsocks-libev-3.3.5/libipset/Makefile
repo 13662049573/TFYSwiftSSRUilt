@@ -15,6 +15,7 @@
 
 
 
+
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
     false; \
@@ -98,42 +99,59 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
+DIST_COMMON = $(srcdir)/Makefile.am $(include_HEADERS) \
+	$(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-LTLIBRARIES = $(noinst_LTLIBRARIES)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+  || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+       $(am__cd) "$$dir" && echo $$files | $(am__xargs_n) 40 $(am__rm_f); }; \
+  }
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
+LTLIBRARIES = $(lib_LTLIBRARIES)
 libipset_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = src/libipset/bdd/libipset_la-assignments.lo \
-	src/libipset/bdd/libipset_la-basics.lo \
-	src/libipset/bdd/libipset_la-bdd-iterator.lo \
-	src/libipset/bdd/libipset_la-expanded.lo \
-	src/libipset/bdd/libipset_la-reachable.lo \
-	src/libipset/bdd/libipset_la-read.lo \
-	src/libipset/bdd/libipset_la-write.lo
-am__objects_2 = src/libipset/map/libipset_la-allocation.lo \
-	src/libipset/map/libipset_la-inspection.lo \
-	src/libipset/map/libipset_la-ipv4_map.lo \
-	src/libipset/map/libipset_la-ipv6_map.lo \
-	src/libipset/map/libipset_la-storage.lo
-am__objects_3 = src/libipset/set/libipset_la-allocation.lo \
-	src/libipset/set/libipset_la-inspection.lo \
-	src/libipset/set/libipset_la-ipv4_set.lo \
-	src/libipset/set/libipset_la-ipv6_set.lo \
-	src/libipset/set/libipset_la-iterator.lo \
-	src/libipset/set/libipset_la-storage.lo
-am_libipset_la_OBJECTS = src/libipset/libipset_la-general.lo \
-	$(am__objects_1) $(am__objects_2) $(am__objects_3)
+am_libipset_la_OBJECTS = src/libipset/general.lo \
+	src/libipset/bdd/assignments.lo src/libipset/bdd/basics.lo \
+	src/libipset/bdd/bdd-iterator.lo src/libipset/bdd/expanded.lo \
+	src/libipset/bdd/reachable.lo src/libipset/bdd/read.lo \
+	src/libipset/bdd/write.lo src/libipset/map/allocation.lo \
+	src/libipset/map/inspection.lo src/libipset/map/ipv4_map.lo \
+	src/libipset/map/ipv6_map.lo src/libipset/map/storage.lo \
+	src/libipset/set/ipv4_set.lo src/libipset/set/ipv6_set.lo \
+	src/libipset/set/iterator.lo
 libipset_la_OBJECTS = $(am_libipset_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
 am__v_lt_1 = 
 libipset_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libipset_la_CFLAGS) \
-	$(CFLAGS) $(libipset_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(libipset_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -149,25 +167,22 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/auto/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = src/libipset/$(DEPDIR)/libipset_la-general.Plo \
-	src/libipset/bdd/$(DEPDIR)/libipset_la-assignments.Plo \
-	src/libipset/bdd/$(DEPDIR)/libipset_la-basics.Plo \
-	src/libipset/bdd/$(DEPDIR)/libipset_la-bdd-iterator.Plo \
-	src/libipset/bdd/$(DEPDIR)/libipset_la-expanded.Plo \
-	src/libipset/bdd/$(DEPDIR)/libipset_la-reachable.Plo \
-	src/libipset/bdd/$(DEPDIR)/libipset_la-read.Plo \
-	src/libipset/bdd/$(DEPDIR)/libipset_la-write.Plo \
-	src/libipset/map/$(DEPDIR)/libipset_la-allocation.Plo \
-	src/libipset/map/$(DEPDIR)/libipset_la-inspection.Plo \
-	src/libipset/map/$(DEPDIR)/libipset_la-ipv4_map.Plo \
-	src/libipset/map/$(DEPDIR)/libipset_la-ipv6_map.Plo \
-	src/libipset/map/$(DEPDIR)/libipset_la-storage.Plo \
-	src/libipset/set/$(DEPDIR)/libipset_la-allocation.Plo \
-	src/libipset/set/$(DEPDIR)/libipset_la-inspection.Plo \
-	src/libipset/set/$(DEPDIR)/libipset_la-ipv4_set.Plo \
-	src/libipset/set/$(DEPDIR)/libipset_la-ipv6_set.Plo \
-	src/libipset/set/$(DEPDIR)/libipset_la-iterator.Plo \
-	src/libipset/set/$(DEPDIR)/libipset_la-storage.Plo
+am__depfiles_remade = src/libipset/$(DEPDIR)/general.Plo \
+	src/libipset/bdd/$(DEPDIR)/assignments.Plo \
+	src/libipset/bdd/$(DEPDIR)/basics.Plo \
+	src/libipset/bdd/$(DEPDIR)/bdd-iterator.Plo \
+	src/libipset/bdd/$(DEPDIR)/expanded.Plo \
+	src/libipset/bdd/$(DEPDIR)/reachable.Plo \
+	src/libipset/bdd/$(DEPDIR)/read.Plo \
+	src/libipset/bdd/$(DEPDIR)/write.Plo \
+	src/libipset/map/$(DEPDIR)/allocation.Plo \
+	src/libipset/map/$(DEPDIR)/inspection.Plo \
+	src/libipset/map/$(DEPDIR)/ipv4_map.Plo \
+	src/libipset/map/$(DEPDIR)/ipv6_map.Plo \
+	src/libipset/map/$(DEPDIR)/storage.Plo \
+	src/libipset/set/$(DEPDIR)/ipv4_set.Plo \
+	src/libipset/set/$(DEPDIR)/ipv6_set.Plo \
+	src/libipset/set/$(DEPDIR)/iterator.Plo
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -194,6 +209,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+HEADERS = $(include_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -224,7 +240,7 @@ AUTOMAKE = ${SHELL} '/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwi
 AWK = awk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -mios-version-min=15.0
+CFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -mios-version-min=15.0 -fembed-bitcode
 CPPFLAGS = -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/include
 CSCOPE = cscope
 CTAGS = ctags
@@ -251,7 +267,7 @@ INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
 LDFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -mios-version-min=15.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
 LIBOBJS = 
-LIBS =  -lev_${platform_suffix} -lmaxminddb_${platform_suffix} -lsodium_${platform_suffix} -lmbedcrypto_${platform_suffix} -lmbedtls_${platform_suffix} -lmbedx509_${platform_suffix} -lssl_${platform_suffix} -lcrypto_${platform_suffix} -lpcre_${platform_suffix} -lcares_${platform_suffix}
+LIBS =  -lev_ios -lmaxminddb_ios -lsodium_ios -lmbedcrypto_ios -lmbedtls_ios -lmbedx509_ios -lssl_ios -lcrypto_ios -lpcre_ios -lcares_ios
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s
@@ -275,6 +291,11 @@ PACKAGE_TARNAME = shadowsocks-libev
 PACKAGE_URL = 
 PACKAGE_VERSION = 3.3.5
 PATH_SEPARATOR = :
+PCRE_CFLAGS = -I/opt/homebrew/Cellar/pcre/8.45/include
+PCRE_LIBS = -L/opt/homebrew/Cellar/pcre/8.45/lib -lpcre
+PKG_CONFIG = /opt/homebrew/bin/pkg-config
+PKG_CONFIG_LIBDIR = 
+PKG_CONFIG_PATH = 
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
@@ -336,31 +357,34 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-noinst_LTLIBRARIES = libipset.la
-bdd_src = src/libipset/bdd/assignments.c \
-		  src/libipset/bdd/basics.c \
-		  src/libipset/bdd/bdd-iterator.c \
-		  src/libipset/bdd/expanded.c \
-		  src/libipset/bdd/reachable.c \
-		  src/libipset/bdd/read.c \
-		  src/libipset/bdd/write.c 
+VERSION_INFO = 1:0:0
+AM_CFLAGS = -I$(top_srcdir)/libipset/include
+lib_LTLIBRARIES = libipset.la
+libipset_la_SOURCES = \
+    src/libipset/general.c \
+    src/libipset/bdd/assignments.c \
+    src/libipset/bdd/basics.c \
+    src/libipset/bdd/bdd-iterator.c \
+    src/libipset/bdd/expanded.c \
+    src/libipset/bdd/reachable.c \
+    src/libipset/bdd/read.c \
+    src/libipset/bdd/write.c \
+    src/libipset/map/allocation.c \
+    src/libipset/map/inspection.c \
+    src/libipset/map/ipv4_map.c \
+    src/libipset/map/ipv6_map.c \
+    src/libipset/map/storage.c \
+    src/libipset/set/ipv4_set.c \
+    src/libipset/set/ipv6_set.c \
+    src/libipset/set/iterator.c
 
-map_src = src/libipset/map/allocation.c \
-		  src/libipset/map/inspection.c \
-		  src/libipset/map/ipv4_map.c \
-		  src/libipset/map/ipv6_map.c \
-		  src/libipset/map/storage.c
+libipset_la_LDFLAGS = -version-info $(VERSION_INFO)
+include_HEADERS = \
+    include/ipset/bdd/nodes.h \
+    include/ipset/bits.h \
+    include/ipset/errors.h \
+    include/ipset/ipset.h
 
-set_src = src/libipset/set/allocation.c \
-		  src/libipset/set/inspection.c \
-		  src/libipset/set/ipv4_set.c \
-		  src/libipset/set/ipv6_set.c \
-		  src/libipset/set/iterator.c \
-		  src/libipset/set/storage.c
-
-libipset_la_SOURCES = src/libipset/general.c ${bdd_src} ${map_src} ${set_src}
-libipset_la_CFLAGS = -I$(top_srcdir)/libipset/include -I$(top_srcdir)/libcork/include
-libipset_la_LDFLAGS = -static
 all: all-am
 
 .SUFFIXES:
@@ -395,9 +419,33 @@ $(ACLOCAL_M4): # $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 
-clean-noinstLTLIBRARIES:
-	-$(am__rm_f) $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; \
+install-libLTLIBRARIES: $(lib_LTLIBRARIES)
+	@$(NORMAL_INSTALL)
+	@list='$(lib_LTLIBRARIES)'; test -n "$(libdir)" || list=; \
+	list2=; for p in $$list; do \
+	  if test -f $$p; then \
+	    list2="$$list2 $$p"; \
+	  else :; fi; \
+	done; \
+	test -z "$$list2" || { \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(libdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(libdir)" || exit 1; \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
+	}
+
+uninstall-libLTLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	@list='$(lib_LTLIBRARIES)'; test -n "$(libdir)" || list=; \
+	for p in $$list; do \
+	  $(am__strip_dir) \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(libdir)/$$f'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(libdir)/$$f"; \
+	done
+
+clean-libLTLIBRARIES:
+	-$(am__rm_f) $(lib_LTLIBRARIES)
+	@list='$(lib_LTLIBRARIES)'; \
 	locs=`for p in $$list; do echo $$p; done | \
 	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
 	      sort -u`; \
@@ -409,7 +457,7 @@ src/libipset/$(am__dirstamp):
 src/libipset/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/libipset/$(DEPDIR)
 	@: >>src/libipset/$(DEPDIR)/$(am__dirstamp)
-src/libipset/libipset_la-general.lo: src/libipset/$(am__dirstamp) \
+src/libipset/general.lo: src/libipset/$(am__dirstamp) \
 	src/libipset/$(DEPDIR)/$(am__dirstamp)
 src/libipset/bdd/$(am__dirstamp):
 	@$(MKDIR_P) src/libipset/bdd
@@ -417,26 +465,19 @@ src/libipset/bdd/$(am__dirstamp):
 src/libipset/bdd/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/libipset/bdd/$(DEPDIR)
 	@: >>src/libipset/bdd/$(DEPDIR)/$(am__dirstamp)
-src/libipset/bdd/libipset_la-assignments.lo:  \
-	src/libipset/bdd/$(am__dirstamp) \
+src/libipset/bdd/assignments.lo: src/libipset/bdd/$(am__dirstamp) \
 	src/libipset/bdd/$(DEPDIR)/$(am__dirstamp)
-src/libipset/bdd/libipset_la-basics.lo:  \
-	src/libipset/bdd/$(am__dirstamp) \
+src/libipset/bdd/basics.lo: src/libipset/bdd/$(am__dirstamp) \
 	src/libipset/bdd/$(DEPDIR)/$(am__dirstamp)
-src/libipset/bdd/libipset_la-bdd-iterator.lo:  \
-	src/libipset/bdd/$(am__dirstamp) \
+src/libipset/bdd/bdd-iterator.lo: src/libipset/bdd/$(am__dirstamp) \
 	src/libipset/bdd/$(DEPDIR)/$(am__dirstamp)
-src/libipset/bdd/libipset_la-expanded.lo:  \
-	src/libipset/bdd/$(am__dirstamp) \
+src/libipset/bdd/expanded.lo: src/libipset/bdd/$(am__dirstamp) \
 	src/libipset/bdd/$(DEPDIR)/$(am__dirstamp)
-src/libipset/bdd/libipset_la-reachable.lo:  \
-	src/libipset/bdd/$(am__dirstamp) \
+src/libipset/bdd/reachable.lo: src/libipset/bdd/$(am__dirstamp) \
 	src/libipset/bdd/$(DEPDIR)/$(am__dirstamp)
-src/libipset/bdd/libipset_la-read.lo:  \
-	src/libipset/bdd/$(am__dirstamp) \
+src/libipset/bdd/read.lo: src/libipset/bdd/$(am__dirstamp) \
 	src/libipset/bdd/$(DEPDIR)/$(am__dirstamp)
-src/libipset/bdd/libipset_la-write.lo:  \
-	src/libipset/bdd/$(am__dirstamp) \
+src/libipset/bdd/write.lo: src/libipset/bdd/$(am__dirstamp) \
 	src/libipset/bdd/$(DEPDIR)/$(am__dirstamp)
 src/libipset/map/$(am__dirstamp):
 	@$(MKDIR_P) src/libipset/map
@@ -444,20 +485,15 @@ src/libipset/map/$(am__dirstamp):
 src/libipset/map/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/libipset/map/$(DEPDIR)
 	@: >>src/libipset/map/$(DEPDIR)/$(am__dirstamp)
-src/libipset/map/libipset_la-allocation.lo:  \
-	src/libipset/map/$(am__dirstamp) \
+src/libipset/map/allocation.lo: src/libipset/map/$(am__dirstamp) \
 	src/libipset/map/$(DEPDIR)/$(am__dirstamp)
-src/libipset/map/libipset_la-inspection.lo:  \
-	src/libipset/map/$(am__dirstamp) \
+src/libipset/map/inspection.lo: src/libipset/map/$(am__dirstamp) \
 	src/libipset/map/$(DEPDIR)/$(am__dirstamp)
-src/libipset/map/libipset_la-ipv4_map.lo:  \
-	src/libipset/map/$(am__dirstamp) \
+src/libipset/map/ipv4_map.lo: src/libipset/map/$(am__dirstamp) \
 	src/libipset/map/$(DEPDIR)/$(am__dirstamp)
-src/libipset/map/libipset_la-ipv6_map.lo:  \
-	src/libipset/map/$(am__dirstamp) \
+src/libipset/map/ipv6_map.lo: src/libipset/map/$(am__dirstamp) \
 	src/libipset/map/$(DEPDIR)/$(am__dirstamp)
-src/libipset/map/libipset_la-storage.lo:  \
-	src/libipset/map/$(am__dirstamp) \
+src/libipset/map/storage.lo: src/libipset/map/$(am__dirstamp) \
 	src/libipset/map/$(DEPDIR)/$(am__dirstamp)
 src/libipset/set/$(am__dirstamp):
 	@$(MKDIR_P) src/libipset/set
@@ -465,27 +501,15 @@ src/libipset/set/$(am__dirstamp):
 src/libipset/set/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/libipset/set/$(DEPDIR)
 	@: >>src/libipset/set/$(DEPDIR)/$(am__dirstamp)
-src/libipset/set/libipset_la-allocation.lo:  \
-	src/libipset/set/$(am__dirstamp) \
+src/libipset/set/ipv4_set.lo: src/libipset/set/$(am__dirstamp) \
 	src/libipset/set/$(DEPDIR)/$(am__dirstamp)
-src/libipset/set/libipset_la-inspection.lo:  \
-	src/libipset/set/$(am__dirstamp) \
+src/libipset/set/ipv6_set.lo: src/libipset/set/$(am__dirstamp) \
 	src/libipset/set/$(DEPDIR)/$(am__dirstamp)
-src/libipset/set/libipset_la-ipv4_set.lo:  \
-	src/libipset/set/$(am__dirstamp) \
-	src/libipset/set/$(DEPDIR)/$(am__dirstamp)
-src/libipset/set/libipset_la-ipv6_set.lo:  \
-	src/libipset/set/$(am__dirstamp) \
-	src/libipset/set/$(DEPDIR)/$(am__dirstamp)
-src/libipset/set/libipset_la-iterator.lo:  \
-	src/libipset/set/$(am__dirstamp) \
-	src/libipset/set/$(DEPDIR)/$(am__dirstamp)
-src/libipset/set/libipset_la-storage.lo:  \
-	src/libipset/set/$(am__dirstamp) \
+src/libipset/set/iterator.lo: src/libipset/set/$(am__dirstamp) \
 	src/libipset/set/$(DEPDIR)/$(am__dirstamp)
 
 libipset.la: $(libipset_la_OBJECTS) $(libipset_la_DEPENDENCIES) $(EXTRA_libipset_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libipset_la_LINK)  $(libipset_la_OBJECTS) $(libipset_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libipset_la_LINK) -rpath $(libdir) $(libipset_la_OBJECTS) $(libipset_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -501,25 +525,22 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include src/libipset/$(DEPDIR)/libipset_la-general.Plo # am--include-marker
-include src/libipset/bdd/$(DEPDIR)/libipset_la-assignments.Plo # am--include-marker
-include src/libipset/bdd/$(DEPDIR)/libipset_la-basics.Plo # am--include-marker
-include src/libipset/bdd/$(DEPDIR)/libipset_la-bdd-iterator.Plo # am--include-marker
-include src/libipset/bdd/$(DEPDIR)/libipset_la-expanded.Plo # am--include-marker
-include src/libipset/bdd/$(DEPDIR)/libipset_la-reachable.Plo # am--include-marker
-include src/libipset/bdd/$(DEPDIR)/libipset_la-read.Plo # am--include-marker
-include src/libipset/bdd/$(DEPDIR)/libipset_la-write.Plo # am--include-marker
-include src/libipset/map/$(DEPDIR)/libipset_la-allocation.Plo # am--include-marker
-include src/libipset/map/$(DEPDIR)/libipset_la-inspection.Plo # am--include-marker
-include src/libipset/map/$(DEPDIR)/libipset_la-ipv4_map.Plo # am--include-marker
-include src/libipset/map/$(DEPDIR)/libipset_la-ipv6_map.Plo # am--include-marker
-include src/libipset/map/$(DEPDIR)/libipset_la-storage.Plo # am--include-marker
-include src/libipset/set/$(DEPDIR)/libipset_la-allocation.Plo # am--include-marker
-include src/libipset/set/$(DEPDIR)/libipset_la-inspection.Plo # am--include-marker
-include src/libipset/set/$(DEPDIR)/libipset_la-ipv4_set.Plo # am--include-marker
-include src/libipset/set/$(DEPDIR)/libipset_la-ipv6_set.Plo # am--include-marker
-include src/libipset/set/$(DEPDIR)/libipset_la-iterator.Plo # am--include-marker
-include src/libipset/set/$(DEPDIR)/libipset_la-storage.Plo # am--include-marker
+include src/libipset/$(DEPDIR)/general.Plo # am--include-marker
+include src/libipset/bdd/$(DEPDIR)/assignments.Plo # am--include-marker
+include src/libipset/bdd/$(DEPDIR)/basics.Plo # am--include-marker
+include src/libipset/bdd/$(DEPDIR)/bdd-iterator.Plo # am--include-marker
+include src/libipset/bdd/$(DEPDIR)/expanded.Plo # am--include-marker
+include src/libipset/bdd/$(DEPDIR)/reachable.Plo # am--include-marker
+include src/libipset/bdd/$(DEPDIR)/read.Plo # am--include-marker
+include src/libipset/bdd/$(DEPDIR)/write.Plo # am--include-marker
+include src/libipset/map/$(DEPDIR)/allocation.Plo # am--include-marker
+include src/libipset/map/$(DEPDIR)/inspection.Plo # am--include-marker
+include src/libipset/map/$(DEPDIR)/ipv4_map.Plo # am--include-marker
+include src/libipset/map/$(DEPDIR)/ipv6_map.Plo # am--include-marker
+include src/libipset/map/$(DEPDIR)/storage.Plo # am--include-marker
+include src/libipset/set/$(DEPDIR)/ipv4_set.Plo # am--include-marker
+include src/libipset/set/$(DEPDIR)/ipv6_set.Plo # am--include-marker
+include src/libipset/set/$(DEPDIR)/iterator.Plo # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -551,139 +572,6 @@ am--depfiles: $(am__depfiles_remade)
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(LTCOMPILE) -c -o $@ $<
 
-src/libipset/libipset_la-general.lo: src/libipset/general.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/libipset_la-general.lo -MD -MP -MF src/libipset/$(DEPDIR)/libipset_la-general.Tpo -c -o src/libipset/libipset_la-general.lo `test -f 'src/libipset/general.c' || echo '$(srcdir)/'`src/libipset/general.c
-	$(AM_V_at)$(am__mv) src/libipset/$(DEPDIR)/libipset_la-general.Tpo src/libipset/$(DEPDIR)/libipset_la-general.Plo
-#	$(AM_V_CC)source='src/libipset/general.c' object='src/libipset/libipset_la-general.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/libipset_la-general.lo `test -f 'src/libipset/general.c' || echo '$(srcdir)/'`src/libipset/general.c
-
-src/libipset/bdd/libipset_la-assignments.lo: src/libipset/bdd/assignments.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/bdd/libipset_la-assignments.lo -MD -MP -MF src/libipset/bdd/$(DEPDIR)/libipset_la-assignments.Tpo -c -o src/libipset/bdd/libipset_la-assignments.lo `test -f 'src/libipset/bdd/assignments.c' || echo '$(srcdir)/'`src/libipset/bdd/assignments.c
-	$(AM_V_at)$(am__mv) src/libipset/bdd/$(DEPDIR)/libipset_la-assignments.Tpo src/libipset/bdd/$(DEPDIR)/libipset_la-assignments.Plo
-#	$(AM_V_CC)source='src/libipset/bdd/assignments.c' object='src/libipset/bdd/libipset_la-assignments.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/bdd/libipset_la-assignments.lo `test -f 'src/libipset/bdd/assignments.c' || echo '$(srcdir)/'`src/libipset/bdd/assignments.c
-
-src/libipset/bdd/libipset_la-basics.lo: src/libipset/bdd/basics.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/bdd/libipset_la-basics.lo -MD -MP -MF src/libipset/bdd/$(DEPDIR)/libipset_la-basics.Tpo -c -o src/libipset/bdd/libipset_la-basics.lo `test -f 'src/libipset/bdd/basics.c' || echo '$(srcdir)/'`src/libipset/bdd/basics.c
-	$(AM_V_at)$(am__mv) src/libipset/bdd/$(DEPDIR)/libipset_la-basics.Tpo src/libipset/bdd/$(DEPDIR)/libipset_la-basics.Plo
-#	$(AM_V_CC)source='src/libipset/bdd/basics.c' object='src/libipset/bdd/libipset_la-basics.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/bdd/libipset_la-basics.lo `test -f 'src/libipset/bdd/basics.c' || echo '$(srcdir)/'`src/libipset/bdd/basics.c
-
-src/libipset/bdd/libipset_la-bdd-iterator.lo: src/libipset/bdd/bdd-iterator.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/bdd/libipset_la-bdd-iterator.lo -MD -MP -MF src/libipset/bdd/$(DEPDIR)/libipset_la-bdd-iterator.Tpo -c -o src/libipset/bdd/libipset_la-bdd-iterator.lo `test -f 'src/libipset/bdd/bdd-iterator.c' || echo '$(srcdir)/'`src/libipset/bdd/bdd-iterator.c
-	$(AM_V_at)$(am__mv) src/libipset/bdd/$(DEPDIR)/libipset_la-bdd-iterator.Tpo src/libipset/bdd/$(DEPDIR)/libipset_la-bdd-iterator.Plo
-#	$(AM_V_CC)source='src/libipset/bdd/bdd-iterator.c' object='src/libipset/bdd/libipset_la-bdd-iterator.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/bdd/libipset_la-bdd-iterator.lo `test -f 'src/libipset/bdd/bdd-iterator.c' || echo '$(srcdir)/'`src/libipset/bdd/bdd-iterator.c
-
-src/libipset/bdd/libipset_la-expanded.lo: src/libipset/bdd/expanded.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/bdd/libipset_la-expanded.lo -MD -MP -MF src/libipset/bdd/$(DEPDIR)/libipset_la-expanded.Tpo -c -o src/libipset/bdd/libipset_la-expanded.lo `test -f 'src/libipset/bdd/expanded.c' || echo '$(srcdir)/'`src/libipset/bdd/expanded.c
-	$(AM_V_at)$(am__mv) src/libipset/bdd/$(DEPDIR)/libipset_la-expanded.Tpo src/libipset/bdd/$(DEPDIR)/libipset_la-expanded.Plo
-#	$(AM_V_CC)source='src/libipset/bdd/expanded.c' object='src/libipset/bdd/libipset_la-expanded.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/bdd/libipset_la-expanded.lo `test -f 'src/libipset/bdd/expanded.c' || echo '$(srcdir)/'`src/libipset/bdd/expanded.c
-
-src/libipset/bdd/libipset_la-reachable.lo: src/libipset/bdd/reachable.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/bdd/libipset_la-reachable.lo -MD -MP -MF src/libipset/bdd/$(DEPDIR)/libipset_la-reachable.Tpo -c -o src/libipset/bdd/libipset_la-reachable.lo `test -f 'src/libipset/bdd/reachable.c' || echo '$(srcdir)/'`src/libipset/bdd/reachable.c
-	$(AM_V_at)$(am__mv) src/libipset/bdd/$(DEPDIR)/libipset_la-reachable.Tpo src/libipset/bdd/$(DEPDIR)/libipset_la-reachable.Plo
-#	$(AM_V_CC)source='src/libipset/bdd/reachable.c' object='src/libipset/bdd/libipset_la-reachable.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/bdd/libipset_la-reachable.lo `test -f 'src/libipset/bdd/reachable.c' || echo '$(srcdir)/'`src/libipset/bdd/reachable.c
-
-src/libipset/bdd/libipset_la-read.lo: src/libipset/bdd/read.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/bdd/libipset_la-read.lo -MD -MP -MF src/libipset/bdd/$(DEPDIR)/libipset_la-read.Tpo -c -o src/libipset/bdd/libipset_la-read.lo `test -f 'src/libipset/bdd/read.c' || echo '$(srcdir)/'`src/libipset/bdd/read.c
-	$(AM_V_at)$(am__mv) src/libipset/bdd/$(DEPDIR)/libipset_la-read.Tpo src/libipset/bdd/$(DEPDIR)/libipset_la-read.Plo
-#	$(AM_V_CC)source='src/libipset/bdd/read.c' object='src/libipset/bdd/libipset_la-read.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/bdd/libipset_la-read.lo `test -f 'src/libipset/bdd/read.c' || echo '$(srcdir)/'`src/libipset/bdd/read.c
-
-src/libipset/bdd/libipset_la-write.lo: src/libipset/bdd/write.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/bdd/libipset_la-write.lo -MD -MP -MF src/libipset/bdd/$(DEPDIR)/libipset_la-write.Tpo -c -o src/libipset/bdd/libipset_la-write.lo `test -f 'src/libipset/bdd/write.c' || echo '$(srcdir)/'`src/libipset/bdd/write.c
-	$(AM_V_at)$(am__mv) src/libipset/bdd/$(DEPDIR)/libipset_la-write.Tpo src/libipset/bdd/$(DEPDIR)/libipset_la-write.Plo
-#	$(AM_V_CC)source='src/libipset/bdd/write.c' object='src/libipset/bdd/libipset_la-write.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/bdd/libipset_la-write.lo `test -f 'src/libipset/bdd/write.c' || echo '$(srcdir)/'`src/libipset/bdd/write.c
-
-src/libipset/map/libipset_la-allocation.lo: src/libipset/map/allocation.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/map/libipset_la-allocation.lo -MD -MP -MF src/libipset/map/$(DEPDIR)/libipset_la-allocation.Tpo -c -o src/libipset/map/libipset_la-allocation.lo `test -f 'src/libipset/map/allocation.c' || echo '$(srcdir)/'`src/libipset/map/allocation.c
-	$(AM_V_at)$(am__mv) src/libipset/map/$(DEPDIR)/libipset_la-allocation.Tpo src/libipset/map/$(DEPDIR)/libipset_la-allocation.Plo
-#	$(AM_V_CC)source='src/libipset/map/allocation.c' object='src/libipset/map/libipset_la-allocation.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/map/libipset_la-allocation.lo `test -f 'src/libipset/map/allocation.c' || echo '$(srcdir)/'`src/libipset/map/allocation.c
-
-src/libipset/map/libipset_la-inspection.lo: src/libipset/map/inspection.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/map/libipset_la-inspection.lo -MD -MP -MF src/libipset/map/$(DEPDIR)/libipset_la-inspection.Tpo -c -o src/libipset/map/libipset_la-inspection.lo `test -f 'src/libipset/map/inspection.c' || echo '$(srcdir)/'`src/libipset/map/inspection.c
-	$(AM_V_at)$(am__mv) src/libipset/map/$(DEPDIR)/libipset_la-inspection.Tpo src/libipset/map/$(DEPDIR)/libipset_la-inspection.Plo
-#	$(AM_V_CC)source='src/libipset/map/inspection.c' object='src/libipset/map/libipset_la-inspection.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/map/libipset_la-inspection.lo `test -f 'src/libipset/map/inspection.c' || echo '$(srcdir)/'`src/libipset/map/inspection.c
-
-src/libipset/map/libipset_la-ipv4_map.lo: src/libipset/map/ipv4_map.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/map/libipset_la-ipv4_map.lo -MD -MP -MF src/libipset/map/$(DEPDIR)/libipset_la-ipv4_map.Tpo -c -o src/libipset/map/libipset_la-ipv4_map.lo `test -f 'src/libipset/map/ipv4_map.c' || echo '$(srcdir)/'`src/libipset/map/ipv4_map.c
-	$(AM_V_at)$(am__mv) src/libipset/map/$(DEPDIR)/libipset_la-ipv4_map.Tpo src/libipset/map/$(DEPDIR)/libipset_la-ipv4_map.Plo
-#	$(AM_V_CC)source='src/libipset/map/ipv4_map.c' object='src/libipset/map/libipset_la-ipv4_map.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/map/libipset_la-ipv4_map.lo `test -f 'src/libipset/map/ipv4_map.c' || echo '$(srcdir)/'`src/libipset/map/ipv4_map.c
-
-src/libipset/map/libipset_la-ipv6_map.lo: src/libipset/map/ipv6_map.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/map/libipset_la-ipv6_map.lo -MD -MP -MF src/libipset/map/$(DEPDIR)/libipset_la-ipv6_map.Tpo -c -o src/libipset/map/libipset_la-ipv6_map.lo `test -f 'src/libipset/map/ipv6_map.c' || echo '$(srcdir)/'`src/libipset/map/ipv6_map.c
-	$(AM_V_at)$(am__mv) src/libipset/map/$(DEPDIR)/libipset_la-ipv6_map.Tpo src/libipset/map/$(DEPDIR)/libipset_la-ipv6_map.Plo
-#	$(AM_V_CC)source='src/libipset/map/ipv6_map.c' object='src/libipset/map/libipset_la-ipv6_map.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/map/libipset_la-ipv6_map.lo `test -f 'src/libipset/map/ipv6_map.c' || echo '$(srcdir)/'`src/libipset/map/ipv6_map.c
-
-src/libipset/map/libipset_la-storage.lo: src/libipset/map/storage.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/map/libipset_la-storage.lo -MD -MP -MF src/libipset/map/$(DEPDIR)/libipset_la-storage.Tpo -c -o src/libipset/map/libipset_la-storage.lo `test -f 'src/libipset/map/storage.c' || echo '$(srcdir)/'`src/libipset/map/storage.c
-	$(AM_V_at)$(am__mv) src/libipset/map/$(DEPDIR)/libipset_la-storage.Tpo src/libipset/map/$(DEPDIR)/libipset_la-storage.Plo
-#	$(AM_V_CC)source='src/libipset/map/storage.c' object='src/libipset/map/libipset_la-storage.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/map/libipset_la-storage.lo `test -f 'src/libipset/map/storage.c' || echo '$(srcdir)/'`src/libipset/map/storage.c
-
-src/libipset/set/libipset_la-allocation.lo: src/libipset/set/allocation.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/set/libipset_la-allocation.lo -MD -MP -MF src/libipset/set/$(DEPDIR)/libipset_la-allocation.Tpo -c -o src/libipset/set/libipset_la-allocation.lo `test -f 'src/libipset/set/allocation.c' || echo '$(srcdir)/'`src/libipset/set/allocation.c
-	$(AM_V_at)$(am__mv) src/libipset/set/$(DEPDIR)/libipset_la-allocation.Tpo src/libipset/set/$(DEPDIR)/libipset_la-allocation.Plo
-#	$(AM_V_CC)source='src/libipset/set/allocation.c' object='src/libipset/set/libipset_la-allocation.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/set/libipset_la-allocation.lo `test -f 'src/libipset/set/allocation.c' || echo '$(srcdir)/'`src/libipset/set/allocation.c
-
-src/libipset/set/libipset_la-inspection.lo: src/libipset/set/inspection.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/set/libipset_la-inspection.lo -MD -MP -MF src/libipset/set/$(DEPDIR)/libipset_la-inspection.Tpo -c -o src/libipset/set/libipset_la-inspection.lo `test -f 'src/libipset/set/inspection.c' || echo '$(srcdir)/'`src/libipset/set/inspection.c
-	$(AM_V_at)$(am__mv) src/libipset/set/$(DEPDIR)/libipset_la-inspection.Tpo src/libipset/set/$(DEPDIR)/libipset_la-inspection.Plo
-#	$(AM_V_CC)source='src/libipset/set/inspection.c' object='src/libipset/set/libipset_la-inspection.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/set/libipset_la-inspection.lo `test -f 'src/libipset/set/inspection.c' || echo '$(srcdir)/'`src/libipset/set/inspection.c
-
-src/libipset/set/libipset_la-ipv4_set.lo: src/libipset/set/ipv4_set.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/set/libipset_la-ipv4_set.lo -MD -MP -MF src/libipset/set/$(DEPDIR)/libipset_la-ipv4_set.Tpo -c -o src/libipset/set/libipset_la-ipv4_set.lo `test -f 'src/libipset/set/ipv4_set.c' || echo '$(srcdir)/'`src/libipset/set/ipv4_set.c
-	$(AM_V_at)$(am__mv) src/libipset/set/$(DEPDIR)/libipset_la-ipv4_set.Tpo src/libipset/set/$(DEPDIR)/libipset_la-ipv4_set.Plo
-#	$(AM_V_CC)source='src/libipset/set/ipv4_set.c' object='src/libipset/set/libipset_la-ipv4_set.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/set/libipset_la-ipv4_set.lo `test -f 'src/libipset/set/ipv4_set.c' || echo '$(srcdir)/'`src/libipset/set/ipv4_set.c
-
-src/libipset/set/libipset_la-ipv6_set.lo: src/libipset/set/ipv6_set.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/set/libipset_la-ipv6_set.lo -MD -MP -MF src/libipset/set/$(DEPDIR)/libipset_la-ipv6_set.Tpo -c -o src/libipset/set/libipset_la-ipv6_set.lo `test -f 'src/libipset/set/ipv6_set.c' || echo '$(srcdir)/'`src/libipset/set/ipv6_set.c
-	$(AM_V_at)$(am__mv) src/libipset/set/$(DEPDIR)/libipset_la-ipv6_set.Tpo src/libipset/set/$(DEPDIR)/libipset_la-ipv6_set.Plo
-#	$(AM_V_CC)source='src/libipset/set/ipv6_set.c' object='src/libipset/set/libipset_la-ipv6_set.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/set/libipset_la-ipv6_set.lo `test -f 'src/libipset/set/ipv6_set.c' || echo '$(srcdir)/'`src/libipset/set/ipv6_set.c
-
-src/libipset/set/libipset_la-iterator.lo: src/libipset/set/iterator.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/set/libipset_la-iterator.lo -MD -MP -MF src/libipset/set/$(DEPDIR)/libipset_la-iterator.Tpo -c -o src/libipset/set/libipset_la-iterator.lo `test -f 'src/libipset/set/iterator.c' || echo '$(srcdir)/'`src/libipset/set/iterator.c
-	$(AM_V_at)$(am__mv) src/libipset/set/$(DEPDIR)/libipset_la-iterator.Tpo src/libipset/set/$(DEPDIR)/libipset_la-iterator.Plo
-#	$(AM_V_CC)source='src/libipset/set/iterator.c' object='src/libipset/set/libipset_la-iterator.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/set/libipset_la-iterator.lo `test -f 'src/libipset/set/iterator.c' || echo '$(srcdir)/'`src/libipset/set/iterator.c
-
-src/libipset/set/libipset_la-storage.lo: src/libipset/set/storage.c
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -MT src/libipset/set/libipset_la-storage.lo -MD -MP -MF src/libipset/set/$(DEPDIR)/libipset_la-storage.Tpo -c -o src/libipset/set/libipset_la-storage.lo `test -f 'src/libipset/set/storage.c' || echo '$(srcdir)/'`src/libipset/set/storage.c
-	$(AM_V_at)$(am__mv) src/libipset/set/$(DEPDIR)/libipset_la-storage.Tpo src/libipset/set/$(DEPDIR)/libipset_la-storage.Plo
-#	$(AM_V_CC)source='src/libipset/set/storage.c' object='src/libipset/set/libipset_la-storage.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libipset_la_CFLAGS) $(CFLAGS) -c -o src/libipset/set/libipset_la-storage.lo `test -f 'src/libipset/set/storage.c' || echo '$(srcdir)/'`src/libipset/set/storage.c
-
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -693,6 +581,27 @@ clean-libtool:
 	-rm -rf src/libipset/bdd/.libs src/libipset/bdd/_libs
 	-rm -rf src/libipset/map/.libs src/libipset/map/_libs
 	-rm -rf src/libipset/set/.libs src/libipset/set/_libs
+install-includeHEADERS: $(include_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includedir)" || exit $$?; \
+	done
+
+uninstall-includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -780,8 +689,11 @@ distdir-am: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -822,29 +734,26 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
+clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -f src/libipset/$(DEPDIR)/libipset_la-general.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-assignments.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-basics.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-bdd-iterator.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-expanded.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-reachable.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-read.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-write.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-allocation.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-inspection.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-ipv4_map.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-ipv6_map.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-storage.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-allocation.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-inspection.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-ipv4_set.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-ipv6_set.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-iterator.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-storage.Plo
+	-rm -f src/libipset/$(DEPDIR)/general.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/assignments.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/basics.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/bdd-iterator.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/expanded.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/reachable.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/read.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/write.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/allocation.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/inspection.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/ipv4_map.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/ipv6_map.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/storage.Plo
+	-rm -f src/libipset/set/$(DEPDIR)/ipv4_set.Plo
+	-rm -f src/libipset/set/$(DEPDIR)/ipv6_set.Plo
+	-rm -f src/libipset/set/$(DEPDIR)/iterator.Plo
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -861,13 +770,13 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-includeHEADERS
 
 install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am:
+install-exec-am: install-libLTLIBRARIES
 
 install-html: install-html-am
 
@@ -890,25 +799,22 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -f src/libipset/$(DEPDIR)/libipset_la-general.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-assignments.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-basics.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-bdd-iterator.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-expanded.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-reachable.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-read.Plo
-	-rm -f src/libipset/bdd/$(DEPDIR)/libipset_la-write.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-allocation.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-inspection.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-ipv4_map.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-ipv6_map.Plo
-	-rm -f src/libipset/map/$(DEPDIR)/libipset_la-storage.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-allocation.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-inspection.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-ipv4_set.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-ipv6_set.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-iterator.Plo
-	-rm -f src/libipset/set/$(DEPDIR)/libipset_la-storage.Plo
+	-rm -f src/libipset/$(DEPDIR)/general.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/assignments.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/basics.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/bdd-iterator.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/expanded.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/reachable.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/read.Plo
+	-rm -f src/libipset/bdd/$(DEPDIR)/write.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/allocation.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/inspection.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/ipv4_map.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/ipv6_map.Plo
+	-rm -f src/libipset/map/$(DEPDIR)/storage.Plo
+	-rm -f src/libipset/set/$(DEPDIR)/ipv4_set.Plo
+	-rm -f src/libipset/set/$(DEPDIR)/ipv6_set.Plo
+	-rm -f src/libipset/set/$(DEPDIR)/iterator.Plo
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -925,23 +831,25 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
 
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles check check-am clean \
-	clean-generic clean-libtool clean-noinstLTLIBRARIES \
-	cscopelist-am ctags ctags-am distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	clean-generic clean-libLTLIBRARIES clean-libtool cscopelist-am \
+	ctags ctags-am distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am \
+	install-includeHEADERS install-info install-info-am \
+	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am
+	tags tags-am uninstall uninstall-am uninstall-includeHEADERS \
+	uninstall-libLTLIBRARIES
 
 .PRECIOUS: Makefile
 

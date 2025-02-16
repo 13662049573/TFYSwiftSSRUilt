@@ -72,20 +72,17 @@ int working_dir_size = 0;
 
 static struct cork_hash_table *server_table;
 
-static int
-setnonblocking(int fd)
-{
-    int flags;
-    if (-1 == (flags = fcntl(fd, F_GETFL, 0))) {
-        flags = 0;
-    }
-    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-}
+// Function declarations
+static char *get_port(char *buf, int len);
+static uint64_t get_traffic(char *buf, int len);
+static void start_server(struct manager_ctx *manager_ctx, struct server *server);
+static void stop_server(char *prefix, char *pid_file);
+static void destroy_server(struct server *server);
+static void remove_server(char *prefix, char *port);
 
 static void
 destroy_server(struct server *server)
 {
-// function used to free memories alloced in **get_server**
     if (server->method)
         ss_free(server->method);
     if (server->plugin)
@@ -335,40 +332,6 @@ get_server(char *buf, int len)
 }
 
 static int
-parse_traffic(char *buf, int len, char *port, uint64_t *traffic)
-{
-    char *data = get_data(buf, len);
-    char error_buf[512];
-    json_settings settings = { 0 };
-
-    if (data == NULL) {
-        LOGE("No data found");
-        return -1;
-    }
-
-    json_value *obj = json_parse_ex(&settings, data, strlen(data), error_buf);
-    if (obj == NULL) {
-        LOGE("%s", error_buf);
-        return -1;
-    }
-
-    if (obj->type == json_object) {
-        int i = 0;
-        for (i = 0; i < obj->u.object.length; i++) {
-            char *name        = obj->u.object.values[i].name;
-            json_value *value = obj->u.object.values[i].value;
-            if (value->type == json_integer) {
-                strncpy(port, name, 7);
-                *traffic = value->u.integer;
-            }
-        }
-    }
-
-    json_value_free(obj);
-    return 0;
-}
-
-static int
 create_and_bind(const char *host, const char *port, int protocol)
 {
     struct addrinfo hints;
@@ -591,36 +554,13 @@ get_traffic(char *buf, int len)
 }
 
 static void
-start_server(manager_t *manager, struct server *server)
+start_server(struct manager_ctx *manager_ctx, struct server *server)
 {
     // Implementation of start_server
-    int ret = add_server(manager, server);
+    int ret = add_server(manager_ctx, server);
     if (ret == -1) {
         LOGE("Failed to start server for port: %s", server->port);
     }
-}
-
-static void
-kill_server(char *prefix, char *pid_file)
-{
-    char *path = NULL;
-    int pid, path_size = strlen(prefix) + strlen(pid_file) + 2;
-    path = ss_malloc(path_size);
-    snprintf(path, path_size, "%s/%s", prefix, pid_file);
-    FILE *f = fopen(path, "r");
-    if (f == NULL) {
-        if (verbose) {
-            LOGE("unable to open pid file");
-        }
-        ss_free(path);
-        return;
-    }
-    if (fscanf(f, "%d", &pid) != EOF) {
-        kill(pid, SIGTERM);
-    }
-    fclose(f);
-    remove(path);
-    ss_free(path);
 }
 
 static void
@@ -710,7 +650,7 @@ manager_recv_cb(EV_P_ ev_io *w, int revents)
         }
 
         remove_server(working_dir, server->port);
-        start_server(manager_ctx->manager, server);
+        start_server(manager_ctx, server);
         ss_free(server);
     } else if (strcmp(action, "remove") == 0) {
         struct server *server = get_server(buf, r);

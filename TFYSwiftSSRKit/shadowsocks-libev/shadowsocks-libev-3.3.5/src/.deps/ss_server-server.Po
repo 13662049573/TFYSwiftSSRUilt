@@ -226,12 +226,13 @@ ss_server-server.o: server.c ../config.h \
   ../libcork/include/libcork/ds/stream.h netutils.h utils.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/syslog.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/syslog.h \
-  acl.h plugin.h server.h ../libcork/include/libcork/ds.h \
-  ../libcork/include/libcork/ds/array.h \
+  acl.h ../libipset/include/ipset/ipset.h \
+  ../libcork/include/libcork/ds.h ../libcork/include/libcork/ds/array.h \
   ../libcork/include/libcork/ds/bitset.h \
   ../libcork/include/libcork/ds/dllist.h \
   ../libcork/include/libcork/ds/hash-table.h \
   ../libcork/include/libcork/ds/ring-buffer.h \
+  ../libipset/include/ipset/bdd/nodes.h plugin.h server.h \
   /Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/include/ev.h \
   crypto.h \
   /Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/include/sodium.h \
@@ -550,14 +551,16 @@ utils.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/syslog.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include/sys/syslog.h:
 acl.h:
-plugin.h:
-server.h:
+../libipset/include/ipset/ipset.h:
 ../libcork/include/libcork/ds.h:
 ../libcork/include/libcork/ds/array.h:
 ../libcork/include/libcork/ds/bitset.h:
 ../libcork/include/libcork/ds/dllist.h:
 ../libcork/include/libcork/ds/hash-table.h:
 ../libcork/include/libcork/ds/ring-buffer.h:
+../libipset/include/ipset/bdd/nodes.h:
+plugin.h:
+server.h:
 /Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/include/ev.h:
 crypto.h:
 /Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/include/sodium.h:

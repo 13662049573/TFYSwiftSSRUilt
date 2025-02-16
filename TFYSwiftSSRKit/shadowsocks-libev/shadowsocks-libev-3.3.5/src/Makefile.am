@@ -100,8 +100,7 @@ ss_server_SOURCES = utils.c \
                     base64.c \
                     stream.c \
                     aead.c \
-                    crypto.c \
-                    manager.c
+                    crypto.c
 
 ss_manager_SOURCES = utils.c \
                      jconf.c \

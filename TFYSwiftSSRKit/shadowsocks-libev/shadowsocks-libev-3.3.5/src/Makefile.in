@@ -227,7 +227,7 @@ am_ss_server_OBJECTS = ss_server-utils.$(OBJEXT) \
 	ss_server-plugin.$(OBJEXT) ss_server-ppbloom.$(OBJEXT) \
 	ss_server-rule.$(OBJEXT) ss_server-base64.$(OBJEXT) \
 	ss_server-stream.$(OBJEXT) ss_server-aead.$(OBJEXT) \
-	ss_server-crypto.$(OBJEXT) ss_server-manager.$(OBJEXT)
+	ss_server-crypto.$(OBJEXT)
 ss_server_OBJECTS = $(am_ss_server_OBJECTS)
 ss_server_DEPENDENCIES = $(am__DEPENDENCIES_1)
 ss_server_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -296,7 +296,7 @@ am__depfiles_remade = ./$(DEPDIR)/libshadowsocks_libev_la-acl.Plo \
 	./$(DEPDIR)/ss_server-acl.Po ./$(DEPDIR)/ss_server-aead.Po \
 	./$(DEPDIR)/ss_server-base64.Po ./$(DEPDIR)/ss_server-cache.Po \
 	./$(DEPDIR)/ss_server-crypto.Po ./$(DEPDIR)/ss_server-jconf.Po \
-	./$(DEPDIR)/ss_server-json.Po ./$(DEPDIR)/ss_server-manager.Po \
+	./$(DEPDIR)/ss_server-json.Po \
 	./$(DEPDIR)/ss_server-netutils.Po \
 	./$(DEPDIR)/ss_server-plugin.Po \
 	./$(DEPDIR)/ss_server-ppbloom.Po \
@@ -426,6 +426,11 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PCRE_CFLAGS = @PCRE_CFLAGS@
+PCRE_LIBS = @PCRE_LIBS@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -567,8 +572,7 @@ ss_server_SOURCES = utils.c \
                     base64.c \
                     stream.c \
                     aead.c \
-                    crypto.c \
-                    manager.c
+                    crypto.c
 
 ss_manager_SOURCES = utils.c \
                      jconf.c \
@@ -844,7 +848,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_server-crypto.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_server-jconf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_server-json.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_server-manager.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_server-netutils.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_server-plugin.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_server-ppbloom.Po@am__quote@ # am--include-marker
@@ -1675,20 +1678,6 @@ ss_server-crypto.obj: crypto.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-crypto.obj `if test -f 'crypto.c'; then $(CYGPATH_W) 'crypto.c'; else $(CYGPATH_W) '$(srcdir)/crypto.c'; fi`
 
-ss_server-manager.o: manager.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-manager.o -MD -MP -MF $(DEPDIR)/ss_server-manager.Tpo -c -o ss_server-manager.o `test -f 'manager.c' || echo '$(srcdir)/'`manager.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_server-manager.Tpo $(DEPDIR)/ss_server-manager.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='manager.c' object='ss_server-manager.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-manager.o `test -f 'manager.c' || echo '$(srcdir)/'`manager.c
-
-ss_server-manager.obj: manager.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-manager.obj -MD -MP -MF $(DEPDIR)/ss_server-manager.Tpo -c -o ss_server-manager.obj `if test -f 'manager.c'; then $(CYGPATH_W) 'manager.c'; else $(CYGPATH_W) '$(srcdir)/manager.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_server-manager.Tpo $(DEPDIR)/ss_server-manager.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='manager.c' object='ss_server-manager.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-manager.obj `if test -f 'manager.c'; then $(CYGPATH_W) 'manager.c'; else $(CYGPATH_W) '$(srcdir)/manager.c'; fi`
-
 ss_tunnel-utils.o: utils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_tunnel_CFLAGS) $(CFLAGS) -MT ss_tunnel-utils.o -MD -MP -MF $(DEPDIR)/ss_tunnel-utils.Tpo -c -o ss_tunnel-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_tunnel-utils.Tpo $(DEPDIR)/ss_tunnel-utils.Po
@@ -2081,7 +2070,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/ss_server-crypto.Po
 	-rm -f ./$(DEPDIR)/ss_server-jconf.Po
 	-rm -f ./$(DEPDIR)/ss_server-json.Po
-	-rm -f ./$(DEPDIR)/ss_server-manager.Po
 	-rm -f ./$(DEPDIR)/ss_server-netutils.Po
 	-rm -f ./$(DEPDIR)/ss_server-plugin.Po
 	-rm -f ./$(DEPDIR)/ss_server-ppbloom.Po
@@ -2204,7 +2192,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/ss_server-crypto.Po
 	-rm -f ./$(DEPDIR)/ss_server-jconf.Po
 	-rm -f ./$(DEPDIR)/ss_server-json.Po
-	-rm -f ./$(DEPDIR)/ss_server-manager.Po
 	-rm -f ./$(DEPDIR)/ss_server-netutils.Po
 	-rm -f ./$(DEPDIR)/ss_server-plugin.Po
 	-rm -f ./$(DEPDIR)/ss_server-ppbloom.Po

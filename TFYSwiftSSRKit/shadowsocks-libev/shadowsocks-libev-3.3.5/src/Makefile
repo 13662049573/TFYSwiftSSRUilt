@@ -227,7 +227,7 @@ am_ss_server_OBJECTS = ss_server-utils.$(OBJEXT) \
 	ss_server-plugin.$(OBJEXT) ss_server-ppbloom.$(OBJEXT) \
 	ss_server-rule.$(OBJEXT) ss_server-base64.$(OBJEXT) \
 	ss_server-stream.$(OBJEXT) ss_server-aead.$(OBJEXT) \
-	ss_server-crypto.$(OBJEXT) ss_server-manager.$(OBJEXT)
+	ss_server-crypto.$(OBJEXT)
 ss_server_OBJECTS = $(am_ss_server_OBJECTS)
 ss_server_DEPENDENCIES = $(am__DEPENDENCIES_1)
 ss_server_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -296,7 +296,7 @@ am__depfiles_remade = ./$(DEPDIR)/libshadowsocks_libev_la-acl.Plo \
 	./$(DEPDIR)/ss_server-acl.Po ./$(DEPDIR)/ss_server-aead.Po \
 	./$(DEPDIR)/ss_server-base64.Po ./$(DEPDIR)/ss_server-cache.Po \
 	./$(DEPDIR)/ss_server-crypto.Po ./$(DEPDIR)/ss_server-jconf.Po \
-	./$(DEPDIR)/ss_server-json.Po ./$(DEPDIR)/ss_server-manager.Po \
+	./$(DEPDIR)/ss_server-json.Po \
 	./$(DEPDIR)/ss_server-netutils.Po \
 	./$(DEPDIR)/ss_server-plugin.Po \
 	./$(DEPDIR)/ss_server-ppbloom.Po \
@@ -375,7 +375,7 @@ AUTOMAKE = ${SHELL} '/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwi
 AWK = awk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -mios-version-min=15.0
+CFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -mios-version-min=15.0 -fembed-bitcode
 CPPFLAGS = -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk/usr/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/include
 CSCOPE = cscope
 CTAGS = ctags
@@ -402,7 +402,7 @@ INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
 LDFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -mios-version-min=15.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
 LIBOBJS = 
-LIBS =  -lev_${platform_suffix} -lmaxminddb_${platform_suffix} -lsodium_${platform_suffix} -lmbedcrypto_${platform_suffix} -lmbedtls_${platform_suffix} -lmbedx509_${platform_suffix} -lssl_${platform_suffix} -lcrypto_${platform_suffix} -lpcre_${platform_suffix} -lcares_${platform_suffix}
+LIBS =  -lev_ios -lmaxminddb_ios -lsodium_ios -lmbedcrypto_ios -lmbedtls_ios -lmbedx509_ios -lssl_ios -lcrypto_ios -lpcre_ios -lcares_ios
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s
@@ -426,6 +426,11 @@ PACKAGE_TARNAME = shadowsocks-libev
 PACKAGE_URL = 
 PACKAGE_VERSION = 3.3.5
 PATH_SEPARATOR = :
+PCRE_CFLAGS = -I/opt/homebrew/Cellar/pcre/8.45/include
+PCRE_LIBS = -L/opt/homebrew/Cellar/pcre/8.45/lib -lpcre
+PKG_CONFIG = /opt/homebrew/bin/pkg-config
+PKG_CONFIG_LIBDIR = 
+PKG_CONFIG_PATH = 
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
@@ -567,8 +572,7 @@ ss_server_SOURCES = utils.c \
                     base64.c \
                     stream.c \
                     aead.c \
-                    crypto.c \
-                    manager.c
+                    crypto.c
 
 ss_manager_SOURCES = utils.c \
                      jconf.c \
@@ -844,7 +848,6 @@ include ./$(DEPDIR)/ss_server-cache.Po # am--include-marker
 include ./$(DEPDIR)/ss_server-crypto.Po # am--include-marker
 include ./$(DEPDIR)/ss_server-jconf.Po # am--include-marker
 include ./$(DEPDIR)/ss_server-json.Po # am--include-marker
-include ./$(DEPDIR)/ss_server-manager.Po # am--include-marker
 include ./$(DEPDIR)/ss_server-netutils.Po # am--include-marker
 include ./$(DEPDIR)/ss_server-plugin.Po # am--include-marker
 include ./$(DEPDIR)/ss_server-ppbloom.Po # am--include-marker
@@ -1675,20 +1678,6 @@ ss_server-crypto.obj: crypto.c
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-crypto.obj `if test -f 'crypto.c'; then $(CYGPATH_W) 'crypto.c'; else $(CYGPATH_W) '$(srcdir)/crypto.c'; fi`
 
-ss_server-manager.o: manager.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-manager.o -MD -MP -MF $(DEPDIR)/ss_server-manager.Tpo -c -o ss_server-manager.o `test -f 'manager.c' || echo '$(srcdir)/'`manager.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_server-manager.Tpo $(DEPDIR)/ss_server-manager.Po
-#	$(AM_V_CC)source='manager.c' object='ss_server-manager.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-manager.o `test -f 'manager.c' || echo '$(srcdir)/'`manager.c
-
-ss_server-manager.obj: manager.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-manager.obj -MD -MP -MF $(DEPDIR)/ss_server-manager.Tpo -c -o ss_server-manager.obj `if test -f 'manager.c'; then $(CYGPATH_W) 'manager.c'; else $(CYGPATH_W) '$(srcdir)/manager.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_server-manager.Tpo $(DEPDIR)/ss_server-manager.Po
-#	$(AM_V_CC)source='manager.c' object='ss_server-manager.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-manager.obj `if test -f 'manager.c'; then $(CYGPATH_W) 'manager.c'; else $(CYGPATH_W) '$(srcdir)/manager.c'; fi`
-
 ss_tunnel-utils.o: utils.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_tunnel_CFLAGS) $(CFLAGS) -MT ss_tunnel-utils.o -MD -MP -MF $(DEPDIR)/ss_tunnel-utils.Tpo -c -o ss_tunnel-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
 	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_tunnel-utils.Tpo $(DEPDIR)/ss_tunnel-utils.Po
@@ -2081,7 +2070,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/ss_server-crypto.Po
 	-rm -f ./$(DEPDIR)/ss_server-jconf.Po
 	-rm -f ./$(DEPDIR)/ss_server-json.Po
-	-rm -f ./$(DEPDIR)/ss_server-manager.Po
 	-rm -f ./$(DEPDIR)/ss_server-netutils.Po
 	-rm -f ./$(DEPDIR)/ss_server-plugin.Po
 	-rm -f ./$(DEPDIR)/ss_server-ppbloom.Po
@@ -2204,7 +2192,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/ss_server-crypto.Po
 	-rm -f ./$(DEPDIR)/ss_server-jconf.Po
 	-rm -f ./$(DEPDIR)/ss_server-json.Po
-	-rm -f ./$(DEPDIR)/ss_server-manager.Po
 	-rm -f ./$(DEPDIR)/ss_server-netutils.Po
 	-rm -f ./$(DEPDIR)/ss_server-plugin.Po
 	-rm -f ./$(DEPDIR)/ss_server-ppbloom.Po

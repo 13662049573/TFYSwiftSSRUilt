@@ -24,320 +24,241 @@
 #include "config.h"
 #endif
 
-#include <ctype.h>
-
-#ifdef USE_SYSTEM_SHARED_LIB
-#include <libcorkipset/ipset.h>
-#else
-#include <ipset/ipset.h>
-#endif
-
-#include "rule.h"
-#include "netutils.h"
+#include "acl.h"
 #include "utils.h"
 #include "cache.h"
-#include "acl.h"
+
+#ifndef __MINGW32__
+#include <ctype.h>
+#endif
+
+#include <ipset/ipset.h>
+
+#define MAX_TRIES 64
+#define MALICIOUS_IP "198.18.0.0/15"
+#define MALICIOUS_PORT "9988"
 
 static struct ip_set white_list_ipv4;
 static struct ip_set white_list_ipv6;
-
 static struct ip_set black_list_ipv4;
 static struct ip_set black_list_ipv6;
-
-static struct ip_set outbound_block_list_ipv4;
-static struct ip_set outbound_block_list_ipv6;
-
-static rule_t *black_list_rules;
-static rule_t *white_list_rules;
-static rule_t *outbound_block_list_rules;
+static struct cork_dllist black_list_rules;
+static struct cork_dllist white_list_rules;
 
 static int acl_mode = BLACK_LIST;
 
-static void
-parse_addr_cidr(const char *str, char *host, int *cidr)
+static int
+parse_addr_cidr(const char *addr_str, char *addr_buf, int *prefix_len)
 {
     int ret = -1;
     char *pch;
 
-    pch = strchr(str, '/');
-    while (pch != NULL) {
-        ret = sscanf(pch + 1, "%d", cidr);
-        *pch = '\0';
-        break;
-    }
-    if (ret == -1) {
-        *cidr = -1;
+    pch = strchr(addr_str, '/');
+    if (pch == NULL) {
+        prefix_len = NULL;
+        ret = 0;
+        strncpy(addr_buf, addr_str, 128);
+    } else {
+        ret = 1;
+        memcpy(addr_buf, addr_str, pch - addr_str);
+        addr_buf[pch - addr_str] = '\0';
+        *prefix_len = atoi(pch + 1);
     }
 
-    strcpy(host, str);
+    return ret;
 }
 
 static int
-parse_line(char *line, char *host, int *cidr)
+parse_addr_port(const char *addr_str, char *addr_buf, int *port)
 {
-    char *line_buffer = line;
+    int ret = -1;
     char *pch;
 
-    while (isspace(*line_buffer)) {
-        line_buffer++;
+    pch = strchr(addr_str, ':');
+    if (pch == NULL) {
+        strncpy(addr_buf, addr_str, 128);
+        *port = -1;
+        ret = 0;
+    } else {
+        memcpy(addr_buf, addr_str, pch - addr_str);
+        addr_buf[pch - addr_str] = '\0';
+        *port = atoi(pch + 1);
+        ret = 1;
     }
 
-    if (*line_buffer == 0 || *line_buffer == '#') {
+    return ret;
+}
+
+int
+outbound_block_match_host(const char *host)
+{
+    struct cork_dllist *rules = &black_list_rules;
+    struct cork_dllist_item *curr;
+    struct cork_dllist_item *next;
+    struct acl_rule *rule;
+
+    if (acl_mode == WHITE_LIST) {
+        rules = &white_list_rules;
+    }
+
+    if (cork_dllist_is_empty(rules)) {
+        if (acl_mode == WHITE_LIST) {
+            return 1;
+        }
         return 0;
     }
 
-    pch = strchr(line_buffer, '#');
-    if (pch != NULL) {
-        *pch = '\0';
+    for (curr = rules->head.next; curr != &rules->head; curr = next) {
+        next = curr->next;
+        rule = cork_container_of(curr, struct acl_rule, entries);
+        if (strncmp(rule->addr, host, strlen(rule->addr)) == 0) {
+            return 1;
+        }
     }
 
-    parse_addr_cidr(line_buffer, host, cidr);
-
-    return 1;
+    return 0;
 }
 
 int
 init_acl(const char *path)
 {
-    FILE *f = fopen(path, "r");
-    if (f == NULL) {
-        LOGE("Invalid acl path.");
-        return -1;
-    }
-
-    char line[257];
-    char host[257];
-    int cidr;
-
+    // Initialize ipset
+    ipset_init_library();
     ipset_init(&white_list_ipv4);
     ipset_init(&white_list_ipv6);
     ipset_init(&black_list_ipv4);
     ipset_init(&black_list_ipv6);
-    ipset_init(&outbound_block_list_ipv4);
-    ipset_init(&outbound_block_list_ipv6);
 
-    black_list_rules = NULL;
-    white_list_rules = NULL;
-    outbound_block_list_rules = NULL;
+    cork_dllist_init(&black_list_rules);
+    cork_dllist_init(&white_list_rules);
 
+    struct ip_set *list_ipv4 = &black_list_ipv4;
+    struct ip_set *list_ipv6 = &black_list_ipv6;
+    struct cork_dllist *rules = &black_list_rules;
+
+    // If no path provided, just return success
+    if (path == NULL) {
+        return 0;
+    }
+
+    FILE *f = fopen(path, "r");
+    if (f == NULL) {
+        LOGE("Failed to open ACL file %s", path);
+        return 1;
+    }
+
+    char buf[257];
     while (!feof(f)) {
-        if (fgets(line, 256, f) == NULL) {
-            break;
-        }
-
-        // Trim the newline
-        int len = strlen(line);
-        if (len > 0 && line[len - 1] == '\n') {
-            line[len - 1] = '\0';
-        }
-
-        if (parse_line(line, host, &cidr) == 0) {
-            continue;
-        }
-
-        if (strcmp(host, "[outbound_block_list]") == 0) {
-            acl_mode = OUTBOUND_BLOCK_LIST;
-            continue;
-        } else if (strcmp(host, "[black_list]") == 0) {
-            acl_mode = BLACK_LIST;
-            continue;
-        } else if (strcmp(host, "[white_list]") == 0) {
-            acl_mode = WHITE_LIST;
-            continue;
-        } else if (strcmp(host, "[reject_all]") == 0) {
-            acl_mode = REJECT_ALL;
-            continue;
-        } else if (strcmp(host, "[accept_all]") == 0) {
-            acl_mode = ACCEPT_ALL;
-            continue;
-        }
-
-        if (cidr >= 0) {
-            struct cork_ipv4 addr;
-            struct cork_ipv6 addr6;
-            int err;
-            if ((err = cork_ipv4_init(&addr, host)) != -1) {
-                if (acl_mode == BLACK_LIST) {
-                    ipset_ipv4_add_network(&black_list_ipv4, &addr, cidr);
-                } else if (acl_mode == WHITE_LIST) {
-                    ipset_ipv4_add_network(&white_list_ipv4, &addr, cidr);
-                } else if (acl_mode == OUTBOUND_BLOCK_LIST) {
-                    ipset_ipv4_add_network(&outbound_block_list_ipv4, &addr, cidr);
-                }
-            } else if ((err = cork_ipv6_init(&addr6, host)) != -1) {
-                if (acl_mode == BLACK_LIST) {
-                    ipset_ipv6_add_network(&black_list_ipv6, &addr6, cidr);
-                } else if (acl_mode == WHITE_LIST) {
-                    ipset_ipv6_add_network(&white_list_ipv6, &addr6, cidr);
-                } else if (acl_mode == OUTBOUND_BLOCK_LIST) {
-                    ipset_ipv6_add_network(&outbound_block_list_ipv6, &addr6, cidr);
-                }
+        if (fgets(buf, 256, f)) {
+            // Trim the newline
+            int len = strlen(buf);
+            if (len > 0 && buf[len - 1] == '\n') {
+                buf[len - 1] = '\0';
             }
-        } else {
-            rule_t *rule = create_rule(host, 0, acl_mode);
-            if (rule != NULL) {
-                if (acl_mode == BLACK_LIST) {
-                    rule->next = black_list_rules;
-                    black_list_rules = rule;
-                } else if (acl_mode == WHITE_LIST) {
-                    rule->next = white_list_rules;
-                    white_list_rules = rule;
-                } else if (acl_mode == OUTBOUND_BLOCK_LIST) {
-                    rule->next = outbound_block_list_rules;
-                    outbound_block_list_rules = rule;
+
+            if (strlen(buf) == 0) {
+                continue;
+            }
+
+            if (buf[0] == '[') {
+                if (strncmp(buf, "[outbound_block_list]", 20) == 0) {
+                    list_ipv4 = &black_list_ipv4;
+                    list_ipv6 = &black_list_ipv6;
+                    rules = &black_list_rules;
+                    acl_mode = BLACK_LIST;
+                } else if (strncmp(buf, "[white_list]", 12) == 0) {
+                    list_ipv4 = &white_list_ipv4;
+                    list_ipv6 = &white_list_ipv6;
+                    rules = &white_list_rules;
+                    acl_mode = WHITE_LIST;
+                } else if (strncmp(buf, "[black_list]", 12) == 0) {
+                    list_ipv4 = &black_list_ipv4;
+                    list_ipv6 = &black_list_ipv6;
+                    rules = &black_list_rules;
+                    acl_mode = BLACK_LIST;
+                }
+            } else {
+                char addr_str[128];
+                int prefix_len;
+                int port;
+                int ret = parse_addr_cidr(buf, addr_str, &prefix_len);
+                if (ret == 0) {
+                    ret = parse_addr_port(addr_str, addr_str, &port);
+                    if (ret == 0) {
+                        struct acl_rule *rule = ss_malloc(sizeof(struct acl_rule));
+                        rule->addr = strdup(addr_str);
+                        cork_dllist_add(rules, &rule->entries);
+                    }
+                } else if (ret == 1) {
+                    struct cork_ipv4 addr;
+                    int err = cork_ipv4_init(&addr, addr_str);
+                    if (!err) {
+                        // Create network address with prefix length
+                        struct cork_ipv4 network_addr = addr;
+                        uint32_t mask = htonl(0xffffffff << (32 - prefix_len));
+                        memcpy(&network_addr, &mask, sizeof(uint32_t));
+                        ipset_ipv4_add(list_ipv4, &network_addr);
+                    } else {
+                        struct cork_ipv6 addr;
+                        err = cork_ipv6_init(&addr, addr_str);
+                        if (!err) {
+                            // Create network address with prefix length
+                            struct cork_ipv6 network_addr = addr;
+                            int i;
+                            for (i = prefix_len; i < 128; i++) {
+                                int byte = i / 8;
+                                int bit = 7 - (i % 8);
+                                uint8_t *bytes = (uint8_t *)&network_addr;
+                                bytes[byte] &= ~(1 << bit);
+                            }
+                            ipset_ipv6_add(list_ipv6, &network_addr);
+                        }
+                    }
                 }
             }
         }
     }
 
     fclose(f);
-
     return 0;
 }
 
 void
 free_acl(void)
 {
+    struct cork_dllist *rules = &black_list_rules;
+    struct cork_dllist_item *curr;
+    struct cork_dllist_item *next;
+
+    for (curr = rules->head.next; curr != &rules->head; curr = next) {
+        next = curr->next;
+        struct acl_rule *rule = cork_container_of(curr, struct acl_rule, entries);
+        ss_free(rule->addr);
+        ss_free(rule);
+    }
+
+    rules = &white_list_rules;
+    for (curr = rules->head.next; curr != &rules->head; curr = next) {
+        next = curr->next;
+        struct acl_rule *rule = cork_container_of(curr, struct acl_rule, entries);
+        ss_free(rule->addr);
+        ss_free(rule);
+    }
+
     ipset_done(&black_list_ipv4);
     ipset_done(&black_list_ipv6);
     ipset_done(&white_list_ipv4);
     ipset_done(&white_list_ipv6);
-    ipset_done(&outbound_block_list_ipv4);
-    ipset_done(&outbound_block_list_ipv6);
-
-    release_rules(black_list_rules);
-    release_rules(white_list_rules);
-    release_rules(outbound_block_list_rules);
-}
-
-int
-acl_match_host(const char *host)
-{
-    struct cork_ipv4 addr;
-    struct cork_ipv6 addr6;
-    int ret;
-
-    if (acl_mode == ACCEPT_ALL) {
-        return 1;
-    }
-
-    if (acl_mode == REJECT_ALL) {
-        return 0;
-    }
-
-    if ((ret = cork_ipv4_init(&addr, host)) != -1) {
-        if (acl_mode == BLACK_LIST) {
-            ret = ipset_contains_ipv4(&black_list_ipv4, &addr);
-            if (ret) {
-                return 0;
-            }
-            ret = get_rule(host, 0, BLACK_LIST, black_list_rules) != NULL;
-            if (ret) {
-                return 0;
-            }
-            return 1;
-        } else if (acl_mode == WHITE_LIST) {
-            ret = ipset_contains_ipv4(&white_list_ipv4, &addr);
-            if (ret) {
-                return 1;
-            }
-            ret = get_rule(host, 0, WHITE_LIST, white_list_rules) != NULL;
-            if (ret) {
-                return 1;
-            }
-            return 0;
-        }
-    } else if ((ret = cork_ipv6_init(&addr6, host)) != -1) {
-        if (acl_mode == BLACK_LIST) {
-            ret = ipset_contains_ipv6(&black_list_ipv6, &addr6);
-            if (ret) {
-                return 0;
-            }
-            ret = get_rule(host, 0, BLACK_LIST, black_list_rules) != NULL;
-            if (ret) {
-                return 0;
-            }
-            return 1;
-        } else if (acl_mode == WHITE_LIST) {
-            ret = ipset_contains_ipv6(&white_list_ipv6, &addr6);
-            if (ret) {
-                return 1;
-            }
-            ret = get_rule(host, 0, WHITE_LIST, white_list_rules) != NULL;
-            if (ret) {
-                return 1;
-            }
-            return 0;
-        }
-    } else {
-        if (acl_mode == BLACK_LIST) {
-            ret = get_rule(host, 0, BLACK_LIST, black_list_rules) != NULL;
-            if (ret) {
-                return 0;
-            }
-            return 1;
-        } else if (acl_mode == WHITE_LIST) {
-            ret = get_rule(host, 0, WHITE_LIST, white_list_rules) != NULL;
-            if (ret) {
-                return 1;
-            }
-            return 0;
-        }
-    }
-
-    return 1;
-}
-
-int
-acl_add_ip(const char *ip)
-{
-    struct cork_ipv4 addr;
-    struct cork_ipv6 addr6;
-    int err;
-
-    if ((err = cork_ipv4_init(&addr, ip)) != -1) {
-        if (acl_mode == BLACK_LIST) {
-            ipset_ipv4_add(&black_list_ipv4, &addr);
-        } else if (acl_mode == WHITE_LIST) {
-            ipset_ipv4_add(&white_list_ipv4, &addr);
-        }
-    } else if ((err = cork_ipv6_init(&addr6, ip)) != -1) {
-        if (acl_mode == BLACK_LIST) {
-            ipset_ipv6_add(&black_list_ipv6, &addr6);
-        } else if (acl_mode == WHITE_LIST) {
-            ipset_ipv6_add(&white_list_ipv6, &addr6);
-        }
-    }
-
-    return 0;
-}
-
-int
-acl_remove_ip(const char *ip)
-{
-    struct cork_ipv4 addr;
-    struct cork_ipv6 addr6;
-    int err;
-
-    if ((err = cork_ipv4_init(&addr, ip)) != -1) {
-        if (acl_mode == BLACK_LIST) {
-            ipset_ipv4_remove(&black_list_ipv4, &addr);
-        } else if (acl_mode == WHITE_LIST) {
-            ipset_ipv4_remove(&white_list_ipv4, &addr);
-        }
-    } else if ((err = cork_ipv6_init(&addr6, ip)) != -1) {
-        if (acl_mode == BLACK_LIST) {
-            ipset_ipv6_remove(&black_list_ipv6, &addr6);
-        } else if (acl_mode == WHITE_LIST) {
-            ipset_ipv6_remove(&white_list_ipv6, &addr6);
-        }
-    }
-
-    return 0;
 }
 
 int
 get_acl_mode(void)
 {
     return acl_mode;
+}
+
+int
+acl_match_host(const char *host)
+{
+    return outbound_block_match_host(host);
 }

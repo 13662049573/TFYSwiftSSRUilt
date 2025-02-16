@@ -4,9 +4,9 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: shadowsocks-libev
-Description: a lightweight secured socks5 proxy
-URL: https://shadowsocks.org
+Description: lightweight secured socks5 proxy
 Version: @VERSION@
 Requires:
 Cflags: -I${includedir}
 Libs: -L${libdir} -lshadowsocks-libev
+Libs.private: -lev -lsodium -lmbedtls -lmbedcrypto -lpcre
