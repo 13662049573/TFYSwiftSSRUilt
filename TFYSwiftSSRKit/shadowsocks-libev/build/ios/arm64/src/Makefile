@@ -413,7 +413,7 @@ AWK = awk
 CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 CCDEPMODE = depmode=gcc3
 CFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -O2 -fPIC -mios-version-min=15.0 -fembed-bitcode -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/include -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/include
-CPPFLAGS = 
+CPPFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -O2 -fPIC
 CSCOPE = cscope
 CTAGS = ctags
 CYGPATH_W = echo
@@ -439,7 +439,7 @@ INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
 LDFLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk -O2 -fPIC -mios-version-min=15.0 -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libev/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libmaxminddb/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/libsodium/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/mbedtls/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/openssl/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/lib -L/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/c-ares/lib
 LIBOBJS = 
-LIBS = -lsodium -lev -lev_ios -lmaxminddb_ios -lsodium_ios -lmbedcrypto_ios -lssl_ios -lcrypto_ios -lpcre_ios -lcares_ios
+LIBS = -lev_ios -lmaxminddb_ios -lsodium_ios                  -lmbedcrypto_ios -lmbedtls_ios -lmbedx509_ios                  -lssl_ios -lcrypto_ios -lpcre_ios -lcares_ios
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s

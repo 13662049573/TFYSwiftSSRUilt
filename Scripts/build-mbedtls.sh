@@ -57,6 +57,13 @@ prepare_source() {
 #define MBEDTLS_CIPHER_MODE_CFB
 #define MBEDTLS_GCM_C
 #define MBEDTLS_MD5_C
+#define MBEDTLS_MD_C
+#define MBEDTLS_PLATFORM_MEMORY
+#define MBEDTLS_PLATFORM_NO_STD_FUNCTIONS
+#define MBEDTLS_THREADING_C
+#define MBEDTLS_ERROR_C
+#define MBEDTLS_ERROR_STRERROR_DUMMY
+#define MBEDTLS_TIMING_C
 
 #include "check_config.h"
 

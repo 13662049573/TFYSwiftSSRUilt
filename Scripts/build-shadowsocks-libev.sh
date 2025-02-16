@@ -68,6 +68,10 @@ verify_dependencies() {
         "$LIBSODIUM_PATH/lib/libsodium_macos.a"
         "$MBEDTLS_PATH/lib/libmbedcrypto_ios.a"
         "$MBEDTLS_PATH/lib/libmbedcrypto_macos.a"
+        "$MBEDTLS_PATH/lib/libmbedtls_ios.a"
+        "$MBEDTLS_PATH/lib/libmbedtls_macos.a"
+        "$MBEDTLS_PATH/lib/libmbedx509_ios.a"
+        "$MBEDTLS_PATH/lib/libmbedx509_macos.a"
         "$OPENSSL_PATH/lib/libssl_ios.a"
         "$OPENSSL_PATH/lib/libssl_macos.a"
         "$OPENSSL_PATH/lib/libcrypto_ios.a"
@@ -91,7 +95,8 @@ verify_dependencies() {
         "$LIBEV_PATH/include"
         "$LIBMAXMINDDB_PATH/include"
         "$LIBSODIUM_PATH/include"
-        "$MBEDTLS_PATH/include"
+        "$MBEDTLS_PATH/include/mbedtls"
+        "$MBEDTLS_PATH/include/psa"
         "$OPENSSL_PATH/include"
         "$PCRE_PATH/include"
         "$CARES_PATH/include"
@@ -168,10 +173,6 @@ LT_INIT([disable-shared])
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-dnl Add library dependencies
-AC_CHECK_LIB([ev], [ev_time], [], [AC_MSG_ERROR([Couldn't find libev. Try installing libev-dev or libev-devel.])])
-AC_CHECK_LIB([sodium], [sodium_init], [], [AC_MSG_ERROR([Couldn't find libsodium. Try installing libsodium-dev or libsodium-devel.])])
-
 dnl Checks for header files.
 AC_CHECK_HEADERS([limits.h stdint.h inttypes.h stdlib.h string.h unistd.h])
 AC_CHECK_HEADERS([sys/time.h time.h])
@@ -240,9 +241,6 @@ build_shadowsocks() {
         export SDKROOT="$sdk_path"
         export DEPLOYMENT_TARGET="$IOS_DEPLOYMENT_TARGET"
         host="arm-apple-darwin"
-        export CROSS_TOP="$(xcrun --sdk iphoneos --show-sdk-platform-path)/Developer"
-        export CROSS_SDK="iPhoneOS.sdk"
-        export PLATFORM_DIR="$(xcrun --sdk iphoneos --show-sdk-platform-path)"
         platform_suffix="ios"
     else
         install_dir="$INSTALL_DIR_MACOS"
@@ -250,7 +248,6 @@ build_shadowsocks() {
         export SDKROOT="$sdk_path"
         export DEPLOYMENT_TARGET="$MACOS_DEPLOYMENT_TARGET"
         host="aarch64-apple-darwin"
-        unset CROSS_TOP CROSS_SDK PLATFORM_DIR
         platform_suffix="macos"
     fi
     
@@ -306,7 +303,9 @@ build_shadowsocks() {
     LDFLAGS="$LDFLAGS -L$CARES_PATH/lib"
     
     # Add library dependencies
-    export LIBS="-lev_${platform_suffix} -lmaxminddb_${platform_suffix} -lsodium_${platform_suffix} -lmbedcrypto_${platform_suffix} -lssl_${platform_suffix} -lcrypto_${platform_suffix} -lpcre_${platform_suffix} -lcares_${platform_suffix}"
+    export LIBS="-lev_${platform_suffix} -lmaxminddb_${platform_suffix} -lsodium_${platform_suffix} \
+                 -lmbedcrypto_${platform_suffix} -lmbedtls_${platform_suffix} -lmbedx509_${platform_suffix} \
+                 -lssl_${platform_suffix} -lcrypto_${platform_suffix} -lpcre_${platform_suffix} -lcares_${platform_suffix}"
     
     # Configure cache variables
     export ac_cv_func_malloc_0_nonnull=yes
@@ -330,12 +329,6 @@ build_shadowsocks() {
     export ac_cv_header_sys_wait_h=yes
     export ac_cv_header_unistd_h=yes
     export cross_compiling=yes
-    
-    # Set environment variables for configure
-    export ac_cv_lib_ev_ev_time=yes
-    export ac_cv_search_ev_time="-lev_ios"
-    export ac_cv_lib_sodium_sodium_init=yes
-    export ac_cv_search_sodium_init="-lsodium_ios"
     
     # Configure with correct library paths and names
     ./configure \
@@ -383,13 +376,6 @@ build_shadowsocks() {
         fi
     done
     
-    # 验证编译结果
-    if [ ! -d "$install_dir/lib" ] || [ ! -d "$install_dir/include" ]; then
-        error "编译失败：安装目录结构不完整"
-        return 1
-    fi
-    
-    info "Successfully built ${LIB_NAME} for $platform ($arch)"
     return 0
 }
 

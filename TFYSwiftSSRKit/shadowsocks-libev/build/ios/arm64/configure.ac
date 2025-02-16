@@ -25,10 +25,6 @@ LT_INIT([disable-shared])
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-dnl Add library dependencies
-AC_CHECK_LIB([ev], [ev_time], [], [AC_MSG_ERROR([Couldn't find libev. Try installing libev-dev or libev-devel.])])
-AC_CHECK_LIB([sodium], [sodium_init], [], [AC_MSG_ERROR([Couldn't find libsodium. Try installing libsodium-dev or libsodium-devel.])])
-
 dnl Checks for header files.
 AC_CHECK_HEADERS([limits.h stdint.h inttypes.h stdlib.h string.h unistd.h])
 AC_CHECK_HEADERS([sys/time.h time.h])

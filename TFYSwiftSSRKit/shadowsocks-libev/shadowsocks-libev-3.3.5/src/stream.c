@@ -174,25 +174,16 @@ cipher_nonce_size(const cipher_t *cipher)
     if (cipher == NULL) {
         return 0;
     }
-    return cipher->info->iv_size;
+    return mbedtls_cipher_info_get_iv_size(cipher->info);
 }
 
 int
 cipher_key_size(const cipher_t *cipher)
 {
-    /*
-     * Semi-API changes (technically public, morally prnonceate)
-     * Renamed a few headers to include _internal in the name. Those headers are
-     * not supposed to be included by users.
-     * Changed md_info_t into an opaque structure (use md_get_xxx() accessors).
-     * Changed pk_info_t into an opaque structure.
-     * Changed cipher_base_t into an opaque structure.
-     */
     if (cipher == NULL) {
         return 0;
     }
-    /* From Version 1.2.7 released 2013-04-13 Default Blowfish keysize is now 128-bits */
-    return cipher->info->key_bitlen / 8;
+    return mbedtls_cipher_info_get_key_bitlen(cipher->info) / 8;
 }
 
 const cipher_kt_t *

@@ -177,10 +177,9 @@ aead_cipher_encrypt(cipher_ctx_t *cipher_ctx,
     // Otherwise, just use the mbedTLS one with crappy AES-NI.
     case AES192GCM:
     case AES128GCM:
-
-        err = mbedtls_cipher_auth_encrypt(cipher_ctx->evp, n, nlen, ad, adlen,
-                                          m, mlen, c, clen, c + mlen, tlen);
-        *clen += tlen;
+        err = mbedtls_cipher_auth_encrypt_ext(cipher_ctx->evp, n, nlen, ad, adlen,
+                                          m, mlen, c, mlen + tlen,
+                                          clen, tlen);
         break;
     case CHACHA20POLY1305IETF:
         err = crypto_aead_chacha20poly1305_ietf_encrypt(c, &long_clen, m, mlen,
@@ -226,8 +225,9 @@ aead_cipher_decrypt(cipher_ctx_t *cipher_ctx,
     // Otherwise, just use the mbedTLS one with crappy AES-NI.
     case AES192GCM:
     case AES128GCM:
-        err = mbedtls_cipher_auth_decrypt(cipher_ctx->evp, n, nlen, ad, adlen,
-                                          m, mlen - tlen, p, plen, m + mlen - tlen, tlen);
+        err = mbedtls_cipher_auth_decrypt_ext(cipher_ctx->evp, n, nlen, ad, adlen,
+                                          m, mlen, p, mlen - tlen,
+                                          plen, tlen);
         break;
     case CHACHA20POLY1305IETF:
         err = crypto_aead_chacha20poly1305_ietf_decrypt(p, &long_plen, NULL, m, mlen,
