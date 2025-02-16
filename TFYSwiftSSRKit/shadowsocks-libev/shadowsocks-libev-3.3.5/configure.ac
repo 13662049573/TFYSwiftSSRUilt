@@ -60,6 +60,29 @@ AC_CHECK_FUNCS([strchr])
 AC_CHECK_FUNCS([strrchr])
 AC_CHECK_FUNCS([strerror])
 
+# Add include paths for dependencies
+CFLAGS="$CFLAGS -I$LIBEV_PATH/include"
+CFLAGS="$CFLAGS -I$LIBMAXMINDDB_PATH/include"
+CFLAGS="$CFLAGS -I$LIBSODIUM_PATH/include"
+CFLAGS="$CFLAGS -I$MBEDTLS_PATH/include"
+CFLAGS="$CFLAGS -I$OPENSSL_PATH/include"
+CFLAGS="$CFLAGS -I$PCRE_PATH/include"
+CFLAGS="$CFLAGS -I$CARES_PATH/include"
+
+# Add library paths for dependencies
+LDFLAGS="$LDFLAGS -L$LIBEV_PATH/lib"
+LDFLAGS="$LDFLAGS -L$LIBMAXMINDDB_PATH/lib"
+LDFLAGS="$LDFLAGS -L$LIBSODIUM_PATH/lib"
+LDFLAGS="$LDFLAGS -L$MBEDTLS_PATH/lib"
+LDFLAGS="$LDFLAGS -L$OPENSSL_PATH/lib"
+LDFLAGS="$LDFLAGS -L$PCRE_PATH/lib"
+LDFLAGS="$LDFLAGS -L$CARES_PATH/lib"
+
+# Add library dependencies
+LIBS="$LIBS -lev_${platform_suffix} -lmaxminddb_${platform_suffix} -lsodium_${platform_suffix}"
+LIBS="$LIBS -lmbedcrypto_${platform_suffix} -lmbedtls_${platform_suffix} -lmbedx509_${platform_suffix}"
+LIBS="$LIBS -lssl_${platform_suffix} -lcrypto_${platform_suffix} -lpcre_${platform_suffix} -lcares_${platform_suffix}"
+
 AC_CONFIG_FILES([Makefile
                  libbloom/Makefile
                  libcork/Makefile
