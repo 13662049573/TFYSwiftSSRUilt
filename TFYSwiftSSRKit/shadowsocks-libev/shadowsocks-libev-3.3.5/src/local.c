@@ -38,6 +38,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #endif
 #ifdef LIB_ONLY
 #include "shadowsocks.h"
@@ -999,32 +1000,13 @@ remote_recv_cb(EV_P_ ev_io *w, int revents)
         }
     }
 
-    int s = send(server->fd, server->buf->data, server->buf->len, 0);
-
-    if (s == -1) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            // no data, wait for send
-            server->buf->idx = 0;
-            ev_io_stop(EV_A_ & remote_recv_ctx->io);
-            ev_io_start(EV_A_ & server->send_ctx->io);
-        } else {
-            ERROR("remote_recv_cb_send");
-            close_and_free_remote(EV_A_ remote);
-            close_and_free_server(EV_A_ server);
-            return;
-        }
-    } else if (s < (int)(server->buf->len)) {
-        server->buf->len -= s;
-        server->buf->idx  = s;
-        ev_io_stop(EV_A_ & remote_recv_ctx->io);
-        ev_io_start(EV_A_ & server->send_ctx->io);
-    }
-
     // Disable TCP_NODELAY after the first response are sent
     if (!remote->recv_ctx->connected && !no_delay) {
         int opt = 0;
-        setsockopt(server->fd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
-        setsockopt(remote->fd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#ifdef TCP_NODELAY
+        setsockopt(server->fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+        setsockopt(remote->fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#endif
     }
     remote->recv_ctx->connected = 1;
 }
@@ -1280,7 +1262,9 @@ create_remote(listen_ctx_t *listener,
     }
 
     int opt = 1;
-    setsockopt(remotefd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#ifdef TCP_NODELAY
+    setsockopt(remotefd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#endif
 #ifdef SO_NOSIGPIPE
     setsockopt(remotefd, SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt));
 #endif
@@ -1389,7 +1373,9 @@ accept_cb(EV_P_ ev_io *w, int revents)
     }
     setnonblocking(serverfd);
     int opt = 1;
-    setsockopt(serverfd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#ifdef TCP_NODELAY
+    setsockopt(serverfd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#endif
 #ifdef SO_NOSIGPIPE
     setsockopt(serverfd, SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt));
 #endif

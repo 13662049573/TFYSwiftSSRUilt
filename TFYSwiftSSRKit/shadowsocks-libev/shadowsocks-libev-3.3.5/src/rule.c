@@ -31,103 +31,80 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "rule.h"
 #include "utils.h"
 
-static void free_rule(rule_t *);
-
 rule_t *
-new_rule()
+create_rule(const char *pattern,
+           int port,
+           int mode)
 {
-    rule_t *rule;
-
-    rule = calloc(1, sizeof(rule_t));
+    rule_t *rule = (rule_t *)calloc(1, sizeof(rule_t));
     if (rule == NULL) {
-        ERROR("malloc");
         return NULL;
     }
 
+    rule->port = port;
+    rule->mode = mode;
+
+    const char *error;
+    int erroffset;
+    rule->pattern_re = pcre_compile(pattern, 0, &error, &erroffset, NULL);
+    if (rule->pattern_re == NULL) {
+        LOGE("PCRE compilation failed at offset %d: %s", erroffset, error);
+        free(rule);
+        return NULL;
+    }
+
+    rule->next = NULL;
     return rule;
 }
 
 int
-accept_rule_arg(rule_t *rule, const char *arg)
+delete_rule(rule_t *rule)
 {
-    if (rule->pattern == NULL) {
-        rule->pattern = strdup(arg);
-        if (rule->pattern == NULL) {
-            ERROR("strdup failed");
-            return -1;
-        }
-    } else {
-        LOGE("Unexpected table rule argument: %s", arg);
-        return -1;
+    if (rule == NULL) {
+        return 0;
     }
 
-    return 1;
+    if (rule->pattern_re != NULL) {
+        pcre_free(rule->pattern_re);
+    }
+
+    free(rule);
+    return 0;
 }
 
 void
-add_rule(struct cork_dllist *rules, rule_t *rule)
+release_rules(rule_t *rules)
 {
-    cork_dllist_add(rules, &rule->entries);
-}
-
-int
-init_rule(rule_t *rule)
-{
-    if (rule->pattern_re == NULL) {
-        const char *reerr;
-        int reerroffset;
-
-        rule->pattern_re =
-            pcre_compile(rule->pattern, 0, &reerr, &reerroffset, NULL);
-        if (rule->pattern_re == NULL) {
-            LOGE("Regex compilation of \"%s\" failed: %s, offset %d",
-                 rule->pattern, reerr, reerroffset);
-            return 0;
-        }
+    rule_t *curr = rules;
+    while (curr != NULL) {
+        rule_t *next = curr->next;
+        delete_rule(curr);
+        curr = next;
     }
-
-    return 1;
 }
 
 rule_t *
-lookup_rule(const struct cork_dllist *rules, const char *name, size_t name_len)
+get_rule(const char *pattern,
+         int port,
+         int mode,
+         rule_t *rules)
 {
-    struct cork_dllist_item *curr, *next;
-
-    if (name == NULL) {
-        name     = "";
-        name_len = 0;
+    rule_t *curr = rules;
+    while (curr != NULL) {
+        if (curr->port == port && curr->mode == mode) {
+            int ovector[30];
+            int rc = pcre_exec(curr->pattern_re, NULL, pattern, strlen(pattern),
+                             0, 0, ovector, 30);
+            if (rc >= 0) {
+                return curr;
+            }
+        }
+        curr = curr->next;
     }
-
-    cork_dllist_foreach_void(rules, curr, next) {
-        rule_t *rule = cork_container_of(curr, rule_t, entries);
-        if (pcre_exec(rule->pattern_re, NULL,
-                      name, name_len, 0, 0, NULL, 0) >= 0)
-            return rule;
-    }
-
     return NULL;
-}
-
-void
-remove_rule(rule_t *rule)
-{
-    cork_dllist_remove(&rule->entries);
-    free_rule(rule);
-}
-
-static void
-free_rule(rule_t *rule)
-{
-    if (rule == NULL)
-        return;
-
-    ss_free(rule->pattern);
-    if (rule->pattern_re != NULL)
-        pcre_free(rule->pattern_re);
-    ss_free(rule);
 }

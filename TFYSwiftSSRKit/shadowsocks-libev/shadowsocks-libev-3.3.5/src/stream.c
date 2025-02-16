@@ -620,6 +620,21 @@ stream_ctx_init(cipher_t *cipher, cipher_ctx_t *cipher_ctx, int enc)
     if (enc) {
         rand_bytes(cipher_ctx->nonce, cipher->nonce_len);
     }
+
+    if (cipher->method == SALSA20 || cipher->method == CHACHA20 || cipher->method == CHACHA20IETF) {
+        cipher_kt_t *cipher_info = (cipher_kt_t *)ss_malloc(sizeof(cipher_kt_t));
+        cipher->info             = cipher_info;
+        cipher->key_len         = supported_stream_ciphers_key_size[cipher->method];
+        cipher->nonce_len       = supported_stream_ciphers_nonce_size[cipher->method];
+    } else {
+        cipher->info = (cipher_kt_t *)stream_get_cipher_type(cipher->method);
+        if (cipher->info == NULL) {
+            LOGE("Cipher %s not found in mbed TLS library", supported_stream_ciphers[cipher->method]);
+            FATAL("Cannot initialize cipher");
+        }
+        cipher->key_len = mbedtls_cipher_info_get_key_bitlen(cipher->info) / 8;
+        cipher->nonce_len = mbedtls_cipher_info_get_iv_size(cipher->info);
+    }
 }
 
 cipher_t *
@@ -636,30 +651,28 @@ stream_key_init(int method, const char *pass, const char *key)
     if (method == SALSA20 || method == CHACHA20 || method == CHACHA20IETF) {
         cipher_kt_t *cipher_info = (cipher_kt_t *)ss_malloc(sizeof(cipher_kt_t));
         cipher->info             = cipher_info;
-        cipher->info->base       = NULL;
-        cipher->info->key_bitlen = supported_stream_ciphers_key_size[method] * 8;
-        cipher->info->iv_size    = supported_stream_ciphers_nonce_size[method];
+        cipher->key_len         = supported_stream_ciphers_key_size[method];
+        cipher->nonce_len       = supported_stream_ciphers_nonce_size[method];
     } else {
         cipher->info = (cipher_kt_t *)stream_get_cipher_type(method);
-    }
-
-    if (cipher->info == NULL && cipher->key_len == 0) {
-        LOGE("Cipher %s not found in crypto library", supported_stream_ciphers[method]);
-        FATAL("Cannot initialize cipher");
+        if (cipher->info == NULL) {
+            LOGE("Cipher %s not found in mbed TLS library", supported_stream_ciphers[method]);
+            FATAL("Cannot initialize cipher");
+        }
+        cipher->key_len = mbedtls_cipher_info_get_key_bitlen(cipher->info) / 8;
+        cipher->nonce_len = mbedtls_cipher_info_get_iv_size(cipher->info);
     }
 
     if (key != NULL)
-        cipher->key_len = crypto_parse_key(key, cipher->key, cipher_key_size(cipher));
+        cipher->key_len = crypto_parse_key(key, cipher->key, cipher->key_len);
     else
-        cipher->key_len = crypto_derive_key(pass, cipher->key, cipher_key_size(cipher));
+        cipher->key_len = crypto_derive_key(pass, cipher->key, cipher->key_len);
 
     if (cipher->key_len == 0) {
         FATAL("Cannot generate key and NONCE");
     }
     if (method == RC4_MD5) {
         cipher->nonce_len = 16;
-    } else {
-        cipher->nonce_len = cipher_nonce_size(cipher);
     }
     cipher->method = method;
 

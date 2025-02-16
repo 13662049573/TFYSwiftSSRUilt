@@ -42,6 +42,7 @@
 #include <netinet/in.h>
 #include <pthread.h>
 #include <sys/un.h>
+#include <netinet/tcp.h>
 #endif
 #include <libcork/core.h>
 
@@ -85,6 +86,14 @@
 #define MARK_MASK_PREFIX 0xDC00
 #endif
 
+#endif
+
+#ifndef CONNECT_IN_PROGRESS
+#ifdef EINPROGRESS
+#define CONNECT_IN_PROGRESS EINPROGRESS
+#else
+#define CONNECT_IN_PROGRESS EAGAIN
+#endif
 #endif
 
 static void signal_cb(EV_P_ ev_signal *w, int revents);
@@ -383,7 +392,9 @@ create_and_bind(const char *host, const char *port, int mptcp)
         }
 
         int opt = 1;
-        setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+#ifdef TCP_NODELAY
+        setsockopt(listen_sock, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#endif
 #ifdef SO_NOSIGPIPE
         setsockopt(listen_sock, SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt));
 #endif
@@ -465,7 +476,9 @@ connect_to_remote(EV_P_ struct addrinfo *res,
     }
 
     int opt = 1;
-    setsockopt(sockfd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#ifdef TCP_NODELAY
+    setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#endif
 #ifdef SO_NOSIGPIPE
     setsockopt(sockfd, SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt));
 #endif
@@ -1181,8 +1194,10 @@ remote_recv_cb(EV_P_ ev_io *w, int revents)
     // Disable TCP_NODELAY after the first response are sent
     if (!remote->recv_ctx->connected && !no_delay) {
         int opt = 0;
-        setsockopt(server->fd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
-        setsockopt(remote->fd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#ifdef TCP_NODELAY
+        setsockopt(server->fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+        setsockopt(remote->fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#endif
     }
     remote->recv_ctx->connected = 1;
 }
@@ -1534,7 +1549,9 @@ accept_cb(EV_P_ ev_io *w, int revents)
     }
 
     int opt = 1;
-    setsockopt(serverfd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#ifdef TCP_NODELAY
+    setsockopt(serverfd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+#endif
 #ifdef SO_NOSIGPIPE
     setsockopt(serverfd, SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt));
 #endif

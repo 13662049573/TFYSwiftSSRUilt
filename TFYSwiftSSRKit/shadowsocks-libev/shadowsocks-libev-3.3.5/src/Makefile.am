@@ -1,28 +1,37 @@
 VERSION_INFO = 2:0:0
 
-AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -std=gnu99 -D_GNU_SOURCE
+if platform_suffix_ios
+AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -fPIC -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
+else
+AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasing -fPIC -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
+endif
+
 AM_CFLAGS += $(PTHREAD_CFLAGS)
 if !USE_SYSTEM_SHARED_LIB
 AM_CFLAGS += -I$(top_srcdir)/libbloom
-AM_CFLAGS += -I$(top_srcdir)/libipset/include
 AM_CFLAGS += -I$(top_srcdir)/libcork/include
+AM_CFLAGS += -I$(top_srcdir)/libipset/include
 endif
-AM_CFLAGS += $(LIBPCRE_CFLAGS)
+AM_CFLAGS += -I/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/include
 
-SS_COMMON_LIBS = $(INET_NTOP_LIB) $(LIBPCRE_LIBS)
+SS_COMMON_LIBS = $(INET_NTOP_LIB)
 if !USE_SYSTEM_SHARED_LIB
 SS_COMMON_LIBS += $(top_builddir)/libbloom/libbloom.la \
-                  $(top_builddir)/libipset/libipset.la \
-                  $(top_builddir)/libcork/libcork.la
-else
-SS_COMMON_LIBS += -lbloom -lcork -lcorkipset
+                  $(top_builddir)/libcork/libcork.la \
+                  $(top_builddir)/libipset/libipset.la
 endif
-SS_COMMON_LIBS += -lev -lsodium -lm
+SS_COMMON_LIBS += -lev_$(platform_suffix) \
+                  -lmaxminddb_$(platform_suffix) \
+                  -lsodium_$(platform_suffix) \
+                  -lmbedcrypto_$(platform_suffix) \
+                  -lmbedtls_$(platform_suffix) \
+                  -lmbedx509_$(platform_suffix) \
+                  -lssl_$(platform_suffix) \
+                  -lcrypto_$(platform_suffix) \
+                  -lpcre_$(platform_suffix) \
+                  -lcares_$(platform_suffix)
 
-bin_PROGRAMS = ss-local ss-tunnel ss-server
-if !BUILD_WINCOMPAT
-bin_PROGRAMS += ss-manager
-endif
+bin_PROGRAMS = ss-local ss-tunnel ss-server ss-manager
 
 acl_src = rule.c \
           acl.c
@@ -46,38 +55,75 @@ if BUILD_WINCOMPAT
 common_src += winsock.c
 endif
 
-ss_local_SOURCES = local.c \
-                   $(common_src) \
-                   $(crypto_src) \
-                   $(plugin_src) \
-                   $(acl_src)
+ss_local_SOURCES = utils.c \
+                   jconf.c \
+                   json.c \
+                   udprelay.c \
+                   cache.c \
+                   acl.c \
+                   netutils.c \
+                   local.c \
+                   plugin.c \
+                   ppbloom.c \
+                   rule.c \
+                   base64.c \
+                   stream.c \
+                   aead.c \
+                   crypto.c
 
-ss_tunnel_SOURCES = tunnel.c \
-                    $(common_src) \
-                    $(crypto_src) \
-                    $(plugin_src)
+ss_tunnel_SOURCES = utils.c \
+                    jconf.c \
+                    json.c \
+                    udprelay.c \
+                    cache.c \
+                    netutils.c \
+                    tunnel.c \
+                    plugin.c \
+                    ppbloom.c \
+                    base64.c \
+                    stream.c \
+                    aead.c \
+                    crypto.c
 
-ss_server_SOURCES = resolv.c \
+ss_server_SOURCES = utils.c \
+                    jconf.c \
+                    json.c \
+                    udprelay.c \
+                    cache.c \
+                    acl.c \
+                    resolv.c \
+                    netutils.c \
                     server.c \
-                    $(common_src) \
-                    $(crypto_src) \
-                    $(plugin_src) \
-                    ${acl_src}
+                    plugin.c \
+                    ppbloom.c \
+                    rule.c \
+                    base64.c \
+                    stream.c \
+                    aead.c \
+                    crypto.c \
+                    manager.c
 
 ss_manager_SOURCES = utils.c \
                      jconf.c \
                      json.c \
-                     netutils.c \
                      manager.c
 
 ss_local_LDADD = $(SS_COMMON_LIBS)
 ss_tunnel_LDADD = $(SS_COMMON_LIBS)
 ss_server_LDADD = $(SS_COMMON_LIBS)
 ss_manager_LDADD = $(SS_COMMON_LIBS)
-ss_local_LDADD += -lcares
-ss_tunnel_LDADD += -lcares
-ss_server_LDADD += -lcares
-ss_manager_LDADD += -lcares
+
+if platform_suffix_ios
+ss_local_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
+ss_tunnel_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
+ss_server_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
+ss_manager_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk iphoneos --show-sdk-path` -mios-version-min=15.0
+else
+ss_local_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
+ss_tunnel_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
+ss_server_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
+ss_manager_LDFLAGS = -arch arm64 -isysroot `xcrun --sdk macosx --show-sdk-path` -mmacosx-version-min=12.0
+endif
 
 ss_local_CFLAGS = $(AM_CFLAGS) -DMODULE_LOCAL
 ss_tunnel_CFLAGS = $(AM_CFLAGS) -DMODULE_TUNNEL

@@ -24,35 +24,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef RULE_H
-#define RULE_H
+#ifndef _RULE_H
+#define _RULE_H
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include <stdio.h>
+#include <string.h>
 
-#include <libcork/ds.h>
+#include "/Users/tianfengyou/Desktop/自己库/TFYSwiftSSRUilt/TFYSwiftSSRKit/pcre/include/pcre.h"
 
-#ifdef HAVE_PCRE_H
-#include <pcre.h>
-#elif HAVE_PCRE_PCRE_H
-#include <pcre/pcre.h>
-#endif
+#define MAX_HOSTNAME_LEN 256
+#define MAX_CNAME_LEN 64
+#define MAX_PATH_LEN 256
 
 typedef struct rule {
-    char *pattern;
-
-    /* Runtime fields */
+    int port;
+    int mode;
     pcre *pattern_re;
-
-    struct cork_dllist_item entries;
+    struct rule *next;
 } rule_t;
 
-void add_rule(struct cork_dllist *, rule_t *);
-int init_rule(rule_t *);
-rule_t *lookup_rule(const struct cork_dllist *, const char *, size_t);
-void remove_rule(rule_t *);
-rule_t *new_rule();
-int accept_rule_arg(rule_t *, const char *);
+rule_t *create_rule(const char *pattern,
+                    int port,
+                    int mode);
+int delete_rule(rule_t *rule);
+void release_rules(rule_t *rules);
+rule_t *get_rule(const char *pattern,
+                 int port,
+                 int mode,
+                 rule_t *rules);
 
-#endif
+#endif // _RULE_H

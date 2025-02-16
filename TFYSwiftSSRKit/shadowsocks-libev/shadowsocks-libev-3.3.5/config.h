@@ -1,12 +1,6 @@
 /* config.h.  Generated from config.h.in by configure.  */
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* Define if building universal (internal helper macro) */
-/* #undef AC_APPLE_UNIVERSAL_BUILD */
-
-/* Define to 1 if you have the <arpa/inet.h> header file. */
-#define HAVE_ARPA_INET_H 1
-
 /* Define to 1 if you have the 'clock_gettime' function. */
 #define HAVE_CLOCK_GETTIME 1
 
@@ -19,17 +13,11 @@
 /* Define to 1 if you have the 'inet_ntoa' function. */
 #define HAVE_INET_NTOA 1
 
+/* Define to 1 if the system has the type 'int64_t'. */
+#define HAVE_INT64_T 1
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
-
-/* Define to 1 if you have the <limits.h> header file. */
-#define HAVE_LIMITS_H 1
-
-/* Define to 1 if you have the <linux/tcp.h> header file. */
-/* #undef HAVE_LINUX_TCP_H */
-
-/* Define to 1 if you have the <linux/udp.h> header file. */
-/* #undef HAVE_LINUX_UDP_H */
 
 /* Define to 1 if you have the 'malloc' function. */
 #define HAVE_MALLOC 1
@@ -43,20 +31,23 @@
 /* Define to 1 if you have the <minix/config.h> header file. */
 /* #undef HAVE_MINIX_CONFIG_H */
 
-/* Define to 1 if you have the <netdb.h> header file. */
-#define HAVE_NETDB_H 1
+/* Define to 1 if you have the <pcre.h> header file. */
+#define HAVE_PCRE_H 1
 
-/* Define to 1 if you have the <netinet/in.h> header file. */
-#define HAVE_NETINET_IN_H 1
-
-/* Define to 1 if you have the <netinet/tcp.h> header file. */
-#define HAVE_NETINET_TCP_H 1
+/* Define to 1 if the system has the type 'pid_t'. */
+#define HAVE_PID_T 1
 
 /* Define to 1 if you have the 'select' function. */
 #define HAVE_SELECT 1
 
+/* Define to 1 if the system has the type 'size_t'. */
+#define HAVE_SIZE_T 1
+
 /* Define to 1 if you have the 'socket' function. */
 #define HAVE_SOCKET 1
+
+/* Define to 1 if the system has the type 'ssize_t'. */
+#define HAVE_SSIZE_T 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -82,20 +73,23 @@
 /* Define to 1 if you have the 'strrchr' function. */
 #define HAVE_STRRCHR 1
 
-/* Define to 1 if you have the <sys/socket.h> header file. */
-#define HAVE_SYS_SOCKET_H 1
-
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
-
-/* Define to 1 if you have the <sys/time.h> header file. */
-#define HAVE_SYS_TIME_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
 
-/* Define to 1 if you have the <time.h> header file. */
-#define HAVE_TIME_H 1
+/* Define to 1 if the system has the type 'uint16_t'. */
+#define HAVE_UINT16_T 1
+
+/* Define to 1 if the system has the type 'uint32_t'. */
+#define HAVE_UINT32_T 1
+
+/* Define to 1 if the system has the type 'uint64_t'. */
+#define HAVE_UINT64_T 1
+
+/* Define to 1 if the system has the type 'uint8_t'. */
+#define HAVE_UINT8_T 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
@@ -226,65 +220,3 @@
 
 /* Version number of package */
 #define VERSION "3.3.5"
-
-/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
-   significant byte first (like Motorola and SPARC, unlike Intel). */
-#if defined AC_APPLE_UNIVERSAL_BUILD
-# if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN 1
-# endif
-#else
-# ifndef WORDS_BIGENDIAN
-/* #  undef WORDS_BIGENDIAN */
-# endif
-#endif
-
-/* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
-   #define below would cause a syntax error. */
-/* #undef _UINT32_T */
-
-/* Define for Solaris 2.5.1 so the uint64_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
-   #define below would cause a syntax error. */
-/* #undef _UINT64_T */
-
-/* Define for Solaris 2.5.1 so the uint8_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
-   #define below would cause a syntax error. */
-/* #undef _UINT8_T */
-
-/* Define to '__inline__' or '__inline' if that's what the C compiler
-   calls it, or to nothing if 'inline' is not supported under any name.  */
-#ifndef __cplusplus
-/* #undef inline */
-#endif
-
-/* Define to the type of a signed integer type of width exactly 64 bits if
-   such a type exists and the standard includes do not define it. */
-/* #undef int64_t */
-
-/* Define as a signed integer type capable of holding a process identifier. */
-/* #undef pid_t */
-
-/* Define as 'unsigned int' if <stddef.h> doesn't define. */
-/* #undef size_t */
-
-/* Define as 'int' if <sys/types.h> doesn't define. */
-/* #undef ssize_t */
-
-/* Define to the type of an unsigned integer type of width exactly 16 bits if
-   such a type exists and the standard includes do not define it. */
-/* #undef uint16_t */
-
-/* Define to the type of an unsigned integer type of width exactly 32 bits if
-   such a type exists and the standard includes do not define it. */
-/* #undef uint32_t */
-
-/* Define to the type of an unsigned integer type of width exactly 64 bits if
-   such a type exists and the standard includes do not define it. */
-/* #undef uint64_t */
-
-/* Define to the type of an unsigned integer type of width exactly 8 bits if
-   such a type exists and the standard includes do not define it. */
-/* #undef uint8_t */

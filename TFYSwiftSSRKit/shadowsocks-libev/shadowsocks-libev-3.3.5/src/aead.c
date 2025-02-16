@@ -724,16 +724,18 @@ aead_key_init(int method, const char *pass, const char *key)
     if (method >= CHACHA20POLY1305IETF) {
         cipher_kt_t *cipher_info = (cipher_kt_t *)ss_malloc(sizeof(cipher_kt_t));
         cipher->info             = cipher_info;
-        cipher->info->base       = NULL;
-        cipher->info->key_bitlen = supported_aead_ciphers_key_size[method] * 8;
-        cipher->info->iv_size    = supported_aead_ciphers_nonce_size[method];
+        cipher->key_len         = supported_aead_ciphers_key_size[method];
+        cipher->nonce_len       = supported_aead_ciphers_nonce_size[method];
+        cipher->tag_len         = supported_aead_ciphers_tag_size[method];
     } else {
         cipher->info = (cipher_kt_t *)aead_get_cipher_type(method);
-    }
-
-    if (cipher->info == NULL && cipher->key_len == 0) {
-        LOGE("Cipher %s not found in crypto library", supported_aead_ciphers[method]);
-        FATAL("Cannot initialize cipher");
+        if (cipher->info == NULL) {
+            LOGE("Cipher %s not found in mbed TLS library", supported_aead_ciphers[method]);
+            FATAL("Cannot initialize cipher");
+        }
+        cipher->key_len = mbedtls_cipher_info_get_key_bitlen(cipher->info) / 8;
+        cipher->nonce_len = mbedtls_cipher_info_get_iv_size(cipher->info);
+        cipher->tag_len = 16; // GCM tag length is always 16 bytes
     }
 
     if (key != NULL)
@@ -747,9 +749,7 @@ aead_key_init(int method, const char *pass, const char *key)
         FATAL("Cannot generate key and nonce");
     }
 
-    cipher->nonce_len = supported_aead_ciphers_nonce_size[method];
-    cipher->tag_len   = supported_aead_ciphers_tag_size[method];
-    cipher->method    = method;
+    cipher->method = method;
 
     return cipher;
 }

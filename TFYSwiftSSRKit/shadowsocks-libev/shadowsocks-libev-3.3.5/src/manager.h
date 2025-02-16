@@ -23,46 +23,51 @@
 #ifndef _MANAGER_H
 #define _MANAGER_H
 
+#include <ev.h>
 #include <time.h>
 #include <libcork/ds.h>
 
-#ifdef HAVE_LIBEV_EV_H
-#include <libev/ev.h>
-#else
-#include <ev.h>
+#ifdef __MINGW32__
+#include "winsock.h"
 #endif
 
 #include "jconf.h"
-
 #include "common.h"
 
-struct manager_ctx {
-    ev_io io;
-    int fd;
+typedef struct {
     int fast_open;
     int no_delay;
     int reuse_port;
     int verbose;
     int mode;
     char *password;
-    char *key;
     char *timeout;
     char *method;
     char *iface;
     char *acl;
     char *user;
+    char *manager_address;
+    char *host;
+    char *port;
     char *plugin;
     char *plugin_opts;
-    char *manager_address;
-    char **hosts;
-    int host_num;
     char *nameservers;
     int mtu;
     int ipv6first;
-    char *workdir;
+    char *executable;
+    char *working_dir;
+    int host_num;
+    char *hosts[MAX_REMOTE_NUM];
 #ifdef HAVE_SETRLIMIT
     int nofile;
 #endif
+} manager_t;
+
+struct manager_ctx {
+    ev_io io;
+    int fd;
+    manager_t *manager;
+    struct ev_loop *loop;
 };
 
 struct server {
