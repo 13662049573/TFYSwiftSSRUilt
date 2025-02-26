@@ -131,11 +131,7 @@ NSString * const TFYOCLibevConnectionErrorDomain = @"com.tfyswiftssrkit.connecti
         [self.tcpSocket writeData:data withTimeout:-1 tag:0];
     } else {
         // UDP发送数据
-        NSError *error = nil;
-        if (![self.udpSocket sendData:data toHost:self.remoteHost port:self.remotePort withTimeout:-1 tag:0]) {
-            [self notifyError:error];
-            return NO;
-        }
+        [self.udpSocket sendData:data toHost:self.remoteHost port:self.remotePort withTimeout:-1 tag:0];
     }
     
     // 更新上传字节数
