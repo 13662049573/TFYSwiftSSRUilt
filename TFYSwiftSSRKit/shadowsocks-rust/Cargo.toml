@@ -1,14 +1,53 @@
 [package]
 name = "shadowsocks-rust"
-version = "1.22.0"
+version = "0.1.0"
 edition = "2021"
-authors = ["TFYSwiftSSRKit"]
-description = "Shadowsocks Rust implementation for iOS/macOS"
 
 [lib]
 name = "ss"
 crate-type = ["staticlib"]
+visibility = "public"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true
+rpath = false
+debug-assertions = false
+incremental = false
+
+[build]
+target = ["aarch64-apple-ios"]
+
+[target.aarch64-apple-ios]
+rustflags = [
+    "-C", "link-arg=-undefined",
+    "-C", "link-arg=dynamic_lookup",
+    "-C", "target-cpu=generic",
+    "-C", "target-feature=+neon,+fp-armv8,+v8.1a,+lse",
+]
 
 [dependencies]
-shadowsocks-rust = { version = "1.22.0", features = ["stream-cipher", "local-redir"] }
-libc = { version = "0.2.155", features = ["extra_traits"] }
+shadowsocks = { version = "1.22.0", default-features = false, features = [
+    "stream-cipher",
+    "aead-cipher-2022"
+] }
+shadowsocks-service = { version = "1.22.0", default-features = false, features = [
+    "local",
+    "local-flow-stat",
+    "local-tunnel",
+    "local-redir",
+    "local-dns",
+    "local-socks4",
+    "local-http"
+] }
+tokio = { version = "1.0", features = ["full"] }
+log = "0.4"
+env_logger = "0.10"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+bytes = "1.0"
+futures = "0.3"
+socket2 = { version = "0.5", features = ["all"] }

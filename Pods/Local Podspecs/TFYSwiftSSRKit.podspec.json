@@ -1,12 +1,12 @@
 {
   "name": "TFYSwiftSSRKit",
   "version": "1.0.0",
-  "summary": "A powerful iOS/macOS shadowsocks client library written in Objective-C",
-  "description": "TFYSwiftSSRKit is a comprehensive shadowsocks client library for iOS and macOS.\nFeatures:\n* Multiple encryption methods support (OpenSSL & libsodium)\n* GeoIP based routing\n* TLS support\n* Automatic network monitoring and reconnection\n* Rule-based proxy configuration\n* Traffic statistics",
-  "homepage": "https://github.com/13662049573/TFYSwiftSSRUilt",
+  "summary": "iOS/macOS Shadowsocks client framework with Rust and Libev cores",
+  "description": "TFYSwiftSSRKit is an iOS/macOS framework that provides Shadowsocks client functionality.\nIt supports both Rust and Libev implementations for high performance and security,\nwrapped with Objective-C interfaces for easy integration into iOS/macOS apps.",
+  "homepage": "https://github.com/13662049573/TFYSwiftSSRKit",
   "license": {
     "type": "MIT",
-    "file": "LICENSE"
+    "file": "TFYSwiftSSRKit/LICENSE"
   },
   "authors": {
     "田风有": "420144542@qq.com"
@@ -16,104 +16,90 @@
     "osx": "12.0"
   },
   "source": {
-    "git": "https://github.com/13662049573/TFYSwiftSSRUilt.git",
+    "git": "https://github.com/13662049573/TFYSwiftSSRKit.git",
     "tag": "1.0.0"
   },
   "source_files": [
-    "Classes/*.{h,m}",
-    "libmaxminddb/install/include/*.h",
-    "libsodium/install/include/*.h",
-    "libsodium/install/include/sodium/*.h",
-    "openssl/install/include/openssl/*.h",
-    "shadowsocks/install/include/*.h"
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevBridge.{h,m}",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.{h,m}",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevManager.{h,m}",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevSOCKS5Handler.{h,m}",
+    "TFYSwiftSSRKit/RustOCClass/TFYSSManager.{h,m}",
+    "TFYSwiftSSRKit/RustOCClass/TFYVPNManager.{h,m}",
+    "TFYSwiftSSRKit/shadowsocks-rust/output/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libs/include/*.h"
+  ],
+  "exclude_files": [
+    "TFYSwiftSSRKit/shadowsocks-libev/source/**/*",
+    "TFYSwiftSSRKit/shadowsocks-libev/libipset/**/*",
+    "TFYSwiftSSRKit/shadowsocks-libev/mbedtls/**/*",
+    "TFYSwiftSSRKit/shadowsocks-libev/libcork/**/*",
+    "TFYSwiftSSRKit/shadowsocks-libev/pcre/**/*",
+    "TFYSwiftSSRKit/shadowsocks-libev/c-ares/**/*",
+    "TFYSwiftSSRKit/shadowsocks-libev/libsodium/**/*",
+    "TFYSwiftSSRKit/shadowsocks-libev/libev/**/*",
+    "TFYSwiftSSRKit/shadowsocks-rust/src/**/*",
+    "TFYSwiftSSRKit/shadowsocks-rust/Cargo.lock",
+    "TFYSwiftSSRKit/shadowsocks-rust/Cargo.toml"
   ],
   "public_header_files": [
-    "Classes/*.h",
-    "libmaxminddb/install/include/*.h",
-    "libsodium/install/include/*.h",
-    "libsodium/install/include/sodium/*.h",
-    "openssl/install/include/openssl/*.h",
-    "shadowsocks/install/include/*.h"
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevBridge.h",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.h",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevManager.h",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevSOCKS5Handler.h",
+    "TFYSwiftSSRKit/RustOCClass/TFYSSManager.h",
+    "TFYSwiftSSRKit/RustOCClass/TFYVPNManager.h",
+    "TFYSwiftSSRKit/shadowsocks-rust/output/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libs/include/*.h"
   ],
-  "resource_bundles": {
-    "TFYSwiftSSRKit": [
-      "Resources/default_rules.json",
-      "Resources/GeoLite2-Country.mmdb",
-      "Resources/user_rules.json",
-      "shadowsocks/install/bin/sslocal",
-      "shadowsocks/install/bin/ssmanager",
-      "shadowsocks/install/bin/ssserver",
-      "shadowsocks/install/bin/ssurl"
-    ]
-  },
-  "frameworks": [
-    "Network",
-    "SystemConfiguration"
-  ],
-  "dependencies": {
-    "CocoaAsyncSocket": [
-      "~> 7.6.5"
-    ],
-    "MMWormhole": [
-      "~> 2.0.0"
-    ]
-  },
-  "pod_target_xcconfig": {
-    "HEADER_SEARCH_PATHS": [
-      "$(PODS_TARGET_SRCROOT)",
-      "$(PODS_TARGET_SRCROOT)/libmaxminddb/install/include",
-      "$(PODS_TARGET_SRCROOT)/libsodium/install/include",
-      "$(PODS_TARGET_SRCROOT)/openssl/install/include",
-      "$(PODS_TARGET_SRCROOT)/shadowsocks/install/include",
-      "$(PODS_ROOT)/MMWormhole",
-      "$(PODS_ROOT)/CocoaAsyncSocket"
-    ],
-    "LIBRARY_SEARCH_PATHS": [
-      "$(PODS_TARGET_SRCROOT)/Frameworks"
-    ],
-    "ENABLE_BITCODE": "NO",
-    "OTHER_LDFLAGS": [
-      "-lmaxminddb",
-      "-lsodium",
-      "-lcrypto",
-      "-lssl"
-    ],
-    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES",
-    "DEFINES_MODULE": "YES",
-    "GCC_PREPROCESSOR_DEFINITIONS": [
-      "HAVE_CONFIG_H=1",
-      "HAVE_MAXMINDDB=1",
-      "HAVE_SODIUM=1",
-      "HAVE_OPENSSL=1"
-    ],
-    "CLANG_ENABLE_OBJC_ARC": "YES",
-    "CLANG_WARN_DOCUMENTATION_COMMENTS": "NO"
-  },
-  "module_map": "module.modulemap",
   "ios": {
     "vendored_libraries": [
-      "Frameworks/libcrypto_ios.a",
-      "Frameworks/libmaxminddb_ios.a",
-      "Frameworks/libsodium_ios.a",
-      "Frameworks/libssl_ios.a"
+      "TFYSwiftSSRKit/shadowsocks-rust/output/ios/libss_ios.a",
+      "TFYSwiftSSRKit/shadowsocks-libev/libs/ios/libshadowsocks-libev.a",
+      "TFYSwiftSSRKit/shadowsocks-libev/libs/ios/libshadowsocks-libev_ios.a"
     ]
   },
   "osx": {
     "vendored_libraries": [
-      "libmaxminddb/install/lib/libmaxminddb_macos.a",
-      "libsodium/install/lib/libsodium_macos.a",
-      "openssl/install/lib/libcrypto_macos.a",
-      "openssl/install/lib/libssl_macos.a"
+      "TFYSwiftSSRKit/shadowsocks-rust/output/macos/libss_macos.a",
+      "TFYSwiftSSRKit/shadowsocks-libev/libs/macos/libshadowsocks-libev.a",
+      "TFYSwiftSSRKit/shadowsocks-libev/libs/macos/libshadowsocks-libev_macos.a"
     ]
   },
+  "frameworks": [
+    "Foundation",
+    "NetworkExtension",
+    "SystemConfiguration",
+    "Security"
+  ],
+  "requires_arc": true,
+  "static_framework": true,
   "preserve_paths": [
-    "Classes/**/*",
-    "Frameworks/**/*",
-    "Resources/**/*",
-    "libmaxminddb/install/**/*",
-    "libsodium/install/**/*",
-    "openssl/install/**/*",
-    "shadowsocks/install/**/*",
-    "module.modulemap"
-  ]
+    "TFYSwiftSSRKit/module.modulemap",
+    "TFYSwiftSSRKit/shadowsocks-rust/output/include/module/module.modulemap",
+    "TFYSwiftSSRKit/LICENSE",
+    "TFYSwiftSSRKit/README.md",
+    "TFYSwiftSSRKit/DIRECTORY_STRUCTURE.md"
+  ],
+  "module_map": "TFYSwiftSSRKit/module.modulemap",
+  "pod_target_xcconfig": {
+    "VALID_ARCHS[sdk=iphoneos*]": "arm64",
+    "VALID_ARCHS[sdk=macosx*]": "arm64",
+    "ENABLE_BITCODE": "NO",
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64",
+    "EXCLUDED_ARCHS[sdk=macosx*]": "",
+    "LIBRARY_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libs/ios $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libs/macos",
+    "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libs/include $(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass $(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass",
+    "CLANG_ENABLE_MODULES": "YES",
+    "DEFINES_MODULE": "YES",
+    "OTHER_LDFLAGS": "-ObjC"
+  },
+  "user_target_xcconfig": {
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64",
+    "EXCLUDED_ARCHS[sdk=macosx*]": ""
+  },
+  "dependencies": {
+    "CocoaAsyncSocket": [],
+    "MMWormhole": []
+  }
 }

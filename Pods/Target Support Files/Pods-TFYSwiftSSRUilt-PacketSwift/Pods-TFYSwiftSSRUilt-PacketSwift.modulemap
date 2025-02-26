@@ -1,0 +1,6 @@
+framework module Pods_TFYSwiftSSRUilt_PacketSwift {
+  umbrella header "Pods-TFYSwiftSSRUilt-PacketSwift-umbrella.h"
+
+  export *
+  module * { export * }
+}

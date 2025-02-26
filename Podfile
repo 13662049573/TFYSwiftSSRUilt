@@ -5,14 +5,23 @@ platform :ios, '15.0'
 inhibit_all_warnings!
 
 # 使用 framework 而不是 static library
-use_frameworks!
+use_frameworks! :linkage => :static
 
 # 禁用未使用的 master specs repo 警告
-install! 'cocoapods', :warn_for_unused_master_specs_repo => false
+install! 'cocoapods', 
+  :warn_for_unused_master_specs_repo => false,
+  :generate_multiple_pod_projects => true,
+  :disable_input_output_paths => true
 
 target 'TFYSwiftSSRUilt' do
   # 使用本地的 TFYSwiftSSRKit
-  pod 'TFYSwiftSSRKit', :path => './TFYSwiftSSRKit'
+  pod 'TFYSwiftSSRKit', :path => './'
+  
+  target 'PacketSwift' do
+    pod 'TFYSwiftSSRKit', :path => './'
+    pod 'CocoaAsyncSocket'
+    pod 'MMWormhole'
+  end
 end
 
 # 针对 M1 芯片的设置
@@ -31,6 +40,36 @@ post_install do |installer|
       # Swift 版本
       if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.framework"
         config.build_settings['SWIFT_VERSION'] = '5.0'
+      end
+      
+      # 添加这些设置
+      config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+      config.build_settings['SKIP_INSTALL'] = 'NO'
+      config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
+      config.build_settings['SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD'] = 'NO'
+      
+      # 添加沙盒权限
+      config.build_settings['CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION'] = 'YES'
+      config.build_settings['CODE_SIGN_ENTITLEMENTS'] = '$(SRCROOT)/TFYSwiftSSRUilt/TFYSwiftSSRUilt.entitlements'
+      
+      # 沙盒设置
+      config.build_settings['ENABLE_APP_SANDBOX'] = 'NO'
+      config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+      
+      # 资源复制设置
+      config.build_settings['COPY_PHASE_STRIP'] = 'NO'
+      config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'NO'
+      
+      # 移除资源复制脚本
+      if config.build_settings['WRAPPER_EXTENSION'] == 'bundle'
+        config.build_settings['SKIP_INSTALL'] = 'NO'
+      end
+    end
+    
+    # 移除资源复制脚本
+    if target.respond_to?(:product_type) && target.product_type == "com.apple.product-type.bundle"
+      target.build_configurations.each do |config|
+        config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
       end
     end
   end

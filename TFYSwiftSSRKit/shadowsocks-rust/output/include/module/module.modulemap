@@ -1,0 +1,5 @@
+module ss [system] {
+    header "../ss.h"
+    link "ss_ios"
+    export *
+} 
