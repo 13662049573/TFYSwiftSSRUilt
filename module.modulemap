@@ -8,6 +8,20 @@ framework module TFYSwiftSSRKit {
     explicit module Private {
         // 这些模块不会被公开，但会在内部使用
         header "shadowsocks-rust/include/ss.h"
+        header "GCDAsyncSocket/GCDAsyncSocket.h"
+        header "GCDAsyncSocket/GCDAsyncUdpSocket.h"
         export *
     }
+    
+    // 排除 C 库头文件，避免伞形头文件警告
+    exclude header "shadowsocks-libev/**/*.h"
+    exclude header "shadowsocks-libev/mbedtls/include/**/*.h"
+    exclude header "shadowsocks-libev/openssl/include/**/*.h"
+    exclude header "shadowsocks-libev/libsodium/include/**/*.h"
+    exclude header "shadowsocks-libev/libcork/include/**/*.h"
+    exclude header "shadowsocks-libev/libev/include/**/*.h"
+    exclude header "shadowsocks-libev/c-ares/include/**/*.h"
+    exclude header "shadowsocks-libev/pcre/include/**/*.h"
+    exclude header "shadowsocks-libev/libmaxminddb/include/**/*.h"
+    exclude header "shadowsocks-libev/antinat/include/**/*.h"
 } 
