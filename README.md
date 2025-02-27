@@ -8,8 +8,8 @@ TFYSwiftSSRKit 是一个功能强大的网络代理工具包，为 iOS 和 macOS
 - **高性能实现**：基于 C/C++ 核心库，提供高效的网络代理服务
 - **完整的 API**：提供简洁易用的 Objective-C 接口，支持 Swift 调用
 - **流量统计**：实时监控上传和下载流量，计算网络速度
-- **HTTP 代理**：集成 Privoxy 提供 HTTP 代理服务
-- **网络连接管理**：通过 Antinat 管理网络连接
+- **HTTP 代理**：集成 Privoxy 提供 HTTP 代理服务，支持过滤规则
+- **网络连接管理**：通过 Antinat 管理网络连接，支持多种代理类型
 - **过滤规则**：支持自定义过滤规则，控制网络访问
 - **全局代理**：在 macOS 上支持设置系统全局代理
 - **服务器延迟测试**：测试服务器连接延迟，优化服务器选择
@@ -111,7 +111,7 @@ class YourClass: LibevManagerDelegate {
 }
 ```
 
-### HTTP 代理
+### HTTP 代理和过滤规则
 
 ```swift
 // 添加 HTTP 过滤规则
@@ -120,9 +120,15 @@ LibevManager.sharedManager().addPrivoxyFilterRule(rule)
 
 // 切换过滤状态
 LibevManager.sharedManager().togglePrivoxyFiltering(true)
+
+// 切换压缩状态
+LibevManager.sharedManager().togglePrivoxyCompression(true)
+
+// 清除所有过滤规则
+LibevManager.sharedManager().clearAllPrivoxyFilterRules()
 ```
 
-### Antinat 连接
+### Antinat 连接管理
 
 ```swift
 // 创建 Antinat 配置
@@ -144,6 +150,12 @@ connection.send(data)
 
 // 关闭连接
 connection.close()
+
+// 获取所有活跃连接
+let connections = LibevManager.sharedManager().activeAntinatConnections()
+
+// 关闭所有连接
+LibevManager.sharedManager().closeAllAntinatConnections()
 ```
 
 ## 架构
@@ -151,8 +163,8 @@ connection.close()
 TFYSwiftSSRKit 由以下主要组件组成：
 
 1. **TFYOCLibevManager**：核心管理器，负责协调各个组件的工作
-2. **TFYOCLibevPrivoxyManager**：管理 Privoxy HTTP 代理服务
-3. **TFYOCLibevAntinatManager**：管理 Antinat 网络连接
+2. **TFYOCLibevPrivoxyManager**：管理 Privoxy HTTP 代理服务和过滤规则
+3. **TFYOCLibevAntinatManager**：管理 Antinat 网络连接和代理
 4. **TFYOCLibevConnection**：通用网络连接类
 5. **TFYOCLibevSOCKS5Handler**：处理 SOCKS5 协议
 
