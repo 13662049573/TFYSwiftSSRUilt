@@ -22,6 +22,7 @@
 // THE SOFTWARE.
 
 #import "MMWormholeSessionMessageTransiting.h"
+
 #import <WatchConnectivity/WatchConnectivity.h>
 
 @interface MMWormholeSessionMessageTransiting ()

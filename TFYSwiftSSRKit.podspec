@@ -286,11 +286,6 @@ Pod::Spec.new do |spec|
     #endif
   EOS
   
-  # 资源包
-  spec.resource_bundles = {
-    'TFYSwiftSSRKit' => ['TFYSwiftSSRKit/Resources/**/*']
-  }
-  
   # 模块映射
   spec.module_map = 'module.modulemap'
 end 

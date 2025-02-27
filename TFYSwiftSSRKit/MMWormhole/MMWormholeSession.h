@@ -23,16 +23,9 @@
 
 #import "MMWormhole.h"
 
-#import <Foundation/Foundation.h>
 #import <WatchConnectivity/WatchConnectivity.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-/**
- This class creates a wormhole that is designed to use the Watch Connectivity framework's
- application context to pass messages from the iOS containing app to a watchOS extension.
- This class requires iOS 9.0+ and watchOS 2.0+.
- */
 
 @interface MMWormholeSession : MMWormhole <WCSessionDelegate>
 

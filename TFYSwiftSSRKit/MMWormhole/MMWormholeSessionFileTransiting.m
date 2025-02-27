@@ -22,9 +22,10 @@
 // THE SOFTWARE.
 
 #import "MMWormholeSessionFileTransiting.h"
+
 #import <WatchConnectivity/WatchConnectivity.h>
 
-@interface MMWormholeSessionFileTransiting ()
+@interface MMWormholeSessionFileTransiting () <WCSessionDelegate>
 @property (nonatomic, strong) WCSession *session;
 @end
 
