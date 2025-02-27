@@ -24,6 +24,8 @@ typedef NS_ENUM(NSInteger, TFYConnectionStatus) {
     TFYConnectionStatusError = 3         // 错误
 } NS_SWIFT_NAME(ConnectionStatus);
 
+@class TFYOCLibevConnection;
+
 // 连接代理协议
 NS_SWIFT_NAME(LibevConnectionDelegate)
 @protocol TFYOCLibevConnectionDelegate <NSObject>
@@ -31,12 +33,16 @@ NS_SWIFT_NAME(LibevConnectionDelegate)
 @optional
 // 连接状态变化回调
 - (void)connectionStatusDidChange:(TFYConnectionStatus)status;
+// 连接成功回调
+- (void)connectionDidConnect:(TFYOCLibevConnection *)connection;
+// 连接断开回调
+- (void)connectionDidDisconnect:(TFYOCLibevConnection *)connection withError:(nullable NSError *)error;
 // 接收到数据回调
-- (void)connectionDidReceiveData:(NSData *)data;
+- (void)connection:(TFYOCLibevConnection *)connection didReceiveData:(NSData *)data;
+// 发送数据回调
+- (void)connection:(TFYOCLibevConnection *)connection didSendData:(NSData *)data;
 // 连接错误回调
 - (void)connectionDidEncounterError:(NSError *)error;
-// 连接关闭回调
-- (void)connectionDidClose;
 
 @end
 
@@ -76,6 +82,8 @@ NS_SWIFT_NAME(LibevConnection)
 // 发送数据
 - (BOOL)sendData:(nonnull NSData *)data;
 // 关闭连接
+- (void)disconnect;
+// 兼容旧方法
 - (void)close;
 
 @end

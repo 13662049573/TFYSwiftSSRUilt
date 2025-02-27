@@ -1,8 +1,8 @@
 {
   "name": "TFYSwiftSSRKit",
-  "version": "1.0.0",
-  "summary": "iOS/macOS Shadowsocks client framework with Rust and Libev cores, supporting Antinat and Privoxy",
-  "description": "TFYSwiftSSRKit is an iOS/macOS framework that provides Shadowsocks client functionality.\nIt supports both Rust and Libev implementations for high performance and security,\nwrapped with Objective-C interfaces for easy integration into iOS/macOS apps.\nThe framework also includes Antinat for network connection management and Privoxy\nfor HTTP proxy functionality with filtering capabilities.",
+  "version": "1.0.1",
+  "summary": "iOS/macOS Shadowsocks客户端框架，集成Rust和Libev核心，支持Antinat和Privoxy",
+  "description": "TFYSwiftSSRKit是一个iOS/macOS框架，提供Shadowsocks客户端功能。\n它同时支持Rust和Libev实现，以获得高性能和安全性，\n并使用Objective-C接口包装，便于集成到iOS/macOS应用中。\n该框架还包括用于网络连接管理的Antinat和\n具有过滤功能的HTTP代理Privoxy。",
   "homepage": "https://github.com/13662049573/TFYSwiftSSRKit",
   "license": {
     "type": "MIT",
@@ -17,7 +17,7 @@
   },
   "source": {
     "git": "file:///Users/tianfengyou/Desktop/MyLibrary/TFYSwiftSSRUilt",
-    "tag": "1.0.0"
+    "tag": "1.0.1"
   },
   "source_files": [
     "TFYSwiftSSRKit.h",

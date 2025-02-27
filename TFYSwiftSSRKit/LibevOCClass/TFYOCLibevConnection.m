@@ -24,23 +24,23 @@ typedef NS_ENUM(NSInteger, TFYOCLibevConnectionErrorCode) {
 @interface TFYOCLibevConnection () <GCDAsyncSocketDelegate, GCDAsyncUdpSocketDelegate>
 
 // 连接状态（使用原子操作）
-@property (atomic, assign, readwrite) TFYConnectionStatus status;
+@property (nonatomic, assign) TFYConnectionStatus status;
 // 连接类型
-@property (nonatomic, assign, readwrite) TFYConnectionType type;
+@property (nonatomic, assign) TFYConnectionType type;
 // 远程主机
-@property (nonatomic, copy, readwrite) NSString *remoteHost;
+@property (nonatomic, copy) NSString *remoteHost;
 // 远程端口
-@property (nonatomic, assign, readwrite) uint16_t remotePort;
+@property (nonatomic, assign) uint16_t remotePort;
 // 本地端口
-@property (nonatomic, assign, readwrite) uint16_t localPort;
+@property (nonatomic, assign) uint16_t localPort;
 // 连接标识符
-@property (nonatomic, copy, readwrite) NSString *identifier;
+@property (nonatomic, copy) NSString *identifier;
 // 连接开始时间
-@property (nonatomic, strong, readwrite) NSDate *startTime;
+@property (nonatomic, strong) NSDate *startTime;
 // 上传字节数（使用原子操作）
-@property (atomic, assign, readwrite) uint64_t uploadBytes;
+@property (nonatomic, assign) uint64_t uploadBytes;
 // 下载字节数（使用原子操作）
-@property (atomic, assign, readwrite) uint64_t downloadBytes;
+@property (nonatomic, assign) uint64_t downloadBytes;
 // TCP Socket
 @property (nonatomic, strong) GCDAsyncSocket *tcpSocket;
 // UDP Socket
@@ -87,7 +87,7 @@ typedef NS_ENUM(NSInteger, TFYOCLibevConnectionErrorCode) {
 #pragma mark - 公共方法
 
 - (BOOL)connect {
-    if (atomic_load(&_status) != TFYConnectionStatusDisconnected) {
+    if (self.status != TFYConnectionStatusDisconnected) {
         return NO;
     }
     
@@ -98,7 +98,7 @@ typedef NS_ENUM(NSInteger, TFYOCLibevConnectionErrorCode) {
         return NO;
     }
     
-    atomic_store(&_status, TFYConnectionStatusConnecting);
+    self.status = TFYConnectionStatusConnecting;
     [self notifyStatusChange];
     
     dispatch_async(self.connectionQueue, ^{
@@ -108,86 +108,75 @@ typedef NS_ENUM(NSInteger, TFYOCLibevConnectionErrorCode) {
                                       onPort:self.remotePort
                                 withTimeout:30
                                      error:&error]) {
-                [self handleError:error ?: [NSError errorWithDomain:TFYOCLibevConnectionErrorDomain
-                                                            code:TFYOCLibevConnectionErrorCodeConnectionFailed
-                                                        userInfo:@{NSLocalizedDescriptionKey: @"TCP连接失败"}]];
+                [self handleError:error];
             }
         } else {
-            NSError *error = nil;
-            if (![self.udpSocket bindToPort:self.localPort error:&error] ||
-                ![self.udpSocket beginReceiving:&error]) {
-                [self handleError:error ?: [NSError errorWithDomain:TFYOCLibevConnectionErrorDomain
-                                                            code:TFYOCLibevConnectionErrorCodeConnectionFailed
-                                                        userInfo:@{NSLocalizedDescriptionKey: @"UDP绑定失败"}]];
-            } else {
-                atomic_store(&_status, TFYConnectionStatusConnected);
-                [self notifyStatusChange];
-            }
+            // UDP连接不需要显式连接，直接标记为已连接
+            self.status = TFYConnectionStatusConnected;
+            [self notifyStatusChange];
         }
     });
     
     return YES;
 }
 
+- (void)disconnect {
+    if (self.status == TFYConnectionStatusDisconnected) {
+        return;
+    }
+    
+    self.status = TFYConnectionStatusDisconnecting;
+    [self notifyStatusChange];
+    
+    dispatch_async(self.connectionQueue, ^{
+        if (self.type == TFYConnectionTypeTCP) {
+            [self.tcpSocket disconnect];
+        } else {
+            [self.udpSocket close];
+            self.status = TFYConnectionStatusDisconnected;
+            [self notifyStatusChange];
+        }
+    });
+}
+
 - (BOOL)sendData:(NSData *)data {
+    if (self.status != TFYConnectionStatusConnected) {
+        return NO;
+    }
+    
     if (!data || data.length == 0) {
         return NO;
     }
     
-    if (atomic_load(&_status) != TFYConnectionStatusConnected) {
-        return NO;
-    }
-    
-    __weak typeof(self) weakSelf = self;
     dispatch_async(self.connectionQueue, ^{
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (!strongSelf) return;
-        
-        if (strongSelf.type == TFYConnectionTypeTCP) {
-            [strongSelf.tcpSocket writeData:data withTimeout:30 tag:0];
+        if (self.type == TFYConnectionTypeTCP) {
+            [self.tcpSocket writeData:data withTimeout:30 tag:0];
         } else {
             NSError *error = nil;
-            if (![strongSelf.udpSocket sendData:data
-                                      toHost:strongSelf.remoteHost
-                                      port:strongSelf.remotePort
-                               withTimeout:30
-                                   tag:0
-                                  error:&error]) {
-                [strongSelf handleError:error ?: [NSError errorWithDomain:TFYOCLibevConnectionErrorDomain
-                                                                code:TFYOCLibevConnectionErrorCodeSendFailed
-                                                            userInfo:@{NSLocalizedDescriptionKey: @"发送数据失败"}]];
+            [self.udpSocket sendData:data toHost:self.remoteHost port:self.remotePort withTimeout:30 tag:0 error:&error];
+            if (error) {
+                [self handleError:error];
             }
         }
         
-        atomic_fetch_add(&strongSelf->_uploadBytes, data.length);
+        self.uploadBytes += data.length;
+        
+        if ([self.delegate respondsToSelector:@selector(connection:didSendData:)]) {
+            [self.delegate connection:self didSendData:data];
+        }
     });
     
     return YES;
 }
 
 - (void)close {
-    dispatch_async(self.connectionQueue, ^{
-        if (self.type == TFYConnectionTypeTCP) {
-            [self.tcpSocket disconnect];
-        } else {
-            [self.udpSocket close];
-        }
-        
-        atomic_store(&_status, TFYConnectionStatusDisconnected);
-        [self notifyStatusChange];
-        
-        if ([self.delegate respondsToSelector:@selector(connectionDidClose)]) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.delegate connectionDidClose];
-            });
-        }
-    });
+    [self disconnect];
 }
 
 #pragma mark - 私有方法
 
 - (void)handleError:(NSError *)error {
-    atomic_store(&_status, TFYConnectionStatusError);
+    self.status = TFYConnectionStatusError;
     [self notifyStatusChange];
     
     if ([self.delegate respondsToSelector:@selector(connectionDidEncounterError:)]) {
@@ -208,41 +197,45 @@ typedef NS_ENUM(NSInteger, TFYOCLibevConnectionErrorCode) {
 #pragma mark - GCDAsyncSocketDelegate
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
-    atomic_store(&_status, TFYConnectionStatusConnected);
+    self.status = TFYConnectionStatusConnected;
     [self notifyStatusChange];
+    
+    if ([self.delegate respondsToSelector:@selector(connectionDidConnect:)]) {
+        [self.delegate connectionDidConnect:self];
+    }
 }
 
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
-    if (err) {
+    self.status = TFYConnectionStatusDisconnected;
+    [self notifyStatusChange];
+    
+    if (err && err.code != GCDAsyncSocketClosedError) {
         [self handleError:err];
-    } else {
-        atomic_store(&_status, TFYConnectionStatusDisconnected);
-        [self notifyStatusChange];
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(connectionDidDisconnect:withError:)]) {
+        [self.delegate connectionDidDisconnect:self withError:err];
     }
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
-    atomic_fetch_add(&_downloadBytes, data.length);
+    self.downloadBytes += data.length;
     
-    if ([self.delegate respondsToSelector:@selector(connectionDidReceiveData:)]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate connectionDidReceiveData:data];
-        });
+    if ([self.delegate respondsToSelector:@selector(connection:didReceiveData:)]) {
+        [self.delegate connection:self didReceiveData:data];
     }
     
+    // 继续读取数据
     [sock readDataWithTimeout:-1 tag:0];
 }
 
 #pragma mark - GCDAsyncUdpSocketDelegate
 
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
-      fromAddress:(NSData *)address withFilterContext:(id)filterContext {
-    atomic_fetch_add(&_downloadBytes, data.length);
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext {
+    self.downloadBytes += data.length;
     
-    if ([self.delegate respondsToSelector:@selector(connectionDidReceiveData:)]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate connectionDidReceiveData:data];
-        });
+    if ([self.delegate respondsToSelector:@selector(connection:didReceiveData:)]) {
+        [self.delegate connection:self didReceiveData:data];
     }
 }
 
@@ -250,7 +243,7 @@ typedef NS_ENUM(NSInteger, TFYOCLibevConnectionErrorCode) {
     if (error) {
         [self handleError:error];
     } else {
-        atomic_store(&_status, TFYConnectionStatusDisconnected);
+        self.status = TFYConnectionStatusDisconnected;
         [self notifyStatusChange];
     }
 }
