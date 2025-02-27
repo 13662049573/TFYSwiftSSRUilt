@@ -244,31 +244,53 @@ Pod::Spec.new do |spec|
     'OTHER_CFLAGS' => '-fembed-bitcode',
     'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
     'MACOSX_DEPLOYMENT_TARGET' => '12.0',
-    'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_IPHONEOS' => '15.0',
-    'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_MACOSX' => '12.0',
+    'SWIFT_VERSION' => '5.0',
     'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++17',
     'CLANG_CXX_LIBRARY' => 'libc++',
-    'SWIFT_VERSION' => '5.0',
-    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++',
-    'VALID_ARCHS' => 'arm64',
-    'ONLY_ACTIVE_ARCH' => 'YES',
-    'ENABLE_BITCODE' => 'NO'
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
+    'VALID_ARCHS[sdk=iphoneos*]' => 'arm64',
+    'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64',
+    'VALID_ARCHS[sdk=macosx*]' => 'arm64 x86_64'
   }
   
   # 框架依赖
-  spec.frameworks = ["Foundation", "NetworkExtension", "SystemConfiguration", "Security"]
+  spec.frameworks = [
+    'Foundation', 
+    'UIKit', 
+    'CoreFoundation', 
+    'Security', 
+    'SystemConfiguration', 
+    'NetworkExtension',
+    'WatchConnectivity'
+  ]
+  
+  # 库依赖
+  spec.libraries = ['c++', 'z']
+  
+  # 要求ARC
   spec.requires_arc = true
+  
+  # 静态框架
   spec.static_framework = true
   
-  # 确保依赖库使用正确的部署目标版本
-  spec.user_target_xcconfig = { 
-    'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-    'MACOSX_DEPLOYMENT_TARGET' => '12.0'
+  # 预编译标志
+  spec.prefix_header_contents = <<-EOS
+    #ifdef __OBJC__
+      #import <Foundation/Foundation.h>
+      #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_15_0
+        #error "This pod requires iOS 15.0 or later."
+      #endif
+      #if __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_12_0
+        #error "This pod requires macOS 12.0 or later."
+      #endif
+    #endif
+  EOS
+  
+  # 资源包
+  spec.resource_bundles = {
+    'TFYSwiftSSRKit' => ['TFYSwiftSSRKit/Resources/**/*']
   }
   
-  # 添加预处理宏定义
-  spec.xcconfig = {
-    'GCC_PREPROCESSOR_DEFINITIONS' => 'COCOAPODS=1 SS_BUILTIN_GETADDRINFO=1'
-  }
-  
+  # 模块映射
+  spec.module_map = 'module.modulemap'
 end 

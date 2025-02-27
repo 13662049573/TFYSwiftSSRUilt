@@ -25,13 +25,9 @@
 
 #import "MMWormholeCoordinatedFileTransiting.h"
 #import "MMWormholeFileTransiting.h"
-
-#if ( defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000 )
 #import "MMWormholeSessionContextTransiting.h"
 #import "MMWormholeSessionFileTransiting.h"
 #import "MMWormholeSessionMessageTransiting.h"
-#endif
-
 #import "MMWormholeTransiting.h"
 
 typedef NS_ENUM(NSInteger, MMWormholeTransitingType) {
