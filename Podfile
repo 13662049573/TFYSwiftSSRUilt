@@ -1,6 +1,5 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
-
 # 设置iOS和macOS平台
 platform :ios, '15.0'
 
@@ -19,13 +18,9 @@ install! 'cocoapods',
 target 'TFYSwiftSSRUilt' do
   # 使用本地的 TFYSwiftSSRKit
   pod 'TFYSwiftSSRKit', :path => './'
-  pod 'CocoaAsyncSocket'
-  pod 'MMWormhole'
   
   target 'PacketSwift' do
     pod 'TFYSwiftSSRKit', :path => './'
-    pod 'CocoaAsyncSocket'
-    pod 'MMWormhole'
   end
 end
 

@@ -48,7 +48,11 @@ Pod::Spec.new do |spec|
     "TFYSwiftSSRKit/shadowsocks-libev/libcork/include/**/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/libipset/include/**/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include/*.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/openssl/include/**/*.h"
+    "TFYSwiftSSRKit/shadowsocks-libev/openssl/include/**/*.h",
+    # 添加 GCDAsyncSocket 源文件
+    "TFYSwiftSSRKit/GCDAsyncSocket/*.{h,m}",
+    # 添加 MMWormhole 源文件
+    "TFYSwiftSSRKit/MMWormhole/*.{h,m}"
   ]
   
   # 排除不需要的文件
@@ -62,7 +66,11 @@ Pod::Spec.new do |spec|
   spec.public_header_files = [
     "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     "TFYSwiftSSRKit/LibevOCClass/*.h",
-    "TFYSwiftSSRKit/RustOCClass/*.h"
+    "TFYSwiftSSRKit/RustOCClass/*.h",
+    # 添加 GCDAsyncSocket 公共头文件
+    "TFYSwiftSSRKit/GCDAsyncSocket/*.h",
+    # 添加 MMWormhole 公共头文件
+    "TFYSwiftSSRKit/MMWormhole/*.h"
   ]
   
   # 私有头文件 - 这些头文件不会被暴露给使用者，但会被框架内部使用
@@ -184,7 +192,10 @@ Pod::Spec.new do |spec|
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include'
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include',
+    # 添加 GCDAsyncSocket 和 MMWormhole 头文件搜索路径
+    '$(PODS_ROOT)/TFYSwiftSSRKit/GCDAsyncSocket',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/MMWormhole'
   ].join(' ')
   
   ios_lib_search_paths = [
@@ -248,10 +259,6 @@ Pod::Spec.new do |spec|
   spec.frameworks = ["Foundation", "NetworkExtension", "SystemConfiguration", "Security"]
   spec.requires_arc = true
   spec.static_framework = true
-  
-  # 依赖库 - 修改为使用与主项目相同的部署目标
-  spec.dependency 'CocoaAsyncSocket', '~> 7.6.5'
-  spec.dependency 'MMWormhole', '~> 2.0.0'
   
   # 确保依赖库使用正确的部署目标版本
   spec.user_target_xcconfig = { 
