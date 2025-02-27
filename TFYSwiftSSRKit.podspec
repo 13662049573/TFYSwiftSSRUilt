@@ -255,12 +255,19 @@ Pod::Spec.new do |spec|
       '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit',
       '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include',
       '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include',
-      '$(SDKROOT)/System/Library/Frameworks'
-    ],
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include',
+      '$(SDKROOT)/System/Library/Frameworks',
+      '$(SDKROOT)/System/Library/Frameworks/WatchConnectivity.framework/Headers'
+    ].join(' '),
     'LIBRARY_SEARCH_PATHS' => [
       '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
-      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib'
-    ],
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib'
+    ].join(' '),
     'GCC_PREPROCESSOR_DEFINITIONS' => [
       'POD_CONFIGURATION_RELEASE=1',
       'COCOAPODS=1',
@@ -278,9 +285,11 @@ Pod::Spec.new do |spec|
     'CoreFoundation',
     'Security',
     'SystemConfiguration',
-    'NetworkExtension',
-    'WatchConnectivity'
+    'NetworkExtension'
   ]
+  
+  # 弱引用框架
+  spec.weak_frameworks = ['WatchConnectivity']
   
   # 库依赖
   spec.libraries = ['c++', 'z']
