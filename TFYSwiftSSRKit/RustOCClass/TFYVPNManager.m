@@ -6,9 +6,6 @@
 #define vpnWeakSelf __weak typeof(self) weakSelf = self;
 #define vpnStrongSelf __strong typeof(weakSelf) strongSelf = weakSelf;
 
-@implementation TFYVPNConfiguration
-@end
-
 @interface TFYVPNManager ()
 
 @property (nonatomic, strong) NETunnelProviderManager *providerManager;

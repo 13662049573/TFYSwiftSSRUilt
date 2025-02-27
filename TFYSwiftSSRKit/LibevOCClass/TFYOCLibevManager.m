@@ -13,9 +13,14 @@
 #import <sys/socket.h>
 #import <netinet/in.h>
 #import <netinet/tcp.h>
+#import <stdatomic.h>
 
 // 导入shadowsocks-libev头文件
 #include "shadowsocks.h"
+
+// 导入antinat和privoxy管理器
+#import "TFYOCLibevAntinatManager.h"
+#import "TFYOCLibevPrivoxyManager.h"
 
 // 导入CocoaAsyncSocket
 #import <CocoaAsyncSocket/GCDAsyncSocket.h>
@@ -24,8 +29,21 @@
 // 导入MMWormhole
 #import <MMWormhole/MMWormhole.h>
 
-// 错误域
+// 错误域和错误码
 NSString * const TFYOCLibevErrorDomain = @"com.tfyswiftssrkit.libev";
+
+typedef NS_ENUM(NSInteger, TFYOCLibevErrorCode) {
+    TFYOCLibevErrorCodeServerEmpty = 1001,
+    TFYOCLibevErrorCodeConnectionFailed = 1002,
+    TFYOCLibevErrorCodeStartFailed = 1003
+};
+
+// 常量定义
+static NSString * const kAppGroupIdentifier = @"group.com.tfyswiftssrkit";
+static NSString * const kWormholeDirectory = @"wormhole";
+static NSString * const kTrafficUpdateIdentifier = @"trafficUpdate";
+static NSString * const kProxyStatusIdentifier = @"proxyStatus";
+static NSString * const kCommandIdentifier = @"command";
 
 // 定义私有属性和方法
 @interface TFYProxyConfig ()
@@ -43,65 +61,54 @@ NSString * const TFYOCLibevErrorDomain = @"com.tfyswiftssrkit.libev";
         _localPort = 1080;
         _timeout = 600;
         _method = @"aes-256-gcm";
-        _mtu = 0; // 默认值
+        _mtu = 0;
     }
     return self;
 }
 
-+ (instancetype)configWithServerHost:(NSString *)serverHost
++ (instancetype)configWithServerHost:(nonnull NSString *)serverHost
                           serverPort:(int)serverPort
-                            password:(NSString *)password
-                              method:(NSString *)method {
+                            password:(nonnull NSString *)password
+                              method:(nonnull NSString *)method {
     TFYProxyConfig *config = [[TFYProxyConfig alloc] init];
-    config.serverHost = serverHost;
+    config.serverHost = [serverHost copy];
     config.serverPort = serverPort;
-    config.password = password;
-    config.method = method;
+    config.password = [password copy];
+    config.method = [method copy];
     return config;
 }
 
 - (profile_t)toProfile {
-    profile_t profile = {0}; // 初始化所有字段为0
+    profile_t profile;
+    memset(&profile, 0, sizeof(profile_t));
     
-    // 必填字段
-    if (self.serverHost) {
-        profile.remote_host = strdup(self.serverHost.UTF8String);
-    }
-    
-    if (self.localAddress) {
-        profile.local_addr = strdup(self.localAddress.UTF8String);
-    }
-    
-    if (self.method) {
-        profile.method = strdup(self.method.UTF8String);
-    }
-    
-    if (self.password) {
-        profile.password = strdup(self.password.UTF8String);
-    }
-    
+    // 设置服务器地址和端口
+    profile.remote_host = strdup(self.serverHost.UTF8String);
     profile.remote_port = self.serverPort;
-    profile.local_port = self.localPort;
-    profile.timeout = self.timeout;
     
-    // 可选字段
+    // 设置本地地址和端口
+    profile.local_addr = strdup(self.localAddress.UTF8String);
+    profile.local_port = self.localPort;
+    
+    // 设置密码和加密方法
+    profile.password = strdup(self.password.UTF8String);
+    profile.method = strdup(self.method.UTF8String);
+    
+    // 设置超时时间和其他选项
+    profile.timeout = self.timeout;
+    profile.fast_open = self.enableFastOpen ? 1 : 0;
+    profile.mptcp = self.enableMPTCP ? 1 : 0;
+    profile.mtu = self.mtu;
+    profile.verbose = self.verbose ? 1 : 0;
+    profile.mode = self.enableUDP ? 1 : 0;
+    
+    // 设置ACL和日志文件路径
     if (self.aclFilePath) {
         profile.acl = strdup(self.aclFilePath.UTF8String);
-    } else {
-        profile.acl = NULL;
     }
-    
     if (self.logFilePath) {
         profile.log = strdup(self.logFilePath.UTF8String);
-    } else {
-        profile.log = NULL;
     }
-    
-    profile.fast_open = self.enableFastOpen ? 1 : 0;
-    profile.mode = self.enableUDP ? 1 : 0;
-    profile.mtu = self.mtu;
-    profile.mptcp = self.enableMPTCP ? 1 : 0;
-    profile.verbose = self.verbose ? 1 : 0;
     
     return profile;
 }
@@ -109,35 +116,48 @@ NSString * const TFYOCLibevErrorDomain = @"com.tfyswiftssrkit.libev";
 @end
 
 // 定义私有属性和方法
-@interface TFYOCLibevManager () <GCDAsyncSocketDelegate>
+@interface TFYOCLibevManager () <GCDAsyncSocketDelegate, TFYOCLibevPrivoxyManagerDelegate>
 
-// 代理状态
-@property (nonatomic, assign, readwrite) TFYProxyStatus status;
+// 代理状态（使用原子操作）
+@property (atomic, assign, readwrite) TFYProxyStatus status;
 // 代理线程
-@property (nonatomic, strong) NSThread *proxyThread;
+@property (nonatomic, strong, nullable) NSThread *proxyThread;
 // 代理监听器
 @property (nonatomic, assign) void *proxyListener;
-// 流量统计
-@property (nonatomic, assign) uint64_t uploadBytes;
-@property (nonatomic, assign) uint64_t downloadBytes;
+// 流量统计（使用原子操作）
+@property (atomic, assign) uint64_t uploadBytes;
+@property (atomic, assign) uint64_t downloadBytes;
 // 上次流量统计时间
-@property (nonatomic, strong) NSDate *lastTrafficUpdateTime;
-// 上次上传和下载字节数
-@property (nonatomic, assign) uint64_t lastUploadBytes;
-@property (nonatomic, assign) uint64_t lastDownloadBytes;
+@property (nonatomic, strong, nullable) NSDate *lastTrafficUpdateTime;
+// 上次上传和下载字节数（使用原子操作）
+@property (atomic, assign) uint64_t lastUploadBytes;
+@property (atomic, assign) uint64_t lastDownloadBytes;
 // 流量统计定时器
-@property (nonatomic, strong) NSTimer *trafficTimer;
+@property (nonatomic, strong, nullable) NSTimer *trafficTimer;
 // 进程间通信
-@property (nonatomic, strong) MMWormhole *wormhole;
+@property (nonatomic, strong, nullable) MMWormhole *wormhole;
 // 测试延迟的socket
-@property (nonatomic, strong) GCDAsyncSocket *latencyTestSocket;
+@property (nonatomic, strong, nullable) GCDAsyncSocket *latencyTestSocket;
 // 延迟测试回调
-@property (nonatomic, copy) void(^latencyTestCompletion)(NSTimeInterval, NSError *);
+@property (nonatomic, copy, nullable) void(^latencyTestCompletion)(NSTimeInterval, NSError *);
 // 延迟测试开始时间
-@property (nonatomic, strong) NSDate *latencyTestStartTime;
+@property (nonatomic, strong, nullable) NSDate *latencyTestStartTime;
+// 队列
+@property (nonatomic, strong) dispatch_queue_t proxyQueue;
+
+// Privoxy管理器
+@property (nonatomic, strong) TFYOCLibevPrivoxyManager *privoxyManager;
+// Antinat管理器
+@property (nonatomic, strong) TFYOCLibevAntinatManager *antinatManager;
+// HTTP代理端口
+@property (nonatomic, assign) int httpProxyPort;
 
 // 添加处理代理启动的方法声明
 - (void)handleProxyStarted:(int)socksFd udpFd:(int)udpFd;
+// 启动HTTP代理
+- (BOOL)startHTTPProxy;
+// 停止HTTP代理
+- (void)stopHTTPProxy;
 
 @end
 
@@ -173,27 +193,44 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
         _uploadBytes = 0;
         _downloadBytes = 0;
         _lastTrafficUpdateTime = [NSDate date];
+        _httpProxyPort = 8118; // 默认HTTP代理端口
+        
+        // 创建专用队列
+        _proxyQueue = dispatch_queue_create("com.tfyswiftssrkit.proxy", DISPATCH_QUEUE_SERIAL);
         
         // 初始化进程间通信
-        _wormhole = [[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.tfyswiftssrkit"
-                                                        optionalDirectory:@"wormhole"];
+        _wormhole = [[MMWormhole alloc] initWithApplicationGroupIdentifier:kAppGroupIdentifier
+                                                        optionalDirectory:kWormholeDirectory];
+        
+        // 初始化Privoxy管理器
+        _privoxyManager = [TFYOCLibevPrivoxyManager sharedManager];
+        _privoxyManager.delegate = self;
+        
+        // 初始化Antinat管理器
+        _antinatManager = [TFYOCLibevAntinatManager sharedManager];
+        
+        // 使用弱引用避免循环引用
+        __weak typeof(self) weakSelf = self;
         
         // 监听来自扩展的消息
-        [_wormhole listenForMessageWithIdentifier:@"trafficUpdate" listener:^(id messageObject) {
-            if ([messageObject isKindOfClass:[NSDictionary class]]) {
-                NSDictionary *trafficData = (NSDictionary *)messageObject;
-                uint64_t upload = [trafficData[@"upload"] unsignedLongLongValue];
-                uint64_t download = [trafficData[@"download"] unsignedLongLongValue];
+        [_wormhole listenForMessageWithIdentifier:kTrafficUpdateIdentifier listener:^(id messageObject) {
+            if (![messageObject isKindOfClass:[NSDictionary class]]) return;
+            
+            NSDictionary *trafficData = (NSDictionary *)messageObject;
+            uint64_t upload = [trafficData[@"upload"] unsignedLongLongValue];
+            uint64_t download = [trafficData[@"download"] unsignedLongLongValue];
+            
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (!strongSelf) return;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                atomic_store(&strongSelf->_uploadBytes, upload);
+                atomic_store(&strongSelf->_downloadBytes, download);
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self.uploadBytes = upload;
-                    self.downloadBytes = download;
-                    
-                    if ([self.delegate respondsToSelector:@selector(proxyTrafficUpdate:downloadBytes:)]) {
-                        [self.delegate proxyTrafficUpdate:self.uploadBytes downloadBytes:self.downloadBytes];
-                    }
-                });
-            }
+                if ([strongSelf.delegate respondsToSelector:@selector(proxyTrafficUpdate:downloadBytes:)]) {
+                    [strongSelf.delegate proxyTrafficUpdate:upload downloadBytes:download];
+                }
+            });
         }];
     }
     return self;
@@ -202,38 +239,60 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
 #pragma mark - 公共方法
 
 - (BOOL)startProxy {
-    if (self.status != TFYProxyStatusStopped) {
+    if (atomic_load(&_status) != TFYProxyStatusStopped) {
         return NO;
     }
     
-    self.status = TFYProxyStatusStarting;
-    if ([self.delegate respondsToSelector:@selector(proxyStatusDidChange:)]) {
-        [self.delegate proxyStatusDidChange:self.status];
-    }
+    atomic_store(&_status, TFYProxyStatusStarting);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(proxyStatusDidChange:)]) {
+            [self.delegate proxyStatusDidChange:self.status];
+        }
+    });
     
     // 启动流量统计定时器
     [self startTrafficTimer];
     
     // 在后台线程启动代理
     self.proxyThread = [[NSThread alloc] initWithTarget:self selector:@selector(proxyThreadMain) object:nil];
+    self.proxyThread.name = @"com.tfyswiftssrkit.proxy";
+    self.proxyThread.qualityOfService = NSQualityOfServiceUserInitiated;
     [self.proxyThread start];
     
     return YES;
 }
 
 - (void)stopProxy {
-    if (self.status != TFYProxyStatusRunning && self.status != TFYProxyStatusStarting) {
+    TFYProxyStatus currentStatus = atomic_load(&_status);
+    if (currentStatus != TFYProxyStatusRunning && currentStatus != TFYProxyStatusStarting) {
         return;
     }
     
-    self.status = TFYProxyStatusStopping;
-    if ([self.delegate respondsToSelector:@selector(proxyStatusDidChange:)]) {
-        [self.delegate proxyStatusDidChange:self.status];
-    }
+    atomic_store(&_status, TFYProxyStatusStopping);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(proxyStatusDidChange:)]) {
+            [self.delegate proxyStatusDidChange:self.status];
+        }
+    });
     
     // 停止流量统计定时器
     [self stopTrafficTimer];
     
+    // 停止HTTP代理
+    [self stopHTTPProxy];
+    
+    // 关闭所有Antinat连接
+    [self closeAllAntinatConnections];
+    
+    dispatch_async(self.proxyQueue, ^{
+        [self stopProxyInternal];
+    });
+}
+
+// 内部方法，实际停止代理
+- (void)stopProxyInternal {
     // 停止代理
     if (self.proxyListener) {
         plexsocks_servver_stop(self.proxyListener);
@@ -247,24 +306,25 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
     
     // 通知扩展代理已停止
     [self.wormhole passMessageObject:@{@"status": @"stopped"}
-                         identifier:@"proxyStatus"];
+                         identifier:kProxyStatusIdentifier];
     
-    self.status = TFYProxyStatusStopped;
-    if ([self.delegate respondsToSelector:@selector(proxyStatusDidChange:)]) {
-        [self.delegate proxyStatusDidChange:self.status];
-    }
+    atomic_store(&_status, TFYProxyStatusStopped);
     
-    // 记录日志
-    if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
-        [self.delegate proxyLogMessage:@"代理服务已停止" level:0];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(proxyStatusDidChange:)]) {
+            [self.delegate proxyStatusDidChange:self.status];
+        }
+        
+        if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
+            [self.delegate proxyLogMessage:@"代理服务已停止" level:0];
+        }
+    });
 }
 
 - (BOOL)restartProxy {
     [self stopProxy];
     
-    // 等待一小段时间确保代理完全停止
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), self.proxyQueue, ^{
         [self startProxy];
     });
     
@@ -272,44 +332,58 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
 }
 
 - (void)testServerLatency:(void(^)(NSTimeInterval latency, NSError * _Nullable error))completion {
-    if (!self.config.serverHost || [self.config.serverHost length] == 0) {
+    if (!self.config.serverHost || self.config.serverHost.length == 0) {
         NSError *error = [NSError errorWithDomain:TFYOCLibevErrorDomain
-                                             code:1001
-                                         userInfo:@{NSLocalizedDescriptionKey: @"服务器地址不能为空"}];
+                                           code:TFYOCLibevErrorCodeServerEmpty
+                                       userInfo:@{NSLocalizedDescriptionKey: @"服务器地址不能为空"}];
         if (completion) {
             completion(-1, error);
         }
         return;
     }
     
-    self.latencyTestCompletion = completion;
+    self.latencyTestCompletion = [completion copy];
     self.latencyTestStartTime = [NSDate date];
     
-    // 创建socket连接
-    self.latencyTestSocket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    
-    NSError *error = nil;
-    if (![self.latencyTestSocket connectToHost:self.config.serverHost onPort:self.config.serverPort withTimeout:5.0 error:&error]) {
-        if (self.latencyTestCompletion) {
-            self.latencyTestCompletion(-1, error);
-            self.latencyTestCompletion = nil;
+    dispatch_async(self.proxyQueue, ^{
+        self.latencyTestSocket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:self.proxyQueue];
+        
+        NSError *error = nil;
+        if (![self.latencyTestSocket connectToHost:self.config.serverHost
+                                          onPort:self.config.serverPort
+                                    withTimeout:5.0
+                                         error:&error]) {
+            if (self.latencyTestCompletion) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.latencyTestCompletion(-1, error);
+                });
+                self.latencyTestCompletion = nil;
+            }
         }
-    }
+    });
 }
 
 - (void)getCurrentSpeed:(void(^)(uint64_t uploadSpeed, uint64_t downloadSpeed))completion {
     if (!completion) return;
     
-    NSTimeInterval timeDiff = [[NSDate date] timeIntervalSinceDate:self.lastTrafficUpdateTime];
-    if (timeDiff <= 0) timeDiff = 1.0;
-    
-    uint64_t uploadDiff = self.uploadBytes - self.lastUploadBytes;
-    uint64_t downloadDiff = self.downloadBytes - self.lastDownloadBytes;
-    
-    uint64_t uploadSpeed = (uint64_t)(uploadDiff / timeDiff);
-    uint64_t downloadSpeed = (uint64_t)(downloadDiff / timeDiff);
-    
-    completion(uploadSpeed, downloadSpeed);
+    dispatch_async(self.proxyQueue, ^{
+        NSTimeInterval timeDiff = MAX(1.0, [[NSDate date] timeIntervalSinceDate:self.lastTrafficUpdateTime]);
+        
+        uint64_t currentUpload = atomic_load(&_uploadBytes);
+        uint64_t currentDownload = atomic_load(&_downloadBytes);
+        uint64_t lastUpload = atomic_load(&_lastUploadBytes);
+        uint64_t lastDownload = atomic_load(&_lastDownloadBytes);
+        
+        uint64_t uploadDiff = currentUpload - lastUpload;
+        uint64_t downloadDiff = currentDownload - lastDownload;
+        
+        uint64_t uploadSpeed = (uint64_t)(uploadDiff / timeDiff);
+        uint64_t downloadSpeed = (uint64_t)(downloadDiff / timeDiff);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(uploadSpeed, downloadSpeed);
+        });
+    });
 }
 
 #if TARGET_OS_OSX
@@ -330,6 +404,21 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
     [task launch];
     [task waitUntilExit];
     
+    // 如果HTTP代理已启动，也设置HTTP代理
+    if (self.privoxyManager.isRunning) {
+        task = [[NSTask alloc] init];
+        [task setLaunchPath:@"/usr/sbin/networksetup"];
+        [task setArguments:@[@"-setwebproxy", @"Wi-Fi", self.config.localAddress, [NSString stringWithFormat:@"%d", self.httpProxyPort]]];
+        [task launch];
+        [task waitUntilExit];
+        
+        task = [[NSTask alloc] init];
+        [task setLaunchPath:@"/usr/sbin/networksetup"];
+        [task setArguments:@[@"-setwebproxystate", @"Wi-Fi", @"on"]];
+        [task launch];
+        [task waitUntilExit];
+    }
+    
     return task.terminationStatus == 0;
 }
 
@@ -341,9 +430,111 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
     [task launch];
     [task waitUntilExit];
     
+    // 禁用HTTP代理
+    task = [[NSTask alloc] init];
+    [task setLaunchPath:@"/usr/sbin/networksetup"];
+    [task setArguments:@[@"-setwebproxystate", @"Wi-Fi", @"off"]];
+    [task launch];
+    [task waitUntilExit];
+    
     return task.terminationStatus == 0;
 }
 #endif
+
+#pragma mark - HTTP代理方法
+
+- (BOOL)startHTTPProxy {
+    // 配置Privoxy
+    TFYPrivoxyConfig *privoxyConfig = [TFYPrivoxyConfig configWithListenPort:self.httpProxyPort
+                                                          forwardSOCKS5Host:self.config.localAddress
+                                                          forwardSOCKS5Port:self.config.localPort];
+    
+    // 设置日志文件路径
+    NSString *logDir = NSTemporaryDirectory();
+    privoxyConfig.logFilePath = [logDir stringByAppendingPathComponent:@"privoxy.log"];
+    
+    // 设置配置
+    self.privoxyManager.config = privoxyConfig;
+    
+    // 启动Privoxy
+    BOOL success = [self.privoxyManager startPrivoxy];
+    
+    if (success) {
+        if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
+            [self.delegate proxyLogMessage:@"HTTP代理服务已启动" level:0];
+        }
+    } else {
+        if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
+            [self.delegate proxyLogMessage:@"HTTP代理服务启动失败" level:2];
+        }
+    }
+    
+    return success;
+}
+
+- (void)stopHTTPProxy {
+    [self.privoxyManager stopPrivoxy];
+}
+
+#pragma mark - Antinat方法
+
+- (TFYOCLibevAntinatConnection *)createAntinatConnectionWithConfig:(TFYAntinatConfig *)config
+                                                        remoteHost:(NSString *)remoteHost
+                                                        remotePort:(uint16_t)remotePort {
+    return [self.antinatManager createConnectionWithConfig:config
+                                                remoteHost:remoteHost
+                                                remotePort:remotePort];
+}
+
+- (NSArray<TFYOCLibevAntinatConnection *> *)activeAntinatConnections {
+    return [self.antinatManager activeConnections];
+}
+
+- (TFYOCLibevAntinatConnection *)antinatConnectionWithIdentifier:(NSString *)identifier {
+    return [self.antinatManager connectionWithIdentifier:identifier];
+}
+
+- (void)closeAllAntinatConnections {
+    [self.antinatManager closeAllConnections];
+}
+
+- (NSArray<NSString *> *)resolveHostname:(NSString *)hostname {
+    return [self.antinatManager resolveHostname:hostname];
+}
+
+#pragma mark - Privoxy方法
+
+- (BOOL)addPrivoxyFilterRule:(TFYPrivoxyFilterRule *)rule {
+    return [self.privoxyManager addFilterRule:rule];
+}
+
+- (BOOL)removePrivoxyFilterRuleWithPattern:(NSString *)pattern {
+    return [self.privoxyManager removeFilterRuleWithPattern:pattern];
+}
+
+- (NSArray<TFYPrivoxyFilterRule *> *)allPrivoxyFilterRules {
+    return [self.privoxyManager allFilterRules];
+}
+
+- (BOOL)clearAllPrivoxyFilterRules {
+    return [self.privoxyManager clearAllFilterRules];
+}
+
+- (BOOL)togglePrivoxyFiltering:(BOOL)enabled {
+    return [self.privoxyManager toggleFiltering:enabled];
+}
+
+- (BOOL)togglePrivoxyCompression:(BOOL)enabled {
+    return [self.privoxyManager toggleCompression:enabled];
+}
+
+- (BOOL)generatePrivoxyConfigFile {
+    return [self.privoxyManager generateConfigFile];
+}
+
+- (BOOL)loadPrivoxyConfigFile:(NSString *)filePath {
+    return [self.privoxyManager loadConfigFile:filePath];
+}
 
 #pragma mark - 私有方法
 
@@ -369,7 +560,7 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
                 self.status = TFYProxyStatusError;
                 
                 NSError *error = [NSError errorWithDomain:TFYOCLibevErrorDomain
-                                                     code:1000
+                                                     code:TFYOCLibevErrorCodeStartFailed
                                                  userInfo:@{NSLocalizedDescriptionKey: @"启动代理服务失败"}];
                 
                 if ([self.delegate respondsToSelector:@selector(proxyDidEncounterError:)]) {
@@ -402,12 +593,15 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
     [self.wormhole passMessageObject:@{@"status": @"running",
                                       @"socksFd": @(socksFd),
                                       @"udpFd": @(udpFd)}
-                         identifier:@"proxyStatus"];
+                         identifier:kProxyStatusIdentifier];
     
     // 记录日志
     if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
         [self.delegate proxyLogMessage:@"代理服务已启动" level:0];
     }
+    
+    // 启动HTTP代理
+    [self startHTTPProxy];
 }
 
 #pragma mark - 流量统计
@@ -441,7 +635,7 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
     
     // 请求扩展更新流量统计
     [self.wormhole passMessageObject:@{@"command": @"getTrafficStats"}
-                         identifier:@"command"];
+                         identifier:kCommandIdentifier];
 }
 
 #pragma mark - GCDAsyncSocketDelegate
@@ -463,11 +657,37 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
     if (sock == self.latencyTestSocket && self.latencyTestCompletion) {
         self.latencyTestCompletion(-1, err ?: [NSError errorWithDomain:TFYOCLibevErrorDomain
-                                                                  code:1002
+                                                                  code:TFYOCLibevErrorCodeConnectionFailed
                                                               userInfo:@{NSLocalizedDescriptionKey: @"连接服务器失败"}]);
         self.latencyTestCompletion = nil;
         self.latencyTestSocket = nil;
     }
 }
 
-@end 
+#pragma mark - TFYOCLibevPrivoxyManagerDelegate
+
+- (void)privoxyDidStart {
+    if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
+        [self.delegate proxyLogMessage:@"HTTP代理服务已启动" level:0];
+    }
+}
+
+- (void)privoxyDidStop {
+    if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
+        [self.delegate proxyLogMessage:@"HTTP代理服务已停止" level:0];
+    }
+}
+
+- (void)privoxyDidEncounterError:(NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
+        [self.delegate proxyLogMessage:[NSString stringWithFormat:@"HTTP代理服务错误: %@", error.localizedDescription] level:2];
+    }
+}
+
+- (void)privoxyLogMessage:(NSString *)message {
+    if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
+        [self.delegate proxyLogMessage:[NSString stringWithFormat:@"[Privoxy] %@", message] level:1];
+    }
+}
+
+@end

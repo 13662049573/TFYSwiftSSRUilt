@@ -1,12 +1,12 @@
 {
   "name": "TFYSwiftSSRKit",
   "version": "1.0.0",
-  "summary": "iOS/macOS Shadowsocks client framework with Rust and Libev cores",
-  "description": "TFYSwiftSSRKit is an iOS/macOS framework that provides Shadowsocks client functionality.\nIt supports both Rust and Libev implementations for high performance and security,\nwrapped with Objective-C interfaces for easy integration into iOS/macOS apps.",
+  "summary": "iOS/macOS Shadowsocks client framework with Rust and Libev cores, supporting Antinat and Privoxy",
+  "description": "TFYSwiftSSRKit is an iOS/macOS framework that provides Shadowsocks client functionality.\nIt supports both Rust and Libev implementations for high performance and security,\nwrapped with Objective-C interfaces for easy integration into iOS/macOS apps.\nThe framework also includes Antinat for network connection management and Privoxy\nfor HTTP proxy functionality with filtering capabilities.",
   "homepage": "https://github.com/13662049573/TFYSwiftSSRKit",
   "license": {
     "type": "MIT",
-    "file": "TFYSwiftSSRKit/LICENSE"
+    "file": "LICENSE"
   },
   "authors": {
     "田风有": "420144542@qq.com"
@@ -16,18 +16,23 @@
     "osx": "12.0"
   },
   "source": {
-    "git": "https://github.com/13662049573/TFYSwiftSSRKit.git",
+    "git": "file:///Users/tianfengyou/Desktop/MyLibrary/TFYSwiftSSRUilt",
     "tag": "1.0.0"
   },
   "source_files": [
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevBridge.{h,m}",
+    "TFYSwiftSSRKit.h",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.{h,m}",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevManager.{h,m}",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevSOCKS5Handler.{h,m}",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevAntinatManager.{h,m}",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevPrivoxyManager.{h,m}",
     "TFYSwiftSSRKit/RustOCClass/TFYSSManager.{h,m}",
     "TFYSwiftSSRKit/RustOCClass/TFYVPNManager.{h,m}",
     "TFYSwiftSSRKit/shadowsocks-rust/output/include/*.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/libs/include/*.h"
+    "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/antinat/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/privoxy.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/config.h"
   ],
   "exclude_files": [
     "TFYSwiftSSRKit/shadowsocks-libev/source/**/*",
@@ -40,30 +45,69 @@
     "TFYSwiftSSRKit/shadowsocks-libev/libev/**/*",
     "TFYSwiftSSRKit/shadowsocks-rust/src/**/*",
     "TFYSwiftSSRKit/shadowsocks-rust/Cargo.lock",
-    "TFYSwiftSSRKit/shadowsocks-rust/Cargo.toml"
+    "TFYSwiftSSRKit/shadowsocks-rust/Cargo.toml",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/acconfig.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/actionlist.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/actions.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/cgi.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/cgiedit.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/cgisimple.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/client-tags.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/cygwin.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/deanimate.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/encode.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/errlog.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/filters.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/gateway.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/jbsockets.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/jcc.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/list.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/loadcfg.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/loaders.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/miscutil.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/parsers.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/pcrs.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/project.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/ssl.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/ssl_common.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/ssplit.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/strptime.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/urlmatch.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/w32log.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/w32res.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/w32svrapi.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/w32taskbar.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/win32.h"
   ],
   "public_header_files": [
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevBridge.h",
+    "TFYSwiftSSRKit.h",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.h",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevManager.h",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevSOCKS5Handler.h",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevAntinatManager.h",
+    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevPrivoxyManager.h",
     "TFYSwiftSSRKit/RustOCClass/TFYSSManager.h",
     "TFYSwiftSSRKit/RustOCClass/TFYVPNManager.h",
     "TFYSwiftSSRKit/shadowsocks-rust/output/include/*.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/libs/include/*.h"
+    "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/antinat/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/privoxy.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/config.h"
   ],
   "ios": {
     "vendored_libraries": [
       "TFYSwiftSSRKit/shadowsocks-rust/output/ios/libss_ios.a",
-      "TFYSwiftSSRKit/shadowsocks-libev/libs/ios/libshadowsocks-libev.a",
-      "TFYSwiftSSRKit/shadowsocks-libev/libs/ios/libshadowsocks-libev_ios.a"
+      "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_ios.a",
+      "TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_ios.a",
+      "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_ios.a"
     ]
   },
   "osx": {
     "vendored_libraries": [
       "TFYSwiftSSRKit/shadowsocks-rust/output/macos/libss_macos.a",
-      "TFYSwiftSSRKit/shadowsocks-libev/libs/macos/libshadowsocks-libev.a",
-      "TFYSwiftSSRKit/shadowsocks-libev/libs/macos/libshadowsocks-libev_macos.a"
+      "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_macos.a",
+      "TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_macos.a",
+      "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_macos.a"
     ]
   },
   "frameworks": [
@@ -75,31 +119,39 @@
   "requires_arc": true,
   "static_framework": true,
   "preserve_paths": [
+    "TFYSwiftSSRKit.h",
+    "module.modulemap",
     "TFYSwiftSSRKit/module.modulemap",
-    "TFYSwiftSSRKit/shadowsocks-rust/output/include/module/module.modulemap",
-    "TFYSwiftSSRKit/LICENSE",
+    "LICENSE",
     "TFYSwiftSSRKit/README.md",
     "TFYSwiftSSRKit/DIRECTORY_STRUCTURE.md"
   ],
-  "module_map": "TFYSwiftSSRKit/module.modulemap",
+  "module_map": "module.modulemap",
   "pod_target_xcconfig": {
     "VALID_ARCHS[sdk=iphoneos*]": "arm64",
     "VALID_ARCHS[sdk=macosx*]": "arm64",
     "ENABLE_BITCODE": "NO",
     "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64",
     "EXCLUDED_ARCHS[sdk=macosx*]": "",
-    "LIBRARY_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libs/ios $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libs/macos",
-    "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libs/include $(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass $(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass",
+    "LIBRARY_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib",
+    "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT) $(PODS_ROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include $(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass $(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass",
     "CLANG_ENABLE_MODULES": "YES",
     "DEFINES_MODULE": "YES",
-    "OTHER_LDFLAGS": "-ObjC"
+    "OTHER_LDFLAGS": "-ObjC",
+    "MODULEMAP_FILE": "$(PODS_ROOT)/module.modulemap",
+    "GCC_PREPROCESSOR_DEFINITIONS": [
+      "$(inherited)",
+      "HAVE_CONFIG_H=1"
+    ]
   },
   "user_target_xcconfig": {
     "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64",
     "EXCLUDED_ARCHS[sdk=macosx*]": ""
   },
+  "swift_versions": "5.0",
   "dependencies": {
     "CocoaAsyncSocket": [],
     "MMWormhole": []
-  }
+  },
+  "swift_version": "5.0"
 }

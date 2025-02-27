@@ -1,5 +1,5 @@
 framework module TFYSwiftSSRKit {
-    umbrella "Classes"
+    umbrella header "TFYSwiftSSRKit.h"
     
     export *
     module * { export * }
@@ -43,6 +43,22 @@ framework module TFYSwiftSSRKit {
     module Shadowsocks [system] {
         requires !swift
         header "shadowsocks.h"
+        export *
+    }
+    
+    module Antinat [system] {
+        requires !swift
+        header "antinat.h"
+        export *
+    }
+    
+    explicit module LibevOCClass {
+        header "LibevOCClass/TFYOCLibevConnection.h"
+        header "LibevOCClass/TFYOCLibevManager.h"
+        header "LibevOCClass/TFYOCLibevSOCKS5Handler.h"
+        header "LibevOCClass/TFYOCLibevAntinatManager.h"
+        header "LibevOCClass/TFYOCLibevPrivoxyManager.h"
+        
         export *
     }
 } 

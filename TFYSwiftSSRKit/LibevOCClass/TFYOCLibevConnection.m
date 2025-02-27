@@ -9,28 +9,44 @@
 #import "TFYOCLibevConnection.h"
 #import <CocoaAsyncSocket/GCDAsyncSocket.h>
 #import <CocoaAsyncSocket/GCDAsyncUdpSocket.h>
+#import <stdatomic.h>
 
-// 错误域
+// 错误域和错误码
 NSString * const TFYOCLibevConnectionErrorDomain = @"com.tfyswiftssrkit.connection";
+
+typedef NS_ENUM(NSInteger, TFYOCLibevConnectionErrorCode) {
+    TFYOCLibevConnectionErrorCodeInvalidHost = 2001,
+    TFYOCLibevConnectionErrorCodeConnectionFailed = 2002,
+    TFYOCLibevConnectionErrorCodeSendFailed = 2003
+};
 
 // 私有接口
 @interface TFYOCLibevConnection () <GCDAsyncSocketDelegate, GCDAsyncUdpSocketDelegate>
 
-// 可写属性
+// 连接状态（使用原子操作）
+@property (atomic, assign, readwrite) TFYConnectionStatus status;
+// 连接类型
 @property (nonatomic, assign, readwrite) TFYConnectionType type;
-@property (nonatomic, assign, readwrite) TFYConnectionStatus status;
+// 远程主机
 @property (nonatomic, copy, readwrite) NSString *remoteHost;
+// 远程端口
 @property (nonatomic, assign, readwrite) uint16_t remotePort;
+// 本地端口
 @property (nonatomic, assign, readwrite) uint16_t localPort;
+// 连接标识符
 @property (nonatomic, copy, readwrite) NSString *identifier;
+// 连接开始时间
 @property (nonatomic, strong, readwrite) NSDate *startTime;
-@property (nonatomic, assign, readwrite) uint64_t uploadBytes;
-@property (nonatomic, assign, readwrite) uint64_t downloadBytes;
-
-// 私有属性
+// 上传字节数（使用原子操作）
+@property (atomic, assign, readwrite) uint64_t uploadBytes;
+// 下载字节数（使用原子操作）
+@property (atomic, assign, readwrite) uint64_t downloadBytes;
+// TCP Socket
 @property (nonatomic, strong) GCDAsyncSocket *tcpSocket;
+// UDP Socket
 @property (nonatomic, strong) GCDAsyncUdpSocket *udpSocket;
-@property (nonatomic, strong) dispatch_queue_t socketQueue;
+// 队列
+@property (nonatomic, strong) dispatch_queue_t connectionQueue;
 
 @end
 
@@ -39,9 +55,9 @@ NSString * const TFYOCLibevConnectionErrorDomain = @"com.tfyswiftssrkit.connecti
 #pragma mark - 初始化方法
 
 - (instancetype)initWithType:(TFYConnectionType)type
-                  remoteHost:(NSString *)remoteHost
-                  remotePort:(uint16_t)remotePort
-                   localPort:(uint16_t)localPort {
+                 remoteHost:(NSString *)remoteHost
+                 remotePort:(uint16_t)remotePort
+                  localPort:(uint16_t)localPort {
     self = [super init];
     if (self) {
         _type = type;
@@ -50,116 +66,136 @@ NSString * const TFYOCLibevConnectionErrorDomain = @"com.tfyswiftssrkit.connecti
         _localPort = localPort;
         _status = TFYConnectionStatusDisconnected;
         _startTime = [NSDate date];
+        _identifier = [[NSUUID UUID] UUIDString];
         _uploadBytes = 0;
         _downloadBytes = 0;
         
-        // 创建唯一标识符
-        _identifier = [[NSUUID UUID] UUIDString];
-        
-        // 创建socket队列
+        // 创建专用队列
         NSString *queueName = [NSString stringWithFormat:@"com.tfyswiftssrkit.connection.%@", _identifier];
-        _socketQueue = dispatch_queue_create([queueName UTF8String], DISPATCH_QUEUE_SERIAL);
+        _connectionQueue = dispatch_queue_create(queueName.UTF8String, DISPATCH_QUEUE_SERIAL);
         
-        // 根据连接类型创建相应的socket
+        // 初始化socket
         if (type == TFYConnectionTypeTCP) {
-            _tcpSocket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:_socketQueue];
+            _tcpSocket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:_connectionQueue];
         } else {
-            _udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:_socketQueue];
+            _udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:_connectionQueue];
         }
-        
-        // 将连接添加到管理器
-        [[TFYOCLibevConnectionManager sharedManager] addConnection:self];
     }
     return self;
-}
-
-- (void)dealloc {
-    [self close];
 }
 
 #pragma mark - 公共方法
 
 - (BOOL)connect {
-    if (self.status == TFYConnectionStatusConnecting || self.status == TFYConnectionStatusConnected) {
+    if (atomic_load(&_status) != TFYConnectionStatusDisconnected) {
         return NO;
     }
     
-    self.status = TFYConnectionStatusConnecting;
+    if (!self.remoteHost || self.remoteHost.length == 0) {
+        [self handleError:[NSError errorWithDomain:TFYOCLibevConnectionErrorDomain
+                                            code:TFYOCLibevConnectionErrorCodeInvalidHost
+                                        userInfo:@{NSLocalizedDescriptionKey: @"远程主机地址不能为空"}]];
+        return NO;
+    }
+    
+    atomic_store(&_status, TFYConnectionStatusConnecting);
     [self notifyStatusChange];
     
-    NSError *error = nil;
-    BOOL success = NO;
-    
-    if (self.type == TFYConnectionTypeTCP) {
-        // TCP连接
-        success = [self.tcpSocket connectToHost:self.remoteHost onPort:self.remotePort error:&error];
-    } else {
-        // UDP连接
-        success = [self.udpSocket bindToPort:self.localPort error:&error];
-        if (success) {
-            [self.udpSocket beginReceiving:&error];
-            if (!error) {
-                // UDP连接成功后立即设置为已连接状态
-                self.status = TFYConnectionStatusConnected;
-                [self notifyStatusChange];
+    dispatch_async(self.connectionQueue, ^{
+        if (self.type == TFYConnectionTypeTCP) {
+            NSError *error = nil;
+            if (![self.tcpSocket connectToHost:self.remoteHost
+                                      onPort:self.remotePort
+                                withTimeout:30
+                                     error:&error]) {
+                [self handleError:error ?: [NSError errorWithDomain:TFYOCLibevConnectionErrorDomain
+                                                            code:TFYOCLibevConnectionErrorCodeConnectionFailed
+                                                        userInfo:@{NSLocalizedDescriptionKey: @"TCP连接失败"}]];
+            }
+        } else {
+            NSError *error = nil;
+            if (![self.udpSocket bindToPort:self.localPort error:&error] ||
+                ![self.udpSocket beginReceiving:&error]) {
+                [self handleError:error ?: [NSError errorWithDomain:TFYOCLibevConnectionErrorDomain
+                                                            code:TFYOCLibevConnectionErrorCodeConnectionFailed
+                                                        userInfo:@{NSLocalizedDescriptionKey: @"UDP绑定失败"}]];
             } else {
-                success = NO;
+                atomic_store(&_status, TFYConnectionStatusConnected);
+                [self notifyStatusChange];
             }
         }
-    }
+    });
     
-    if (!success) {
-        self.status = TFYConnectionStatusError;
-        [self notifyStatusChange];
-        [self notifyError:error];
-    }
-    
-    return success;
+    return YES;
 }
 
 - (BOOL)sendData:(NSData *)data {
-    if (self.status != TFYConnectionStatusConnected) {
-        return NO;
-    }
-    
     if (!data || data.length == 0) {
         return NO;
     }
     
-    if (self.type == TFYConnectionTypeTCP) {
-        // TCP发送数据
-        [self.tcpSocket writeData:data withTimeout:-1 tag:0];
-    } else {
-        // UDP发送数据
-        [self.udpSocket sendData:data toHost:self.remoteHost port:self.remotePort withTimeout:-1 tag:0];
+    if (atomic_load(&_status) != TFYConnectionStatusConnected) {
+        return NO;
     }
     
-    // 更新上传字节数
-    self.uploadBytes += data.length;
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(self.connectionQueue, ^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (!strongSelf) return;
+        
+        if (strongSelf.type == TFYConnectionTypeTCP) {
+            [strongSelf.tcpSocket writeData:data withTimeout:30 tag:0];
+        } else {
+            NSError *error = nil;
+            if (![strongSelf.udpSocket sendData:data
+                                      toHost:strongSelf.remoteHost
+                                      port:strongSelf.remotePort
+                               withTimeout:30
+                                   tag:0
+                                  error:&error]) {
+                [strongSelf handleError:error ?: [NSError errorWithDomain:TFYOCLibevConnectionErrorDomain
+                                                                code:TFYOCLibevConnectionErrorCodeSendFailed
+                                                            userInfo:@{NSLocalizedDescriptionKey: @"发送数据失败"}]];
+            }
+        }
+        
+        atomic_fetch_add(&strongSelf->_uploadBytes, data.length);
+    });
     
     return YES;
 }
 
 - (void)close {
-    if (self.status == TFYConnectionStatusDisconnected) {
-        return;
-    }
-    
-    if (self.type == TFYConnectionTypeTCP) {
-        [self.tcpSocket disconnect];
-    } else {
-        [self.udpSocket close];
-    }
-    
-    self.status = TFYConnectionStatusDisconnected;
-    [self notifyStatusChange];
-    [self notifyConnectionDidClose];
-    
-    // 从管理器中移除
-    [[TFYOCLibevConnectionManager sharedManager] removeConnection:self];
+    dispatch_async(self.connectionQueue, ^{
+        if (self.type == TFYConnectionTypeTCP) {
+            [self.tcpSocket disconnect];
+        } else {
+            [self.udpSocket close];
+        }
+        
+        atomic_store(&_status, TFYConnectionStatusDisconnected);
+        [self notifyStatusChange];
+        
+        if ([self.delegate respondsToSelector:@selector(connectionDidClose)]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.delegate connectionDidClose];
+            });
+        }
+    });
 }
 
 #pragma mark - 私有方法
+
+- (void)handleError:(NSError *)error {
+    atomic_store(&_status, TFYConnectionStatusError);
+    [self notifyStatusChange];
+    
+    if ([self.delegate respondsToSelector:@selector(connectionDidEncounterError:)]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate connectionDidEncounterError:error];
+        });
+    }
+}
 
 - (void)notifyStatusChange {
     if ([self.delegate respondsToSelector:@selector(connectionStatusDidChange:)]) {
@@ -169,7 +205,40 @@ NSString * const TFYOCLibevConnectionErrorDomain = @"com.tfyswiftssrkit.connecti
     }
 }
 
-- (void)notifyDataReceived:(NSData *)data {
+#pragma mark - GCDAsyncSocketDelegate
+
+- (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
+    atomic_store(&_status, TFYConnectionStatusConnected);
+    [self notifyStatusChange];
+}
+
+- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
+    if (err) {
+        [self handleError:err];
+    } else {
+        atomic_store(&_status, TFYConnectionStatusDisconnected);
+        [self notifyStatusChange];
+    }
+}
+
+- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
+    atomic_fetch_add(&_downloadBytes, data.length);
+    
+    if ([self.delegate respondsToSelector:@selector(connectionDidReceiveData:)]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate connectionDidReceiveData:data];
+        });
+    }
+    
+    [sock readDataWithTimeout:-1 tag:0];
+}
+
+#pragma mark - GCDAsyncUdpSocketDelegate
+
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
+      fromAddress:(NSData *)address withFilterContext:(id)filterContext {
+    atomic_fetch_add(&_downloadBytes, data.length);
+    
     if ([self.delegate respondsToSelector:@selector(connectionDidReceiveData:)]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.delegate connectionDidReceiveData:data];
@@ -177,85 +246,13 @@ NSString * const TFYOCLibevConnectionErrorDomain = @"com.tfyswiftssrkit.connecti
     }
 }
 
-- (void)notifyError:(NSError *)error {
-    if ([self.delegate respondsToSelector:@selector(connectionDidEncounterError:)]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate connectionDidEncounterError:error];
-        });
-    }
-}
-
-- (void)notifyConnectionDidClose {
-    if ([self.delegate respondsToSelector:@selector(connectionDidClose)]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate connectionDidClose];
-        });
-    }
-}
-
-#pragma mark - GCDAsyncSocketDelegate
-
-- (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
-    self.status = TFYConnectionStatusConnected;
-    [self notifyStatusChange];
-    
-    // 开始读取数据
-    [sock readDataWithTimeout:-1 tag:0];
-}
-
-- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
-    // 更新下载字节数
-    self.downloadBytes += data.length;
-    
-    // 通知接收到数据
-    [self notifyDataReceived:data];
-    
-    // 继续读取数据
-    [sock readDataWithTimeout:-1 tag:0];
-}
-
-- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
-    if (err) {
-        self.status = TFYConnectionStatusError;
-        [self notifyError:err];
-    } else {
-        self.status = TFYConnectionStatusDisconnected;
-    }
-    
-    [self notifyStatusChange];
-    [self notifyConnectionDidClose];
-    
-    // 从管理器中移除
-    [[TFYOCLibevConnectionManager sharedManager] removeConnection:self];
-}
-
-#pragma mark - GCDAsyncUdpSocketDelegate
-
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext {
-    // 更新下载字节数
-    self.downloadBytes += data.length;
-    
-    // 通知接收到数据
-    [self notifyDataReceived:data];
-}
-
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error {
-    [self notifyError:error];
-}
-
 - (void)udpSocketDidClose:(GCDAsyncUdpSocket *)sock withError:(NSError *)error {
     if (error) {
-        self.status = TFYConnectionStatusError;
-        [self notifyError:error];
+        [self handleError:error];
     } else {
-        self.status = TFYConnectionStatusDisconnected;
+        atomic_store(&_status, TFYConnectionStatusDisconnected);
+        [self notifyStatusChange];
     }
-    
-    [self notifyStatusChange];
-    [self notifyConnectionDidClose];
-    
-    // 从管理器中移除
-    [[TFYOCLibevConnectionManager sharedManager] removeConnection:self];
 }
 
 @end

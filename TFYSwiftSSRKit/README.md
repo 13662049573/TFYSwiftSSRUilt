@@ -1,17 +1,24 @@
 # TFYSwiftSSRKit
 
-TFYSwiftSSRKit是一个iOS/macOS通用的网络加速器库，基于shadowsocks-libev实现，支持iOS 15+和macOS 12+。
+TFYSwiftSSRKit 是一个功能强大的网络代理工具包，为 iOS 和 macOS 应用提供高性能的代理服务。该库基于 shadowsocks-libev、antinat 和 privoxy 等开源项目，提供了完整的 Objective-C 实现，同时支持 Swift 调用。
 
 ## 功能特点
 
-- 支持iOS 15+和macOS 12+
-- 支持多种加密方法
-- 支持TCP和UDP协议
-- 支持SOCKS5代理
-- 支持流量统计
-- 支持服务器延迟测试
-- 支持全局代理设置（仅macOS）
-- 提供Swift和Objective-C接口
+- **多协议支持**：支持 Shadowsocks、SOCKS5、HTTP 等多种代理协议
+- **高性能实现**：基于 C/C++ 核心库，提供高效的网络代理服务
+- **完整的 API**：提供简洁易用的 Objective-C 接口，支持 Swift 调用
+- **流量统计**：实时监控上传和下载流量，计算网络速度
+- **HTTP 代理**：集成 Privoxy 提供 HTTP 代理服务，支持过滤规则
+- **网络连接管理**：通过 Antinat 管理网络连接，支持多种代理类型
+- **过滤规则**：支持自定义过滤规则，控制网络访问
+- **全局代理**：在 macOS 上支持设置系统全局代理
+- **服务器延迟测试**：测试服务器连接延迟，优化服务器选择
+
+## 系统要求
+
+- iOS 15.0+ / macOS 12.0+
+- Xcode 14.0+
+- Swift 5.0+
 
 ## 安装
 
@@ -31,278 +38,183 @@ dependencies: [
 
 ## 使用方法
 
-### Swift
+### 基本用法
 
 ```swift
 import TFYSwiftSSRKit
 
-// 启动加速器
-let success = TFYLibevExampleController.shared.startAccelerator(
-    serverHost: "your_server_host",
-    serverPort: 8388,
-    password: "your_password",
-    method: "aes-256-gcm",
-    localPort: 1080
-)
+// 创建代理配置
+let config = ProxyConfig(serverHost: "your-server.com", 
+                         serverPort: 8388, 
+                         password: "your-password", 
+                         method: "aes-256-gcm")
 
-// 停止加速器
-TFYLibevExampleController.shared.stopAccelerator()
+// 获取代理管理器
+let manager = LibevManager.sharedManager()
 
-// 重启加速器
-TFYLibevExampleController.shared.restartAccelerator()
+// 设置代理配置
+manager.config = config
 
-// 测试服务器延迟
-TFYLibevExampleController.shared.testServerLatency { latency, error in
+// 设置代理模式
+manager.proxyMode = .global
+
+// 启动代理
+manager.startProxy()
+
+// 停止代理
+manager.stopProxy()
+```
+
+### 代理状态监听
+
+```swift
+// 设置代理
+class YourClass: LibevManagerDelegate {
+    
+    func setup() {
+        let manager = LibevManager.sharedManager()
+        manager.delegate = self
+    }
+    
+    // 代理状态变化回调
+    func proxyStatusDidChange(_ status: ProxyStatus) {
+        switch status {
+        case .stopped:
+            print("代理已停止")
+        case .starting:
+            print("代理正在启动")
+        case .running:
+            print("代理正在运行")
+        case .stopping:
+            print("代理正在停止")
+        case .error:
+            print("代理发生错误")
+        @unknown default:
+            break
+        }
+    }
+    
+    // 代理错误回调
+    func proxyDidEncounterError(_ error: Error) {
+        print("代理错误: \(error.localizedDescription)")
+    }
+    
+    // 流量统计回调
+    func proxyTrafficUpdate(_ uploadBytes: UInt64, downloadBytes: UInt64) {
+        print("上传: \(uploadBytes) 字节, 下载: \(downloadBytes) 字节")
+    }
+    
+    // 日志回调
+    func proxyLogMessage(_ message: String, level: Int32) {
+        print("日志: \(message), 级别: \(level)")
+    }
+}
+```
+
+### HTTP 代理和过滤规则
+
+```swift
+// 添加 HTTP 过滤规则
+let rule = PrivoxyFilterRule(pattern: "example.com", action: .block, description: "屏蔽示例网站")
+LibevManager.sharedManager().addPrivoxyFilterRule(rule)
+
+// 切换过滤状态
+LibevManager.sharedManager().togglePrivoxyFiltering(true)
+
+// 切换压缩状态
+LibevManager.sharedManager().togglePrivoxyCompression(true)
+
+// 清除所有过滤规则
+LibevManager.sharedManager().clearAllPrivoxyFilterRules()
+```
+
+### Antinat 连接管理
+
+```swift
+// 创建 Antinat 配置
+let antinatConfig = AntinatConfig(proxyHost: "proxy.example.com", proxyPort: 1080, proxyType: .socks5)
+antinatConfig.username = "username"
+antinatConfig.password = "password"
+
+// 创建连接
+let connection = LibevManager.sharedManager().createAntinatConnection(with: antinatConfig, 
+                                                                     remoteHost: "target.com", 
+                                                                     remotePort: 80)
+
+// 连接到远程主机
+connection.connect()
+
+// 发送数据
+let data = "Hello, World!".data(using: .utf8)!
+connection.send(data)
+
+// 关闭连接
+connection.close()
+
+// 获取所有活跃连接
+let connections = LibevManager.sharedManager().activeAntinatConnections()
+
+// 关闭所有连接
+LibevManager.sharedManager().closeAllAntinatConnections()
+```
+
+## 架构
+
+TFYSwiftSSRKit 由以下主要组件组成：
+
+1. **TFYOCLibevManager**：核心管理器，负责协调各个组件的工作
+2. **TFYOCLibevPrivoxyManager**：管理 Privoxy HTTP 代理服务和过滤规则
+3. **TFYOCLibevAntinatManager**：管理 Antinat 网络连接和代理
+4. **TFYOCLibevConnection**：通用网络连接类
+5. **TFYOCLibevSOCKS5Handler**：处理 SOCKS5 协议
+
+## 高级功能
+
+### 测试服务器延迟
+
+```swift
+LibevManager.sharedManager().testServerLatency { (latency, error) in
     if let error = error {
-        print("测试延迟失败: \(error.localizedDescription)")
+        print("测试失败: \(error.localizedDescription)")
     } else {
         print("服务器延迟: \(latency) 毫秒")
     }
 }
+```
 
-// 获取当前状态
-let status = TFYLibevExampleController.shared.currentStatus()
+### 获取网络速度
 
-// 获取当前上传和下载速度
-let uploadSpeed = TFYLibevExampleController.shared.currentUploadSpeed()
-let downloadSpeed = TFYLibevExampleController.shared.currentDownloadSpeed()
+```swift
+LibevManager.sharedManager().getCurrentSpeed { (uploadSpeed, downloadSpeed) in
+    print("上传速度: \(uploadSpeed) 字节/秒")
+    print("下载速度: \(downloadSpeed) 字节/秒")
+}
+```
 
-// 获取总上传和下载字节数
-let totalUploadBytes = TFYLibevExampleController.shared.totalUploadBytes()
-let totalDownloadBytes = TFYLibevExampleController.shared.totalDownloadBytes()
+### 设置全局代理（仅 macOS）
 
-// 获取连接统计信息
-let statistics = TFYLibevExampleController.shared.connectionStatistics()
-
-// 获取所有活跃连接
-let connections = TFYLibevExampleController.shared.activeConnections()
-
-// 关闭所有连接
-TFYLibevExampleController.shared.closeAllConnections()
-
-// 设置全局代理（仅macOS）
+```swift
 #if os(macOS)
-TFYLibevExampleController.shared.setupGlobalProxy()
-TFYLibevExampleController.shared.removeGlobalProxy()
+// 设置全局代理
+LibevManager.sharedManager().setupGlobalProxy()
+
+// 移除全局代理
+LibevManager.sharedManager().removeGlobalProxy()
 #endif
-
-// 监听通知
-NotificationCenter.default.addObserver(self, selector: #selector(handleStatusChange(_:)), name: NSNotification.Name("TFYAcceleratorStatusChangeNotification"), object: nil)
-NotificationCenter.default.addObserver(self, selector: #selector(handleError(_:)), name: NSNotification.Name("TFYAcceleratorErrorNotification"), object: nil)
-NotificationCenter.default.addObserver(self, selector: #selector(handleTrafficUpdate(_:)), name: NSNotification.Name("TFYAcceleratorTrafficUpdateNotification"), object: nil)
-NotificationCenter.default.addObserver(self, selector: #selector(handleSpeedUpdate(_:)), name: NSNotification.Name("TFYAcceleratorSpeedUpdateNotification"), object: nil)
-NotificationCenter.default.addObserver(self, selector: #selector(handleLog(_:)), name: NSNotification.Name("TFYAcceleratorLogNotification"), object: nil)
-
-// 处理通知
-@objc func handleStatusChange(_ notification: Notification) {
-    guard let userInfo = notification.userInfo,
-          let statusValue = userInfo["status"] as? Int,
-          let status = TFYSwiftProxyStatus(rawValue: statusValue) else {
-        return
-    }
-    
-    print("加速器状态变化: \(status)")
-}
-
-@objc func handleError(_ notification: Notification) {
-    guard let userInfo = notification.userInfo,
-          let error = userInfo["error"] as? Error else {
-        return
-    }
-    
-    print("加速器错误: \(error.localizedDescription)")
-}
-
-@objc func handleTrafficUpdate(_ notification: Notification) {
-    guard let userInfo = notification.userInfo,
-          let uploadBytes = userInfo["uploadBytes"] as? UInt64,
-          let downloadBytes = userInfo["downloadBytes"] as? UInt64 else {
-        return
-    }
-    
-    print("总上传: \(uploadBytes) 字节, 总下载: \(downloadBytes) 字节")
-}
-
-@objc func handleSpeedUpdate(_ notification: Notification) {
-    guard let userInfo = notification.userInfo,
-          let uploadSpeed = userInfo["uploadSpeed"] as? UInt64,
-          let downloadSpeed = userInfo["downloadSpeed"] as? UInt64 else {
-        return
-    }
-    
-    print("上传速度: \(uploadSpeed) 字节/秒, 下载速度: \(downloadSpeed) 字节/秒")
-}
-
-@objc func handleLog(_ notification: Notification) {
-    guard let userInfo = notification.userInfo,
-          let message = userInfo["message"] as? String,
-          let level = userInfo["level"] as? Int else {
-        return
-    }
-    
-    print("加速器日志[\(level)]: \(message)")
-}
 ```
-
-### Objective-C
-
-```objective-c
-#import <TFYSwiftSSRKit/TFYSwiftSSRKit-Swift.h>
-
-// 启动加速器
-BOOL success = [[TFYLibevExampleController shared] startAcceleratorWithServerHost:@"your_server_host"
-                                                                       serverPort:8388
-                                                                         password:@"your_password"
-                                                                           method:@"aes-256-gcm"
-                                                                        localPort:1080];
-
-// 停止加速器
-[[TFYLibevExampleController shared] stopAccelerator];
-
-// 重启加速器
-[[TFYLibevExampleController shared] restartAccelerator];
-
-// 测试服务器延迟
-[[TFYLibevExampleController shared] testServerLatencyWithCompletion:^(NSTimeInterval latency, NSError * _Nullable error) {
-    if (error) {
-        NSLog(@"测试延迟失败: %@", error.localizedDescription);
-    } else {
-        NSLog(@"服务器延迟: %f 毫秒", latency);
-    }
-}];
-
-// 获取当前状态
-TFYSwiftProxyStatus status = [[TFYLibevExampleController shared] currentStatus];
-
-// 获取当前上传和下载速度
-uint64_t uploadSpeed = [[TFYLibevExampleController shared] currentUploadSpeed];
-uint64_t downloadSpeed = [[TFYLibevExampleController shared] currentDownloadSpeed];
-
-// 获取总上传和下载字节数
-uint64_t totalUploadBytes = [[TFYLibevExampleController shared] totalUploadBytes];
-uint64_t totalDownloadBytes = [[TFYLibevExampleController shared] totalDownloadBytes];
-
-// 获取连接统计信息
-NSDictionary *statistics = [[TFYLibevExampleController shared] connectionStatistics];
-
-// 获取所有活跃连接
-NSArray<TFYOCLibevConnection *> *connections = [[TFYLibevExampleController shared] activeConnections];
-
-// 关闭所有连接
-[[TFYLibevExampleController shared] closeAllConnections];
-
-// 设置全局代理（仅macOS）
-#if TARGET_OS_OSX
-[[TFYLibevExampleController shared] setupGlobalProxy];
-[[TFYLibevExampleController shared] removeGlobalProxy];
-#endif
-
-// 监听通知
-[[NSNotificationCenter defaultCenter] addObserver:self
-                                         selector:@selector(handleStatusChange:)
-                                             name:@"TFYAcceleratorStatusChangeNotification"
-                                           object:nil];
-[[NSNotificationCenter defaultCenter] addObserver:self
-                                         selector:@selector(handleError:)
-                                             name:@"TFYAcceleratorErrorNotification"
-                                           object:nil];
-[[NSNotificationCenter defaultCenter] addObserver:self
-                                         selector:@selector(handleTrafficUpdate:)
-                                             name:@"TFYAcceleratorTrafficUpdateNotification"
-                                           object:nil];
-[[NSNotificationCenter defaultCenter] addObserver:self
-                                         selector:@selector(handleSpeedUpdate:)
-                                             name:@"TFYAcceleratorSpeedUpdateNotification"
-                                           object:nil];
-[[NSNotificationCenter defaultCenter] addObserver:self
-                                         selector:@selector(handleLog:)
-                                             name:@"TFYAcceleratorLogNotification"
-                                           object:nil];
-
-// 处理通知
-- (void)handleStatusChange:(NSNotification *)notification {
-    NSDictionary *userInfo = notification.userInfo;
-    NSNumber *statusValue = userInfo[@"status"];
-    
-    NSLog(@"加速器状态变化: %@", statusValue);
-}
-
-- (void)handleError:(NSNotification *)notification {
-    NSDictionary *userInfo = notification.userInfo;
-    NSError *error = userInfo[@"error"];
-    
-    NSLog(@"加速器错误: %@", error.localizedDescription);
-}
-
-- (void)handleTrafficUpdate:(NSNotification *)notification {
-    NSDictionary *userInfo = notification.userInfo;
-    NSNumber *uploadBytes = userInfo[@"uploadBytes"];
-    NSNumber *downloadBytes = userInfo[@"downloadBytes"];
-    
-    NSLog(@"总上传: %@ 字节, 总下载: %@ 字节", uploadBytes, downloadBytes);
-}
-
-- (void)handleSpeedUpdate:(NSNotification *)notification {
-    NSDictionary *userInfo = notification.userInfo;
-    NSNumber *uploadSpeed = userInfo[@"uploadSpeed"];
-    NSNumber *downloadSpeed = userInfo[@"downloadSpeed"];
-    
-    NSLog(@"上传速度: %@ 字节/秒, 下载速度: %@ 字节/秒", uploadSpeed, downloadSpeed);
-}
-
-- (void)handleLog:(NSNotification *)notification {
-    NSDictionary *userInfo = notification.userInfo;
-    NSString *message = userInfo[@"message"];
-    NSNumber *level = userInfo[@"level"];
-    
-    NSLog(@"加速器日志[%@]: %@", level, message);
-}
-```
-
-## 支持的加密方法
-
-- aes-128-gcm
-- aes-192-gcm
-- aes-256-gcm
-- chacha20-ietf-poly1305
-- xchacha20-ietf-poly1305
-- aes-128-cfb
-- aes-192-cfb
-- aes-256-cfb
-- aes-128-ctr
-- aes-192-ctr
-- aes-256-ctr
-- camellia-128-cfb
-- camellia-192-cfb
-- camellia-256-cfb
-- bf-cfb
-- chacha20-ietf
-- salsa20
-- rc4-md5
-
-## 架构
-
-TFYSwiftSSRKit由以下几个主要部分组成：
-
-1. **核心库**：基于shadowsocks-libev实现的C语言库，提供核心加密和代理功能。
-2. **OC封装**：对核心库的Objective-C封装，提供更友好的接口。
-3. **Swift封装**：对OC封装的Swift封装，提供更现代化的接口。
-4. **示例控制器**：提供一个简单的示例控制器，展示如何使用该库。
-
-## 依赖库
-
-- shadowsocks-libev
-- CocoaAsyncSocket
-- MMWormhole
 
 ## 许可证
 
-TFYSwiftSSRKit使用MIT许可证。详见LICENSE文件。
+TFYSwiftSSRKit 使用 MIT 许可证。详情请参阅 [LICENSE](LICENSE) 文件。
 
-## 作者
+## 致谢
 
-TFYSwiftSSRKit由TFYSwiftSSRKit团队开发。
+TFYSwiftSSRKit 基于以下开源项目：
 
-## 贡献
+- [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)
+- [antinat](http://antinat.sourceforge.net/)
+- [privoxy](https://www.privoxy.org/)
+- [CocoaAsyncSocket](https://github.com/robbiehanson/CocoaAsyncSocket)
+- [MMWormhole](https://github.com/mutualmobile/MMWormhole)
 
-欢迎提交Pull Request和Issue。 
+感谢这些项目的贡献者们！ 
