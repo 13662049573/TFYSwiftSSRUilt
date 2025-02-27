@@ -7,6 +7,7 @@
 //
 
 #import "TFYOCLibevManager.h"
+#import "TFYOCLibevConnection.h"
 #import <pthread.h>
 #import <arpa/inet.h>
 #import <netdb.h>
@@ -147,6 +148,9 @@ static NSString * const kCommandIdentifier = @"command";
 // 队列
 @property (nonatomic, strong) dispatch_queue_t proxyQueue;
 
+// 活跃连接数组
+@property (nonatomic, strong) NSMutableArray<TFYOCLibevConnection *> *connections;
+
 // Privoxy管理器
 @property (nonatomic, strong) TFYOCLibevPrivoxyManager *privoxyManager;
 // Antinat管理器
@@ -196,6 +200,7 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
         _downloadBytes = 0;
         _lastTrafficUpdateTime = [NSDate date];
         _httpProxyPort = 8118; // 默认HTTP代理端口
+        _connections = [NSMutableArray array];
         
         // 创建专用队列
         _proxyQueue = dispatch_queue_create("com.tfyswiftssrkit.proxy", DISPATCH_QUEUE_SERIAL);
@@ -266,12 +271,11 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
 }
 
 - (void)stopProxy {
-    TFYProxyStatus currentStatus = atomic_load(&_status);
-    if (currentStatus != TFYProxyStatusRunning && currentStatus != TFYProxyStatusStarting) {
+    if (self.status != TFYProxyStatusRunning && self.status != TFYProxyStatusStarting) {
         return;
     }
     
-    atomic_store(&_status, TFYProxyStatusStopping);
+    self.status = TFYProxyStatusStopping;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(proxyStatusDidChange:)]) {
@@ -310,7 +314,7 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
     [self.wormhole passMessageObject:@{@"status": @"stopped"}
                          identifier:kProxyStatusIdentifier];
     
-    atomic_store(&_status, TFYProxyStatusStopped);
+    self.status = TFYProxyStatusStopped;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(proxyStatusDidChange:)]) {
@@ -371,10 +375,10 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
     dispatch_async(self.proxyQueue, ^{
         NSTimeInterval timeDiff = MAX(1.0, [[NSDate date] timeIntervalSinceDate:self.lastTrafficUpdateTime]);
         
-        uint64_t currentUpload = atomic_load(&_uploadBytes);
-        uint64_t currentDownload = atomic_load(&_downloadBytes);
-        uint64_t lastUpload = atomic_load(&_lastUploadBytes);
-        uint64_t lastDownload = atomic_load(&_lastDownloadBytes);
+        uint64_t currentUpload = self.uploadBytes;
+        uint64_t currentDownload = self.downloadBytes;
+        uint64_t lastUpload = self.lastUploadBytes;
+        uint64_t lastDownload = self.lastDownloadBytes;
         
         uint64_t uploadDiff = currentUpload - lastUpload;
         uint64_t downloadDiff = currentDownload - lastDownload;
