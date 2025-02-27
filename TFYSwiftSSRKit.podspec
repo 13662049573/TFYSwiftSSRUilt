@@ -21,8 +21,8 @@ Pod::Spec.new do |spec|
   
   # 平台支持 - 确保使用较高的部署目标版本
   spec.ios.deployment_target = '15.0'
-
   spec.osx.deployment_target = '12.0'
+  
   # Swift 版本要求
   spec.swift_versions = ['5.0']
   
@@ -158,7 +158,8 @@ Pod::Spec.new do |spec|
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios -lprivoxy_ios',
     'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
     'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
-    'LD_VERIFY_BITCODE' => 'NO'
+    'LD_VERIFY_BITCODE' => 'NO',
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64'
   })
   
   spec.ios.pod_target_xcconfig = ios_xcconfig
@@ -169,7 +170,8 @@ Pod::Spec.new do |spec|
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos -lprivoxy_macos',
     'MACOSX_DEPLOYMENT_TARGET' => '12.0',
     'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
-    'LD_VERIFY_BITCODE' => 'NO'
+    'LD_VERIFY_BITCODE' => 'NO',
+    'EXCLUDED_ARCHS[sdk=*]' => 'arm64'
   })
   
   spec.osx.pod_target_xcconfig = macos_xcconfig
@@ -238,21 +240,40 @@ Pod::Spec.new do |spec|
   ].join(' ')
   
   spec.pod_target_xcconfig = {
-    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include',
-    'LIBRARY_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
-    'GCC_PREPROCESSOR_DEFINITIONS' => 'GCD_ASYNC_SOCKET_HEADER="GCDAsyncSocket.h"',
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
+    'EXCLUDED_ARCHS[sdk=macosx*]' => '',
+    'VALID_ARCHS' => 'arm64 x86_64',
+    'HEADER_SEARCH_PATHS' => [
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib'
+    ].join(' '),
+    'LIBRARY_SEARCH_PATHS' => [
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib'
+    ].join(' '),
     'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
-    'DEFINES_MODULE' => 'YES',
-    'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/module.modulemap'
+    'GCC_PREPROCESSOR_DEFINITIONS' => ['POD_CONFIGURATION_RELEASE=1', 'COCOAPODS=1', 'GCD_ASYNC_SOCKET_HEADER="GCDAsyncSocket.h"', 'HAVE_CONFIG_H=1'],
+    'SWIFT_VERSION' => '5.0'
   }
   
   # 框架依赖
   spec.frameworks = [
-    'Foundation', 
-    'UIKit', 
-    'CoreFoundation', 
-    'Security', 
-    'SystemConfiguration', 
+    'Foundation',
+    'UIKit',
+    'CoreFoundation',
+    'Security',
+    'SystemConfiguration',
     'NetworkExtension',
     'WatchConnectivity'
   ]
