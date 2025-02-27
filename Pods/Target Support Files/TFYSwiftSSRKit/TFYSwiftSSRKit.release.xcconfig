@@ -1,28 +1,21 @@
-ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 APPLICATION_EXTENSION_API_ONLY = YES
 BUILD_LIBRARY_FOR_DISTRIBUTION = YES
-CLANG_CXX_LANGUAGE_STANDARD = gnu++17
 CLANG_CXX_LIBRARY = libc++
 CLANG_ENABLE_MODULES = YES
 CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
-COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_IPHONEOS = 15.0
-COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_MACOSX = 12.0
 CONFIGURATION_BUILD_DIR = ${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit
-DEAD_CODE_STRIPPING = YES
 DEFINES_MODULE = YES
-ENABLE_BITCODE = NO NO
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 COCOAPODS=1 SS_BUILTIN_GETADDRINFO=1 $(inherited) HAVE_CONFIG_H=1
-HEADER_SEARCH_PATHS = $(inherited) $(PODS_ROOT)/TFYSwiftSSRKit $(SRCROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass $(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include/module $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_ROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_ROOT)/TFYSwiftSSRKit/MMWormhole
-IPHONEOS_DEPLOYMENT_TARGET = 15.0 15.0
+ENABLE_BITCODE = NO
+EXCLUDED_ARCHS[sdk=iphonesimulator*] = i386
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 $(inherited) HAVE_CONFIG_H=1 COCOAPODS=1 GCD_ASYNC_SOCKET_HEADER="GCDAsyncSocket.h" $(inherited) HAVE_CONFIG_H=1
+HEADER_SEARCH_PATHS = $(inherited) $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libbloom $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libbloom $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole
+IPHONEOS_DEPLOYMENT_TARGET = 15.0
 LD_VERIFY_BITCODE = NO
 LIBRARY_SEARCH_PATHS = $(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"
-LIBRARY_SEARCH_PATHS[sdk=iphoneos*] = $(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib
-LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = $(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib
-LIBRARY_SEARCH_PATHS[sdk=macosx*] = $(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib
-MACOSX_DEPLOYMENT_TARGET = 12.0
+LIBRARY_SEARCH_PATHS[sdk=iphoneos*] = $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib
+LIBRARY_SEARCH_PATHS[sdk=macosx*] = $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib
 MODULEMAP_FILE = $(PODS_TARGET_SRCROOT)/module.modulemap
 ONLY_ACTIVE_ARCH = YES YES
-OTHER_CFLAGS = $(inherited) -fembed-bitcode
 OTHER_LDFLAGS = $(inherited) -ObjC -l"c++" -l"mbedcrypto_ios" -l"mbedtls_ios" -l"mbedx509_ios" -l"privoxy_ios" -l"sodium_ios" -l"ss_ios"
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
@@ -34,7 +27,7 @@ PRODUCT_BUNDLE_IDENTIFIER = org.cocoapods.${PRODUCT_NAME:rfc1034identifier}
 SKIP_INSTALL = YES
 SUPPORTS_MACCATALYST = NO
 SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO
+SWIFT_INCLUDE_PATHS = $(inherited) $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include
 SWIFT_OBJC_INTERFACE_HEADER_NAME = TFYSwiftSSRKit-Swift.h
-SWIFT_VERSION = 5.0
 USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES = YES
 VALID_ARCHS = arm64 arm64

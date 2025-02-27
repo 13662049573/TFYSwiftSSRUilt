@@ -1,5 +1,5 @@
 PODS:
-  - TFYSwiftSSRKit (1.0.4)
+  - TFYSwiftSSRKit (1.0.5)
 
 DEPENDENCIES:
   - TFYSwiftSSRKit (from `./`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  TFYSwiftSSRKit: ec2759f0d3bd1b1929f5223ff5eae2ed1cb1e637
+  TFYSwiftSSRKit: 98455302dcd8be08209d47aae79dc6f05ad477f9
 
 PODFILE CHECKSUM: c18d9b8f03c0e776594d3ee5c9e24aa8ebcc4132
 

@@ -4,16 +4,15 @@ CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
 DEFINES_MODULE = YES
 ENABLE_BITCODE = NO
 FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit"
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 COCOAPODS=1 SS_BUILTIN_GETADDRINFO=1 $(inherited) HAVE_CONFIG_H=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 $(inherited) HAVE_CONFIG_H=1
 HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit/TFYSwiftSSRKit.framework/Headers"
-IPHONEOS_DEPLOYMENT_TARGET = 15.0 15.0
+IPHONEOS_DEPLOYMENT_TARGET = 15.0
 LD_VERIFY_BITCODE = NO
 LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/antinat/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/libcork/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/libev/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/libipset/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/openssl/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/pcre/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib" "${PODS_ROOT}/../TFYSwiftSSRKit/shadowsocks-rust/lib" $(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"
-MACOSX_DEPLOYMENT_TARGET = 12.0
 MODULEMAP_FILE = $(PODS_TARGET_SRCROOT)/module.modulemap
 ONLY_ACTIVE_ARCH = YES
 OTHER_CFLAGS = $(inherited) -isystem "${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit/TFYSwiftSSRKit.framework/Headers" -iframework "${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit"
-OTHER_LDFLAGS = $(inherited) -ObjC -l"antinat_ios" -l"c++" -l"cares_ios" -l"cork_ios" -l"crypto_ios" -l"ev_ios" -l"ipset_ios" -l"maxminddb_ios" -l"mbedcrypto_ios" -l"mbedtls_ios" -l"mbedx509_ios" -l"pcre_ios" -l"privoxy_ios" -l"shadowsocks-libev_ios" -l"sodium_ios" -l"ss_ios" -l"ssl_ios" -framework "Foundation" -framework "NetworkExtension" -framework "Security" -framework "SystemConfiguration" -framework "TFYSwiftSSRKit"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"antinat_ios" -l"c++" -l"cares_ios" -l"cork_ios" -l"crypto_ios" -l"ev_ios" -l"ipset_ios" -l"maxminddb_ios" -l"mbedcrypto_ios" -l"mbedtls_ios" -l"mbedx509_ios" -l"pcre_ios" -l"privoxy_ios" -l"shadowsocks-libev_ios" -l"sodium_ios" -l"ss_ios" -l"ssl_ios" -l"z" -framework "CoreFoundation" -framework "Foundation" -framework "NetworkExtension" -framework "Security" -framework "SystemConfiguration" -framework "TFYSwiftSSRKit" -framework "UIKit" -framework "WatchConnectivity"
 OTHER_MODULE_VERIFIER_FLAGS = $(inherited) "-F${PODS_CONFIGURATION_BUILD_DIR}/TFYSwiftSSRKit"
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)

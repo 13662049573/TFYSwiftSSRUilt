@@ -236,14 +236,30 @@ Pod::Spec.new do |spec|
   
   spec.pod_target_xcconfig = {
     'CLANG_CXX_LIBRARY' => 'libc++',
-    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libbloom $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libbloom $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole',
-    'LIBRARY_SEARCH_PATHS[sdk=iphoneos*]' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
-    'LIBRARY_SEARCH_PATHS[sdk=macosx*]' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
-    'SWIFT_INCLUDE_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include',
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',
-    'VALID_ARCHS' => 'arm64',
-    'ONLY_ACTIVE_ARCH' => 'YES',
-    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'HAVE_CONFIG_H=1', 'COCOAPODS=1', 'GCD_ASYNC_SOCKET_HEADER="GCDAsyncSocket.h"']
+    'HEADER_SEARCH_PATHS' => [
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include'
+    ].join(' '),
+    'LIBRARY_SEARCH_PATHS' => [
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib'
+    ].join(' '),
+    'GCC_PREPROCESSOR_DEFINITIONS' => [
+      'GCD_ASYNC_SOCKET_HEADER="GCDAsyncSocket.h"',
+      'HAVE_CONFIG_H=1'
+    ]
   }
   
   # 框架依赖
@@ -268,4 +284,21 @@ Pod::Spec.new do |spec|
   
   # 模块映射
   spec.module_map = 'module.modulemap'
+  
+  # 添加 preserve_paths 确保库文件被保留
+  spec.preserve_paths = [
+    'TFYSwiftSSRKit/shadowsocks-rust/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-rust/lib/*.a',
+    'TFYSwiftSSRKit/shadowsocks-libev/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/*.a',
+    'TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-libev/libsodium/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-libev/libcork/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-libev/libev/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-libev/c-ares/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-libev/pcre/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-libev/openssl/include/**/*.h',
+    'TFYSwiftSSRKit/shadowsocks-libev/antinat/include/**/*.h'
+  ]
 end 
