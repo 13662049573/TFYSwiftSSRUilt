@@ -219,7 +219,9 @@ Pod::Spec.new do |spec|
     'LIBRARY_SEARCH_PATHS[sdk=macosx*]' => macos_lib_search_paths,
     'DEAD_CODE_STRIPPING' => 'YES',
     'ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES' => 'YES',
-    'OTHER_CFLAGS' => '-fembed-bitcode'
+    'OTHER_CFLAGS' => '-fembed-bitcode',
+    'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
+    'MACOSX_DEPLOYMENT_TARGET' => '12.0'
   }
   
   # 框架依赖
@@ -229,6 +231,6 @@ Pod::Spec.new do |spec|
   spec.swift_version = '5.0'
   
   # 依赖库
-  spec.dependency 'CocoaAsyncSocket'
-  spec.dependency 'MMWormhole'
+  spec.dependency 'CocoaAsyncSocket', '~> 7.6.5'
+  spec.dependency 'MMWormhole', '~> 2.0.0'
 end 
