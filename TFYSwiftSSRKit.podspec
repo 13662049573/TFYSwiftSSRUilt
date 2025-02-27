@@ -261,6 +261,6 @@ Pod::Spec.new do |spec|
   }
   
   # 添加模块映射
-  spec.module_map = 'shadowsocks-rust/include/module/module.modulemap'
+  spec.module_map = 'module.modulemap'
   
 end 
