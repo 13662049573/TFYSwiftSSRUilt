@@ -21,19 +21,15 @@
 #import "GCDAsyncSocket/GCDAsyncSocket.h"
 #import "GCDAsyncSocket/GCDAsyncUdpSocket.h"
 
-// MMWormhole 基础组件（不依赖 WatchConnectivity）
+// MMWormhole
 #import "MMWormhole/MMWormhole.h"
+#import "MMWormhole/MMWormholeSession.h"
 #import "MMWormhole/MMWormholeTransiting.h"
 #import "MMWormhole/MMWormholeFileTransiting.h"
 #import "MMWormhole/MMWormholeCoordinatedFileTransiting.h"
-
-// WatchConnectivity 相关组件（仅在 iOS 9.0 及以上版本可用）
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0
-#import "MMWormhole/MMWormholeSession.h"
 #import "MMWormhole/MMWormholeSessionContextTransiting.h"
 #import "MMWormhole/MMWormholeSessionFileTransiting.h"
 #import "MMWormhole/MMWormholeSessionMessageTransiting.h"
-#endif
 
 // 注意：以下C库头文件不需要在此处导入
 // 它们会在各自的实现文件中按需导入
