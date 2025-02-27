@@ -194,20 +194,12 @@
     }
   },
   "pod_target_xcconfig": {
-    "CLANG_CXX_LIBRARY": "libc++",
-    "HEADER_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libbloom $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libbloom $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole",
-    "LIBRARY_SEARCH_PATHS[sdk=iphoneos*]": "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib",
-    "LIBRARY_SEARCH_PATHS[sdk=macosx*]": "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib",
-    "SWIFT_INCLUDE_PATHS": "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include",
-    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "i386",
-    "VALID_ARCHS": "arm64",
-    "ONLY_ACTIVE_ARCH": "YES",
-    "GCC_PREPROCESSOR_DEFINITIONS": [
-      "$(inherited)",
-      "HAVE_CONFIG_H=1",
-      "COCOAPODS=1",
-      "GCD_ASYNC_SOCKET_HEADER=\"GCDAsyncSocket.h\""
-    ]
+    "HEADER_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include",
+    "LIBRARY_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib",
+    "GCC_PREPROCESSOR_DEFINITIONS": "GCD_ASYNC_SOCKET_HEADER=\"GCDAsyncSocket.h\"",
+    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES",
+    "DEFINES_MODULE": "YES",
+    "MODULEMAP_FILE": "$(PODS_TARGET_SRCROOT)/module.modulemap"
   },
   "frameworks": [
     "Foundation",
@@ -225,5 +217,16 @@
   "requires_arc": true,
   "static_framework": true,
   "module_map": "module.modulemap",
+  "preserve_paths": [
+    "TFYSwiftSSRKit/shadowsocks-rust/include/**/*.h",
+    "TFYSwiftSSRKit/shadowsocks-rust/lib/*.a",
+    "TFYSwiftSSRKit/shadowsocks-libev/**/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/**/*.a",
+    "module.modulemap"
+  ],
+  "vendored_libraries": [
+    "TFYSwiftSSRKit/shadowsocks-rust/lib/libss.a",
+    "TFYSwiftSSRKit/shadowsocks-libev/lib/*.a"
+  ],
   "swift_version": "5.0"
 }
