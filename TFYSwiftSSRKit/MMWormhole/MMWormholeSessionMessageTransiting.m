@@ -22,15 +22,10 @@
 // THE SOFTWARE.
 
 #import "MMWormholeSessionMessageTransiting.h"
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 #import <WatchConnectivity/WatchConnectivity.h>
-#endif
 
 @interface MMWormholeSessionMessageTransiting ()
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 @property (nonatomic, strong) WCSession *session;
-#endif
 @end
 
 @implementation MMWormholeSessionMessageTransiting
@@ -38,13 +33,11 @@
 - (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
                                  optionalDirectory:(nullable NSString *)directory {
     if ((self = [super initWithApplicationGroupIdentifier:identifier optionalDirectory:directory])) {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
         // Setup transiting with the default session
         _session = [WCSession defaultSession];
         
         // Ensure that the MMWormholeSession's delegate is set to enable message sending
         NSAssert(_session.delegate != nil, @"WCSession's delegate is required to be set before you can send messages. Please initialize the MMWormholeSession sharedListeningSession object prior to creating a separate wormhole using the MMWormholeSessionTransiting classes.");
-#endif
     }
     
     return self;
@@ -72,7 +65,6 @@
             return NO;
         }
         
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
         if ([self.session isReachable]) {
             [self.session
              sendMessage:@{identifier : data}
@@ -81,7 +73,6 @@
                  
              }];
         }
-#endif
     }
     
     return NO;

@@ -24,9 +24,7 @@
 #import "MMWormholeSession.h"
 
 @interface MMWormholeSession ()
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 @property (nonatomic, strong) WCSession *session;
-#endif
 @end
 
 @implementation MMWormholeSession
@@ -39,10 +37,8 @@
         sharedSession = [[self alloc] initWithApplicationGroupIdentifier:nil
                                                        optionalDirectory:nil];
         
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
         sharedSession.session = [WCSession defaultSession];
         sharedSession.session.delegate = sharedSession;
-#endif
     });
     
     return sharedSession;
@@ -52,9 +48,7 @@
 #pragma mark - Public Interface Methods
 
 - (void)activateSessionListening {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
     [self.session activateSession];
-#endif
 }
 
 
@@ -92,7 +86,6 @@
 
 #pragma mark - WCSessionDelegate Methods
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 - (void)session:(nonnull WCSession *)session didReceiveMessage:(nonnull NSDictionary<NSString *,id> *)message {
     for (NSString *identifier in message.allKeys) {
         NSData *data = message[identifier];
@@ -137,7 +130,6 @@
         [data writeToFile:filePath atomically:YES];
     }
 }
-#endif
 
 @end
 
