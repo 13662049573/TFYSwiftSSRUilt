@@ -248,9 +248,8 @@ Pod::Spec.new do |spec|
     'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++17',
     'CLANG_CXX_LIBRARY' => 'libc++',
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64 x86_64',
-    'VALID_ARCHS[sdk=iphoneos*]' => 'arm64',
-    'VALID_ARCHS[sdk=iphonesimulator*]' => '',
-    'VALID_ARCHS[sdk=macosx*]' => 'arm64'
+    'VALID_ARCHS' => 'arm64',
+    'ONLY_ACTIVE_ARCH' => 'YES'
   }
   
   # 框架依赖
