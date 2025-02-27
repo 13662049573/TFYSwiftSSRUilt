@@ -1,7 +1,10 @@
 Pod::Spec.new do |spec|
   spec.name         = "TFYSwiftSSRKit"
-  spec.version      = "1.0.5"
+
+  spec.version      = "1.0.6"
+
   spec.summary      = "iOS/macOS Shadowsocks客户端框架，集成Rust和Libev核心，支持Antinat和Privoxy"
+
   spec.description  = <<-DESC
                      TFYSwiftSSRKit是一个iOS/macOS框架，提供Shadowsocks客户端功能。
                      它同时支持Rust和Libev实现，以获得高性能和安全性，
@@ -11,21 +14,21 @@ Pod::Spec.new do |spec|
                      DESC
 
   spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRUilt"
+
   spec.license      = { :type => "MIT", :file => "LICENSE" }
+
   spec.author       = { "田风有" => "420144542@qq.com" }
   
   # 平台支持 - 确保使用较高的部署目标版本
   spec.ios.deployment_target = '15.0'
+
   spec.osx.deployment_target = '12.0'
-  
-  # CocoaPods 版本要求
-  spec.cocoapods_version = '>= 1.10.0'
-  
   # Swift 版本要求
   spec.swift_versions = ['5.0']
   
   # 源代码
   spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRUilt.git", :tag => "#{spec.version}" }
+
   spec.header_mappings_dir = 'TFYSwiftSSRKit'
   
   # 源文件和头文件
