@@ -1,6 +1,6 @@
 import NetworkExtension
-import MMWormhole
 import TFYSwiftSSRKit
+import MMWormhole
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
     private var wormhole: MMWormhole?

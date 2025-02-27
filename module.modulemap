@@ -1,63 +1,6 @@
 framework module TFYSwiftSSRKit {
-    umbrella header "TFYSwiftSSRKit/TFYSwiftSSRKit.h"
+    umbrella header "TFYSwiftSSRKit.h"
     
     export *
     module * { export * }
-    
-    module OpenSSL [system] {
-        requires !swift
-        
-        module ssl {
-            requires !swift
-            header "ssl.h"
-            export *
-        }
-        
-        module err {
-            requires !swift
-            header "err.h"
-            export *
-        }
-        
-        module evp {
-            requires !swift
-            header "evp.h"
-            export *
-        }
-        
-        export *
-    }
-    
-    module Sodium [system] {
-        requires !swift
-        header "sodium/sodium.h"
-        export *
-    }
-    
-    module MaxMindDB [system] {
-        requires !swift
-        header "maxminddb.h"
-        export *
-    }
-    
-    module Shadowsocks [system] {
-        requires !swift
-        header "shadowsocks.h"
-        export *
-    }
-    
-    explicit module LibevOCClass {
-        header "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.h"
-        header "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevManager.h"
-        header "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevSOCKS5Handler.h"
-        
-        export *
-    }
-    
-    explicit module RustOCClass {
-        header "TFYSwiftSSRKit/RustOCClass/TFYSSManager.h"
-        header "TFYSwiftSSRKit/RustOCClass/TFYVPNManager.h"
-        
-        export *
-    }
 } 

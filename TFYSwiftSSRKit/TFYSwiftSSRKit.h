@@ -8,12 +8,12 @@
 #ifndef TFYSwiftSSRKit_h
 #define TFYSwiftSSRKit_h
 
-#import "TFYOCLibevConnection.h"
-#import "TFYOCLibevManager.h"
-#import "TFYOCLibevSOCKS5Handler.h"
-#import "TFYOCLibevAntinatManager.h"
-#import "TFYOCLibevPrivoxyManager.h"
-#import "TFYSSManager.h"
-#import "TFYVPNManager.h"
+#import "LibevOCClass/TFYOCLibevConnection.h"
+#import "LibevOCClass/TFYOCLibevManager.h"
+#import "LibevOCClass/TFYOCLibevSOCKS5Handler.h"
+#import "LibevOCClass/TFYOCLibevAntinatManager.h"
+#import "LibevOCClass/TFYOCLibevPrivoxyManager.h"
+#import "RustOCClass/TFYSSManager.h"
+#import "RustOCClass/TFYVPNManager.h"
 
 #endif /* TFYSwiftSSRKit_h */

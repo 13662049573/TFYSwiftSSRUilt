@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "TFYSwiftSSRKit"
-  spec.version      = "1.0.2"
+  spec.version      = "1.0.3"
   spec.summary      = "iOS/macOS Shadowsocks客户端框架，集成Rust和Libev核心，支持Antinat和Privoxy"
   spec.description  = <<-DESC
                      TFYSwiftSSRKit是一个iOS/macOS框架，提供Shadowsocks客户端功能。
@@ -11,196 +11,222 @@ Pod::Spec.new do |spec|
                      DESC
 
   spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRKit"
-
   spec.license      = { :type => "MIT", :file => "LICENSE" }
-
   spec.author       = { "田风有" => "420144542@qq.com" }
-
-  spec.ios.deployment_target = '15.0'
   
+  # 平台支持
+  spec.ios.deployment_target = '15.0'
   spec.osx.deployment_target = '12.0'
   
-  # 使用本地路径进行验证
-  spec.source       = { :git => "file:///Users/tianfengyou/Desktop/MyLibrary/TFYSwiftSSRUilt", :tag => "#{spec.version}" }
-
-  # 明确指定源文件，避免自动扫描
+  # 源代码
+  spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
+  spec.header_mappings_dir = 'TFYSwiftSSRKit'
+  spec.module_map = 'module.modulemap'
+  
+  # 源文件和头文件
   spec.source_files = [
-    # 主头文件
     "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
-    
-    # LibevOCClass 目录下的所有 Objective-C 文件
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.{h,m}",
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevManager.{h,m}",
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevSOCKS5Handler.{h,m}",
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevAntinatManager.{h,m}",
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevPrivoxyManager.{h,m}",
-    
-    # RustOCClass 目录下的所有 Objective-C 文件
-    "TFYSwiftSSRKit/RustOCClass/TFYSSManager.{h,m}",
-    "TFYSwiftSSRKit/RustOCClass/TFYVPNManager.{h,m}",
-    
-    # shadowsocks-rust 和 shadowsocks-libev 的头文件
+    "TFYSwiftSSRKit/LibevOCClass/*.{h,m}",
+    "TFYSwiftSSRKit/RustOCClass/*.{h,m}",
     "TFYSwiftSSRKit/shadowsocks-rust/output/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/antinat/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/privoxy.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/config.h"
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/config.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libsodium/include/sodium.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libsodium/include/sodium/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libev/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include/**/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/pcre/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/c-ares/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libcork/include/**/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libipset/include/**/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/openssl/include/**/*.h"
   ]
   
-  # 排除文件 - 添加这一部分来排除不需要的目录
+  # 排除不需要的文件
   spec.exclude_files = [
-    # 排除源代码目录，因为我们只需要编译好的库
     "TFYSwiftSSRKit/shadowsocks-rust/src/**/*",
-    
-    # 排除 Cargo 文件
     "TFYSwiftSSRKit/shadowsocks-rust/Cargo.lock",
     "TFYSwiftSSRKit/shadowsocks-rust/Cargo.toml",
-    
-    # 排除 Privoxy 原始头文件，但保留我们自定义的 privoxy.h 和 config.h
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/acconfig.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/actionlist.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/actions.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/cgi.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/cgiedit.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/cgisimple.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/client-tags.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/cygwin.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/deanimate.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/encode.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/errlog.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/filters.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/gateway.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/jbsockets.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/jcc.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/list.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/loadcfg.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/loaders.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/miscutil.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/parsers.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/pcrs.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/project.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/ssl.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/ssl_common.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/ssplit.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/strptime.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/urlmatch.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/w32log.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/w32res.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/w32svrapi.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/w32taskbar.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/win32.h"
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/*.h",
   ]
   
   # 公共头文件
   spec.public_header_files = [
-    # 主头文件
     "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
-    
-    # LibevOCClass 目录下的所有头文件
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.h",
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevManager.h",
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevSOCKS5Handler.h",
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevAntinatManager.h",
-    "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevPrivoxyManager.h",
-    
-    # RustOCClass 目录下的所有头文件
-    "TFYSwiftSSRKit/RustOCClass/TFYSSManager.h",
-    "TFYSwiftSSRKit/RustOCClass/TFYVPNManager.h",
-    
-    # shadowsocks-rust 和 shadowsocks-libev 的头文件
+    "TFYSwiftSSRKit/LibevOCClass/*.h",
+    "TFYSwiftSSRKit/RustOCClass/*.h",
     "TFYSwiftSSRKit/shadowsocks-rust/output/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/antinat/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/privoxy.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/config.h"
+    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/config.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libsodium/include/sodium.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libsodium/include/sodium/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libev/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include/**/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/pcre/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/c-ares/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libcork/include/**/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libipset/include/**/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-libev/openssl/include/**/*.h"
   ]
-
+  
   # iOS静态库
-  spec.ios.vendored_libraries = [
-    "TFYSwiftSSRKit/shadowsocks-rust/output/ios/libss_ios.a",
-    "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_ios.a",
-    "TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_ios.a",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_ios.a"
+  ios_libs = [
+    "shadowsocks-rust/output/ios/libss_ios.a",
+    "shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_ios.a",
+    "shadowsocks-libev/antinat/lib/libantinat_ios.a",
+    "shadowsocks-libev/privoxy/lib/libprivoxy_ios.a",
+    "shadowsocks-libev/libsodium/lib/libsodium_ios.a",
+    "shadowsocks-libev/libev/lib/libev_ios.a",
+    "shadowsocks-libev/mbedtls/lib/libmbedtls_ios.a",
+    "shadowsocks-libev/mbedtls/lib/libmbedcrypto_ios.a",
+    "shadowsocks-libev/mbedtls/lib/libmbedx509_ios.a",
+    "shadowsocks-libev/pcre/lib/libpcre_ios.a",
+    "shadowsocks-libev/c-ares/lib/libcares_ios.a",
+    "shadowsocks-libev/libcork/lib/libcork_ios.a",
+    "shadowsocks-libev/libipset/lib/libipset_ios.a",
+    "shadowsocks-libev/libmaxminddb/lib/libmaxminddb_ios.a",
+    "shadowsocks-libev/openssl/lib/libcrypto_ios.a",
+    "shadowsocks-libev/openssl/lib/libssl_ios.a"
   ]
+  spec.ios.vendored_libraries = ios_libs.map { |lib| "TFYSwiftSSRKit/#{lib}" }
   
   # macOS静态库
-  spec.osx.vendored_libraries = [
-    "TFYSwiftSSRKit/shadowsocks-rust/output/macos/libss_macos.a",
-    "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_macos.a",
-    "TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_macos.a",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_macos.a"
+  macos_libs = [
+    "shadowsocks-rust/output/macos/libss_macos.a",
+    "shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_macos.a",
+    "shadowsocks-libev/antinat/lib/libantinat_macos.a",
+    "shadowsocks-libev/privoxy/lib/libprivoxy_macos.a",
+    "shadowsocks-libev/libsodium/lib/libsodium_macos.a",
+    "shadowsocks-libev/libev/lib/libev_macos.a",
+    "shadowsocks-libev/mbedtls/lib/libmbedtls_macos.a",
+    "shadowsocks-libev/mbedtls/lib/libmbedcrypto_macos.a",
+    "shadowsocks-libev/mbedtls/lib/libmbedx509_macos.a",
+    "shadowsocks-libev/pcre/lib/libpcre_macos.a",
+    "shadowsocks-libev/c-ares/lib/libcares_macos.a",
+    "shadowsocks-libev/libcork/lib/libcork_macos.a",
+    "shadowsocks-libev/libipset/lib/libipset_macos.a",
+    "shadowsocks-libev/libmaxminddb/lib/libmaxminddb_macos.a",
+    "shadowsocks-libev/openssl/lib/libcrypto_macos.a",
+    "shadowsocks-libev/openssl/lib/libssl_macos.a"
   ]
-
-  # 框架依赖
-  spec.frameworks = [
-    "Foundation",
-    "NetworkExtension",
-    "SystemConfiguration",
-    "Security"
-  ]
-
-  spec.requires_arc = true
-  spec.static_framework = true
-
-  # 保留路径 - 只保留必要的文件
-  spec.preserve_paths = [
-    "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
-    "module.modulemap",
-    "TFYSwiftSSRKit/module.modulemap",
-    "LICENSE",
-    "TFYSwiftSSRKit/README.md",
-    "TFYSwiftSSRKit/DIRECTORY_STRUCTURE.md"
-  ]
+  spec.osx.vendored_libraries = macos_libs.map { |lib| "TFYSwiftSSRKit/#{lib}" }
   
-  # 模块映射 - 使用根目录的 module.modulemap
-  spec.module_map = "module.modulemap"
-
-  # 构建设置
-  spec.pod_target_xcconfig = {
-    'VALID_ARCHS[sdk=iphoneos*]' => 'arm64',
-    'VALID_ARCHS[sdk=macosx*]' => 'arm64',
+  # 通用配置
+  common_xcconfig = {
+    'VALID_ARCHS' => 'arm64',
+    'ONLY_ACTIVE_ARCH' => 'YES',
     'ENABLE_BITCODE' => 'NO',
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
-    'EXCLUDED_ARCHS[sdk=macosx*]' => '',
-    'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-    'MACOSX_DEPLOYMENT_TARGET' => '12.0',
-    'LIBRARY_SEARCH_PATHS' => [
-      '$(inherited)',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib'
-    ].join(' '),
-    'HEADER_SEARCH_PATHS' => [
-      '$(inherited)',
-      '$(PODS_ROOT)',
-      '$(PODS_ROOT)/TFYSwiftSSRKit',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/include',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass',
-      '$(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass'
-    ].join(' '),
     'CLANG_ENABLE_MODULES' => 'YES',
     'DEFINES_MODULE' => 'YES',
-    'OTHER_LDFLAGS' => '-ObjC',
+    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'HAVE_CONFIG_H=1'],
     'MODULEMAP_FILE' => '$(PODS_ROOT)/module.modulemap',
-    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'HAVE_CONFIG_H=1']
+    'SWIFT_OBJC_INTERFACE_HEADER_NAME' => 'TFYSwiftSSRKit-Swift.h',
+    'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES'
   }
-
-  spec.user_target_xcconfig = {
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
-    'EXCLUDED_ARCHS[sdk=macosx*]' => '',
+  
+  # iOS配置
+  ios_xcconfig = common_xcconfig.merge({
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 x86_64 arm64',
+    'SUPPORTS_MACCATALYST' => 'NO',
+    'SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD' => 'NO',
+    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios',
     'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-    'MACOSX_DEPLOYMENT_TARGET' => '12.0'
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios',
+    'LD_VERIFY_BITCODE' => 'NO'
+  })
+  
+  spec.ios.pod_target_xcconfig = ios_xcconfig
+  spec.ios.user_target_xcconfig = ios_xcconfig
+  
+  # macOS配置
+  macos_xcconfig = common_xcconfig.merge({
+    'EXCLUDED_ARCHS[sdk=macosx*]' => 'x86_64 i386',
+    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos',
+    'MACOSX_DEPLOYMENT_TARGET' => '12.0',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos',
+    'LD_VERIFY_BITCODE' => 'NO'
+  })
+  
+  spec.osx.pod_target_xcconfig = macos_xcconfig
+  spec.osx.user_target_xcconfig = macos_xcconfig
+  
+  # 搜索路径配置
+  header_search_paths = [
+    '$(inherited)',
+    '$(PODS_ROOT)/TFYSwiftSSRKit',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include'
+  ].join(' ')
+  
+  ios_lib_search_paths = [
+    '$(inherited)',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib'
+  ].join(' ')
+  
+  macos_lib_search_paths = [
+    '$(inherited)',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib'
+  ].join(' ')
+  
+  spec.pod_target_xcconfig = {
+    'HEADER_SEARCH_PATHS' => header_search_paths,
+    'LIBRARY_SEARCH_PATHS[sdk=iphoneos*]' => ios_lib_search_paths,
+    'LIBRARY_SEARCH_PATHS[sdk=macosx*]' => macos_lib_search_paths,
+    'DEAD_CODE_STRIPPING' => 'YES',
+    'ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES' => 'YES',
+    'OTHER_CFLAGS' => '-fembed-bitcode'
   }
-
-  # Swift 支持
+  
+  # 框架依赖
+  spec.frameworks = ["Foundation", "NetworkExtension", "SystemConfiguration", "Security"]
+  spec.requires_arc = true
+  spec.static_framework = true
   spec.swift_version = '5.0'
-
-  # 添加依赖
+  
+  # 依赖库
   spec.dependency 'CocoaAsyncSocket'
   spec.dependency 'MMWormhole'
-end
+end 

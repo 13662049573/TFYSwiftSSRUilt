@@ -30,7 +30,7 @@
 			remoteGlobalIDString = 0AA233C067C4C4EBB7483FC9B5AB2C05;
 			remoteInfo = MMWormhole;
 		};
-		572D86C286381EF2BBA8EED2F8B477FB /* PBXContainerItemProxy */ = {
+		33F43B0DDE2EE29BB1340E89E47EA7EC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
 			proxyType = 1;
@@ -44,19 +44,19 @@
 			remoteGlobalIDString = 028565F879BDCF0F420E4AB07AAF9426;
 			remoteInfo = CocoaAsyncSocket;
 		};
-		B677C6FFEC548D85D38476FFE20BA676 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = FB91A0AEB6E26A36702599DEC2F1E0C8;
-			remoteInfo = TFYSwiftSSRKit;
-		};
 		DB22E358CD46672BD75D24747B168FFC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7BF76F8AD8E4DA494C72CE46E26F1C4A /* CocoaAsyncSocket.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 028565F879BDCF0F420E4AB07AAF9426;
 			remoteInfo = CocoaAsyncSocket;
+		};
+		DB86C4DE52A5AE1E37D72333BFAAD192 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FB91A0AEB6E26A36702599DEC2F1E0C8;
+			remoteInfo = TFYSwiftSSRKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -237,7 +237,7 @@
 			dependencies = (
 				1E82E8A8AEFEDF8AF2D034B92854CE3F /* PBXTargetDependency */,
 				4A8B11B6DABDA32F9FB64C10B903328C /* PBXTargetDependency */,
-				A6CDDE4C7B3E32DB7ED3CD6A4B6B39CA /* PBXTargetDependency */,
+				2B33A2A79DA5F16BC77E9D7D727EAF99 /* PBXTargetDependency */,
 			);
 			name = "Pods-TFYSwiftSSRUilt-PacketSwift";
 			productName = Pods_TFYSwiftSSRUilt_PacketSwift;
@@ -258,7 +258,7 @@
 			dependencies = (
 				E243E7885EDFBF41315216976023C3E6 /* PBXTargetDependency */,
 				AA25D20B5147758844B0D5481B24D722 /* PBXTargetDependency */,
-				56FF997CC1179EACAB60DBC1B604236F /* PBXTargetDependency */,
+				0577DE45C82C645A5C97E5A2736FF5AF /* PBXTargetDependency */,
 			);
 			name = "Pods-TFYSwiftSSRUilt";
 			productName = Pods_TFYSwiftSSRUilt;
@@ -343,25 +343,25 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0577DE45C82C645A5C97E5A2736FF5AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TFYSwiftSSRKit;
+			targetProxy = DB86C4DE52A5AE1E37D72333BFAAD192 /* PBXContainerItemProxy */;
+		};
 		1E82E8A8AEFEDF8AF2D034B92854CE3F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = CocoaAsyncSocket;
 			targetProxy = 8A8B18670B561C85887EE04D4369E65B /* PBXContainerItemProxy */;
 		};
+		2B33A2A79DA5F16BC77E9D7D727EAF99 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TFYSwiftSSRKit;
+			targetProxy = 33F43B0DDE2EE29BB1340E89E47EA7EC /* PBXContainerItemProxy */;
+		};
 		4A8B11B6DABDA32F9FB64C10B903328C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MMWormhole;
 			targetProxy = 1DEDE4D92EA2E7030632F7BB0B42646E /* PBXContainerItemProxy */;
-		};
-		56FF997CC1179EACAB60DBC1B604236F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = TFYSwiftSSRKit;
-			targetProxy = 572D86C286381EF2BBA8EED2F8B477FB /* PBXContainerItemProxy */;
-		};
-		A6CDDE4C7B3E32DB7ED3CD6A4B6B39CA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = TFYSwiftSSRKit;
-			targetProxy = B677C6FFEC548D85D38476FFE20BA676 /* PBXContainerItemProxy */;
 		};
 		AA25D20B5147758844B0D5481B24D722 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -380,8 +380,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EAB6E27EF1EE684DAF35E88D211D9682 /* Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -404,8 +405,13 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MODULEMAP_FILE = "Target Support Files/Pods-TFYSwiftSSRUilt-PacketSwift/Pods-TFYSwiftSSRUilt-PacketSwift.modulemap";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
@@ -417,6 +423,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 x86_64";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -426,8 +433,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC36339C1272FAEA75194092D7408993 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -450,8 +458,13 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MODULEMAP_FILE = "Target Support Files/Pods-TFYSwiftSSRUilt/Pods-TFYSwiftSSRUilt.modulemap";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
@@ -462,6 +475,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 x86_64";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -599,8 +613,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D602E56E7B811B74A42E35F04387536B /* Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -623,8 +638,13 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MODULEMAP_FILE = "Target Support Files/Pods-TFYSwiftSSRUilt-PacketSwift/Pods-TFYSwiftSSRUilt-PacketSwift.modulemap";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
@@ -635,6 +655,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 x86_64";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -644,8 +665,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7A9DD65812AFE4E55625CE15DC56C118 /* Pods-TFYSwiftSSRUilt.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -668,8 +690,13 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MODULEMAP_FILE = "Target Support Files/Pods-TFYSwiftSSRUilt/Pods-TFYSwiftSSRUilt.modulemap";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
@@ -681,6 +708,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 x86_64";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
