@@ -266,12 +266,6 @@ Pod::Spec.new do |spec|
     'MACOSX_DEPLOYMENT_TARGET' => '12.0'
   }
   
-  # 确保所有依赖库使用相同的部署目标
-  spec.subspec 'Core' do |ss|
-    ss.ios.deployment_target = '15.0'
-    ss.osx.deployment_target = '12.0'
-  end
-  
   # 添加预处理宏定义
   spec.xcconfig = {
     'GCC_PREPROCESSOR_DEFINITIONS' => 'COCOAPODS=1 SS_BUILTIN_GETADDRINFO=1'

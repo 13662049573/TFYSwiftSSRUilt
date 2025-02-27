@@ -18,18 +18,18 @@
 #import "RustOCClass/TFYVPNManager.h"
 
 // GCDAsyncSocket
-#import "GCDAsyncSocket.h"
-#import "GCDAsyncUdpSocket.h"
+#import "GCDAsyncSocket/GCDAsyncSocket.h"
+#import "GCDAsyncSocket/GCDAsyncUdpSocket.h"
 
 // MMWormhole
-#import "MMWormhole.h"
-#import "MMWormholeSession.h"
-#import "MMWormholeTransiting.h"
-#import "MMWormholeFileTransiting.h"
-#import "MMWormholeCoordinatedFileTransiting.h"
-#import "MMWormholeSessionContextTransiting.h"
-#import "MMWormholeSessionFileTransiting.h"
-#import "MMWormholeSessionMessageTransiting.h"
+#import "MMWormhole/MMWormhole.h"
+#import "MMWormhole/MMWormholeSession.h"
+#import "MMWormhole/MMWormholeTransiting.h"
+#import "MMWormhole/MMWormholeFileTransiting.h"
+#import "MMWormhole/MMWormholeCoordinatedFileTransiting.h"
+#import "MMWormhole/MMWormholeSessionContextTransiting.h"
+#import "MMWormhole/MMWormholeSessionFileTransiting.h"
+#import "MMWormhole/MMWormholeSessionMessageTransiting.h"
 
 // 注意：以下C库头文件不需要在此处导入
 // 它们会在各自的实现文件中按需导入

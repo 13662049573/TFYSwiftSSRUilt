@@ -23,12 +23,12 @@
 #import "TFYOCLibevAntinatManager.h"
 #import "TFYOCLibevPrivoxyManager.h"
 
-// 导入CocoaAsyncSocket
-#import <CocoaAsyncSocket/GCDAsyncSocket.h>
-#import <CocoaAsyncSocket/GCDAsyncUdpSocket.h>
+// 导入GCDAsyncSocket
+#import "GCDAsyncSocket.h"
+#import "GCDAsyncUdpSocket.h"
 
 // 导入MMWormhole
-#import <MMWormhole/MMWormhole.h>
+#import "MMWormhole.h"
 
 // 错误域和错误码
 NSString * const TFYOCLibevErrorDomain = @"com.tfyswiftssrkit.libev";

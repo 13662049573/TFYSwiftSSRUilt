@@ -7,8 +7,8 @@
 //
 
 #import "TFYOCLibevConnection.h"
-#import <CocoaAsyncSocket/GCDAsyncSocket.h>
-#import <CocoaAsyncSocket/GCDAsyncUdpSocket.h>
+#import "GCDAsyncSocket.h"
+#import "GCDAsyncUdpSocket.h"
 #import <stdatomic.h>
 
 // 错误域和错误码

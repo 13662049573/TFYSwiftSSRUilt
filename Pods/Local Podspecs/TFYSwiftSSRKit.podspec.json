@@ -15,6 +15,10 @@
     "ios": "15.0",
     "osx": "12.0"
   },
+  "cocoapods_version": ">= 1.10.0",
+  "swift_versions": [
+    "5.0"
+  ],
   "source": {
     "git": "https://github.com/13662049573/TFYSwiftSSRUilt.git",
     "tag": "1.0.4"
@@ -39,7 +43,9 @@
     "TFYSwiftSSRKit/shadowsocks-libev/libcork/include/**/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/libipset/include/**/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include/*.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/openssl/include/**/*.h"
+    "TFYSwiftSSRKit/shadowsocks-libev/openssl/include/**/*.h",
+    "TFYSwiftSSRKit/GCDAsyncSocket/*.{h,m}",
+    "TFYSwiftSSRKit/MMWormhole/*.{h,m}"
   ],
   "exclude_files": [
     "TFYSwiftSSRKit/shadowsocks-rust/src/**/*",
@@ -49,7 +55,9 @@
   "public_header_files": [
     "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     "TFYSwiftSSRKit/LibevOCClass/*.h",
-    "TFYSwiftSSRKit/RustOCClass/*.h"
+    "TFYSwiftSSRKit/RustOCClass/*.h",
+    "TFYSwiftSSRKit/GCDAsyncSocket/*.h",
+    "TFYSwiftSSRKit/MMWormhole/*.h"
   ],
   "private_header_files": [
     "TFYSwiftSSRKit/shadowsocks-rust/include/*.h",
@@ -186,7 +194,7 @@
     }
   },
   "pod_target_xcconfig": {
-    "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit $(SRCROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass $(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include/module $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include",
+    "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit $(SRCROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass $(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include/module $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_ROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_ROOT)/TFYSwiftSSRKit/MMWormhole",
     "LIBRARY_SEARCH_PATHS[sdk=iphoneos*]": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib",
     "LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib",
     "LIBRARY_SEARCH_PATHS[sdk=macosx*]": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib",
@@ -213,15 +221,6 @@
   ],
   "requires_arc": true,
   "static_framework": true,
-  "swift_versions": "5.0",
-  "dependencies": {
-    "CocoaAsyncSocket": [
-      "~> 7.6.5"
-    ],
-    "MMWormhole": [
-      "~> 2.0.0"
-    ]
-  },
   "user_target_xcconfig": {
     "IPHONEOS_DEPLOYMENT_TARGET": "15.0",
     "MACOSX_DEPLOYMENT_TARGET": "12.0"
