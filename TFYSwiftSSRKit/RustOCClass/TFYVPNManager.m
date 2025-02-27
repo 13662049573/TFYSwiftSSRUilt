@@ -327,40 +327,38 @@
 
 - (void)vpnStatusDidChange:(NSNotification *)notification {
     NEVPNConnection *connection = notification.object;
-    NEVPNStatus status = connection.status;
     
-    NSLog(@"=== VPN 状态变更 ===");
-    switch (status) {
+    if (![connection isKindOfClass:[NEVPNConnection class]]) {
+        return;
+    }
+    
+    switch (connection.status) {
         case NEVPNStatusInvalid:
-            NSLog(@"状态: 无效");
-            if ([connection.manager.protocolConfiguration isKindOfClass:[NETunnelProviderProtocol class]]) {
-                NETunnelProviderProtocol *protocol = (NETunnelProviderProtocol *)connection.manager.protocolConfiguration;
-                NSLog(@"错误信息: %@", protocol.providerConfiguration);
-            }
+            NSLog(@"VPN 状态: 无效");
             break;
         case NEVPNStatusDisconnected:
-            NSLog(@"状态: 已断开");
-            if ([connection.manager.protocolConfiguration isKindOfClass:[NETunnelProviderProtocol class]]) {
-                NETunnelProviderProtocol *protocol = (NETunnelProviderProtocol *)connection.manager.protocolConfiguration;
-                NSLog(@"配置信息: %@", protocol.providerConfiguration);
-            }
-            self.connectDate = nil;
+            NSLog(@"VPN 状态: 已断开连接");
             break;
         case NEVPNStatusConnecting:
-            NSLog(@"状态: 连接中");
+            NSLog(@"VPN 状态: 正在连接");
             break;
         case NEVPNStatusConnected:
-            NSLog(@"状态: 已连接");
-            self.connectDate = connection.connectedDate;
+            NSLog(@"VPN 状态: 已连接");
+            break;
+        case NEVPNStatusReasserting:
+            NSLog(@"VPN 状态: 重新连接");
             break;
         case NEVPNStatusDisconnecting:
-            NSLog(@"状态: 断开中");
+            NSLog(@"VPN 状态: 正在断开连接");
             break;
+            
         default:
             break;
     }
     
-    [self updateVPNStatus:connection.manager];
+    if ([connection.manager isKindOfClass:[NETunnelProviderManager class]]) {
+        [self updateVPNStatus:(NETunnelProviderManager *)connection.manager];
+    }
 }
 
 - (void)updateVPNStatus:(NETunnelProviderManager *)manager {

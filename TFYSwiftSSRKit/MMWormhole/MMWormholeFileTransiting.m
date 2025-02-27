@@ -29,73 +29,74 @@
 
 @property (nonatomic, copy) NSString *applicationGroupIdentifier;
 @property (nonatomic, copy) NSString *directory;
-@property (nonatomic, strong, readwrite) NSFileManager *fileManager;
+@property (nonatomic, copy) NSString *basePath;
 
 @end
 
 @implementation MMWormholeFileTransiting
 
-- (instancetype)init {
-    return [self initWithApplicationGroupIdentifier:@"dev.assertion.nonDesignatedInitializer"
-                                  optionalDirectory:nil];
-}
-
 - (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
                                  optionalDirectory:(nullable NSString *)directory {
     if ((self = [super init])) {
-        _applicationGroupIdentifier = [identifier copy];
-        _directory = [directory copy];
-        _fileManager = [[NSFileManager alloc] init];
+        _applicationGroupIdentifier = identifier;
+        _directory = directory;
         
-        if (_applicationGroupIdentifier) {
-            [self checkAppGroupCapabilities];
+        if (identifier.length > 0) {
+            NSURL *appGroupContainer = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:identifier];
+            
+            if (appGroupContainer) {
+                _basePath = [appGroupContainer path];
+            }
         }
+        
+        if (_basePath.length == 0) {
+            // Fallback to a temporary directory
+            _basePath = NSTemporaryDirectory();
+        }
+        
+        if (directory.length > 0) {
+            _basePath = [_basePath stringByAppendingPathComponent:directory];
+        }
+        
+        [self createDirectoryAtPath:_basePath];
     }
     
     return self;
 }
 
 
-#pragma mark - Private Check App Group Capabilities
+#pragma mark - Private Methods
 
-- (void)checkAppGroupCapabilities {
-    NSAssert([self.fileManager containerURLForSecurityApplicationGroupIdentifier:self.applicationGroupIdentifier] != nil, @"App Group Capabilities may not be correctly configured for your project, or your appGroupIdentifier may not match your project settings. Check Project->Capabilities->App Groups. Three checkmarks should be displayed in the steps section, and the value passed in for your appGroupIdentifier should match the setting in your project file.");
-}
-
-
-#pragma mark - Private File Operation Methods
-
-- (nullable NSString *)messagePassingDirectoryPath {
-    NSURL *appGroupContainer = [self.fileManager containerURLForSecurityApplicationGroupIdentifier:self.applicationGroupIdentifier];
-    NSString *appGroupContainerPath = [appGroupContainer path];
-    NSString *directoryPath = appGroupContainerPath;
-    
-    if (self.directory != nil) {
-        directoryPath = [appGroupContainerPath stringByAppendingPathComponent:self.directory];
+- (void)createDirectoryAtPath:(NSString *)path {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL] == NO) {
+        NSError *directoryCreationError = nil;
+        
+        if ([[NSFileManager defaultManager] createDirectoryAtPath:path
+                                     withIntermediateDirectories:YES
+                                                      attributes:nil
+                                                           error:&directoryCreationError] == NO) {
+            NSLog(@"Failed to create directory at path %@ with error %@", path, directoryCreationError);
+        }
     }
-    
-    [self.fileManager createDirectoryAtPath:directoryPath
-                withIntermediateDirectories:YES
-                                 attributes:nil
-                                      error:NULL];
-    
-    return directoryPath;
 }
 
-- (nullable NSString *)filePathForIdentifier:(nullable NSString *)identifier {
+
+#pragma mark - MMWormholeTransiting Protocol Methods
+
+- (NSString *)messagePassingDirectoryPath {
+    return self.basePath;
+}
+
+- (NSString *)filePathForIdentifier:(NSString *)identifier {
     if (identifier == nil || identifier.length == 0) {
         return nil;
     }
     
-    NSString *directoryPath = [self messagePassingDirectoryPath];
     NSString *fileName = [NSString stringWithFormat:@"%@.archive", identifier];
-    NSString *filePath = [directoryPath stringByAppendingPathComponent:fileName];
+    NSString *filePath = [self.messagePassingDirectoryPath stringByAppendingPathComponent:fileName];
     
     return filePath;
 }
-
-
-#pragma mark - Public Protocol Methods
 
 - (BOOL)writeMessageObject:(id<NSCoding>)messageObject forIdentifier:(NSString *)identifier {
     if (identifier == nil) {
@@ -103,21 +104,40 @@
     }
     
     if (messageObject) {
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        NSData *data = nil;
+        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
+            NSError *error = nil;
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
+            if (error) {
+                NSLog(@"Error archiving message object: %@", error);
+                return NO;
+            }
+        } else {
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        }
+        
+        if (data == nil) {
+            return NO;
+        }
+        
         NSString *filePath = [self filePathForIdentifier:identifier];
         
-        if (data == nil || filePath == nil) {
+        if (filePath == nil) {
             return NO;
         }
         
         BOOL success = [data writeToFile:filePath atomically:YES];
         
-        if (!success) {
-            return NO;
+        if (success) {
+            return YES;
         }
+    } else {
+        [self deleteContentForIdentifier:identifier];
+        
+        return YES;
     }
     
-    return YES;
+    return NO;
 }
 
 - (id<NSCoding>)messageObjectForIdentifier:(NSString *)identifier {
@@ -137,25 +157,44 @@
         return nil;
     }
     
-    id messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    id messageObject = nil;
+    if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
+        NSError *error = nil;
+        messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
+        if (error) {
+            NSLog(@"Error unarchiving message object: %@", error);
+            return nil;
+        }
+    } else {
+        messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    }
     
     return messageObject;
 }
 
 - (void)deleteContentForIdentifier:(NSString *)identifier {
-    [self.fileManager removeItemAtPath:[self filePathForIdentifier:identifier] error:NULL];
+    if (identifier == nil) {
+        return;
+    }
+    
+    NSString *filePath = [self filePathForIdentifier:identifier];
+    
+    if (filePath == nil) {
+        return;
+    }
+    
+    NSError *fileError = nil;
+    
+    [[NSFileManager defaultManager] removeItemAtPath:filePath error:&fileError];
 }
 
 - (void)deleteContentForAllMessages {
-    if (self.directory != nil) {
-        NSArray *messageFiles = [self.fileManager contentsOfDirectoryAtPath:[self messagePassingDirectoryPath] error:NULL];
-        
-        NSString *directoryPath = [self messagePassingDirectoryPath];
-        
-        for (NSString *path in messageFiles) {
-            NSString *filePath = [directoryPath stringByAppendingPathComponent:path];
-            
-            [self.fileManager removeItemAtPath:filePath error:NULL];
+    NSArray *messageFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.messagePassingDirectoryPath error:NULL];
+    
+    for (NSString *path in messageFiles) {
+        if ([path hasSuffix:@".archive"]) {
+            NSString *identifier = [path stringByDeletingPathExtension];
+            [self deleteContentForIdentifier:identifier];
         }
     }
 }

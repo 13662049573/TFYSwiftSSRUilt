@@ -23,9 +23,9 @@ typedef NS_ENUM(NSInteger, TFYOCLibevSOCKS5ErrorCode) {
 // SOCKS5协议常量
 static const uint8_t kSOCKS5Version = 0x05;
 static const uint8_t kSOCKS5AuthNone = 0x00;
-static const uint8_t kSOCKS5IPv4 = 0x01;
-static const uint8_t kSOCKS5Domain = 0x03;
-static const uint8_t kSOCKS5IPv6 = 0x04;
+__unused static const uint8_t kSOCKS5IPv4 = 0x01;
+__unused static const uint8_t kSOCKS5Domain = 0x03;
+__unused static const uint8_t kSOCKS5IPv6 = 0x04;
 
 // SOCKS5处理状态
 typedef NS_ENUM(NSInteger, TFYSOCKS5HandlerState) {

@@ -33,36 +33,48 @@
     }
     
     if (messageObject) {
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        NSData *data = nil;
+        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
+            NSError *error = nil;
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
+            if (error) {
+                NSLog(@"Error archiving message object: %@", error);
+                return NO;
+            }
+        } else {
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        }
+        
+        if (data == nil) {
+            return NO;
+        }
+        
         NSString *filePath = [self filePathForIdentifier:identifier];
+        
+        if (filePath == nil) {
+            return NO;
+        }
+        
         NSURL *fileURL = [NSURL fileURLWithPath:filePath];
         
-        if (data == nil || filePath == nil || fileURL == nil) {
-            return NO;
-        }
-        
-        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-        NSError *error = nil;
+        NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
         __block BOOL success = NO;
+        __block NSError *error = nil;
         
-        [fileCoordinator
-         coordinateWritingItemAtURL:fileURL
-         options:0
-         error:&error
-         byAccessor:^(NSURL *newURL) {
-             NSError *writeError = nil;
-             
-             success = [data writeToURL:newURL
-                                options:NSDataWritingAtomic | self.additionalFileWritingOptions
-                                  error:&writeError];
-         }];
+        [coordinator coordinateWritingItemAtURL:fileURL options:0 error:&error byAccessor:^(NSURL *newURL) {
+            success = [data writeToFile:filePath atomically:YES];
+        }];
         
-        if (!success) {
-            return NO;
+        if (success) {
+            return YES;
         }
+    } else {
+        [self deleteContentForIdentifier:identifier];
+        
+        return YES;
     }
     
-    return YES;
+    return NO;
 }
 
 - (id<NSCoding>)messageObjectForIdentifier:(NSString *)identifier {
@@ -71,31 +83,59 @@
     }
     
     NSString *filePath = [self filePathForIdentifier:identifier];
-    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
     
-    if (filePath == nil || fileURL == nil) {
+    if (filePath == nil) {
         return nil;
     }
     
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    NSError *error = nil;
-    __block NSData *data = nil;
+    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
     
-    [fileCoordinator
-     coordinateReadingItemAtURL:fileURL
-     options:0
-     error:&error
-     byAccessor:^(NSURL *newURL) {
-         data = [NSData dataWithContentsOfURL:newURL];
-     }];
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+    __block NSData *data = nil;
+    __block NSError *error = nil;
+    
+    [coordinator coordinateReadingItemAtURL:fileURL options:0 error:&error byAccessor:^(NSURL *newURL) {
+        data = [NSData dataWithContentsOfFile:filePath];
+    }];
     
     if (data == nil) {
         return nil;
     }
     
-    id messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    id messageObject = nil;
+    if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
+        NSError *unarchiveError = nil;
+        messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&unarchiveError];
+        if (unarchiveError) {
+            NSLog(@"Error unarchiving message object: %@", unarchiveError);
+            return nil;
+        }
+    } else {
+        messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    }
     
     return messageObject;
+}
+
+- (void)deleteContentForIdentifier:(NSString *)identifier {
+    if (identifier == nil) {
+        return;
+    }
+    
+    NSString *filePath = [self filePathForIdentifier:identifier];
+    
+    if (filePath == nil) {
+        return;
+    }
+    
+    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+    
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+    __block NSError *error = nil;
+    
+    [coordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL *newURL) {
+        [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
+    }];
 }
 
 @end

@@ -49,7 +49,7 @@ NS_SWIFT_NAME(PrivoxyFilterRule)
 
 @property (nonatomic, copy, nonnull) NSString *pattern;            // 匹配模式
 @property (nonatomic, assign) TFYPrivoxyFilterAction action;       // 过滤动作
-@property (nonatomic, copy, nullable) NSString *description;       // 规则描述
+@property (nonatomic, copy, nullable) NSString *ruleDescription;   // 规则描述
 
 // 便捷初始化方法
 + (instancetype)ruleWithPattern:(nonnull NSString *)pattern

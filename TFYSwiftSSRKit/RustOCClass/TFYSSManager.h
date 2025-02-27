@@ -98,7 +98,7 @@ NS_SWIFT_NAME(SSManager)
 
 /// 更新 PAC 规则
 /// @param rules 规则内容
-/// @param error 错误信息
+/// @return 是否成功更新
 - (BOOL)updatePACRules:(NSString *)rules NS_SWIFT_NAME(updatePacrules(rules:));
 
 @end

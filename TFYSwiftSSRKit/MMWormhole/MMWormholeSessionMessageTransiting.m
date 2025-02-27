@@ -23,10 +23,14 @@
 
 #import "MMWormholeSessionMessageTransiting.h"
 
+#if TARGET_OS_IOS || TARGET_OS_WATCH
 #import <WatchConnectivity/WatchConnectivity.h>
+#endif
 
 @interface MMWormholeSessionMessageTransiting ()
+#if TARGET_OS_IOS || TARGET_OS_WATCH
 @property (nonatomic, strong) WCSession *session;
+#endif
 @end
 
 @implementation MMWormholeSessionMessageTransiting
@@ -34,11 +38,13 @@
 - (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
                                  optionalDirectory:(nullable NSString *)directory {
     if ((self = [super initWithApplicationGroupIdentifier:identifier optionalDirectory:directory])) {
+#if TARGET_OS_IOS || TARGET_OS_WATCH
         // Setup transiting with the default session
         _session = [WCSession defaultSession];
         
         // Ensure that the MMWormholeSession's delegate is set to enable message sending
         NSAssert(_session.delegate != nil, @"WCSession's delegate is required to be set before you can send messages. Please initialize the MMWormholeSession sharedListeningSession object prior to creating a separate wormhole using the MMWormholeSessionTransiting classes.");
+#endif
     }
     
     return self;
@@ -60,7 +66,18 @@
     }
     
     if (messageObject) {
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+#if TARGET_OS_IOS || TARGET_OS_WATCH
+        NSData *data = nil;
+        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
+            NSError *error = nil;
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
+            if (error) {
+                NSLog(@"Error archiving message object: %@", error);
+                return NO;
+            }
+        } else {
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        }
         
         if (data == nil) {
             return NO;
@@ -70,10 +87,9 @@
             [self.session
              sendMessage:@{identifier : data}
              replyHandler:nil
-             errorHandler:^(NSError * __nonnull error) {
-                 
-             }];
+             errorHandler:^(NSError * __nonnull error) {}];
         }
+#endif
     }
     
     return NO;

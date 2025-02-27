@@ -145,12 +145,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)updatePACRules:(NSString *)rules NS_SWIFT_NAME(updatePacrules(rules:)) {
     NSLog(@"更新 PAC 规则");
+    if (rules == nil) {
+        NSLog(@"PAC 规则为空");
+        return NO;
+    }
+    
     int32_t result = ss_update_pac(rules.UTF8String);
     if (result != 0) {
         NSLog(@"更新 PAC 规则失败: %@", self.lastError);
         return NO;
     }
-    NSLog(@"更新 PAC 规则成功");
+    
     return YES;
 }
 

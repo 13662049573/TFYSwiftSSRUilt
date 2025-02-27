@@ -75,7 +75,7 @@ static char *configFilePath = NULL;
     TFYPrivoxyFilterRule *rule = [[TFYPrivoxyFilterRule alloc] init];
     rule.pattern = [pattern copy];
     rule.action = action;
-    rule.description = [description copy];
+    rule.ruleDescription = [description copy];
     return rule;
 }
 
@@ -85,7 +85,7 @@ static char *configFilePath = NULL;
 
 @property (nonatomic, strong) NSMutableArray<TFYPrivoxyFilterRule *> *filterRules;
 @property (nonatomic, strong) dispatch_queue_t managerQueue;
-@property (nonatomic, assign) BOOL isRunning;
+@property (nonatomic, assign, readwrite) BOOL isRunning;
 
 @end
 
@@ -188,8 +188,8 @@ static char *configFilePath = NULL;
                 break;
         }
         
-        if (rule.description) {
-            [content appendFormat:@"# %@\n", rule.description];
+        if (rule.ruleDescription) {
+            [content appendFormat:@"# %@\n", rule.ruleDescription];
         }
         [content appendFormat:@"{%@} %@\n", actionStr, rule.pattern];
     }
@@ -639,7 +639,8 @@ static char *configFilePath = NULL;
 
 #pragma mark - 回调函数
 
-static void privoxy_log_callback(const char *message) {
+// 添加 __unused 属性以消除未使用函数警告
+__unused static void privoxy_log_callback(const char *message) {
     if (!message) {
         return;
     }
@@ -648,8 +649,6 @@ static void privoxy_log_callback(const char *message) {
     
     if (sharedInstance && sharedInstance.delegate && 
         [sharedInstance.delegate respondsToSelector:@selector(privoxyLogMessage:)]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [sharedInstance.delegate privoxyLogMessage:logMessage];
-        });
+        [sharedInstance.delegate privoxyLogMessage:logMessage];
     }
 }

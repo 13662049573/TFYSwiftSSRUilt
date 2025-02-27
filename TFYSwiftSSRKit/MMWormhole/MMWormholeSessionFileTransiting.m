@@ -23,10 +23,14 @@
 
 #import "MMWormholeSessionFileTransiting.h"
 
+#if TARGET_OS_IOS || TARGET_OS_WATCH
 #import <WatchConnectivity/WatchConnectivity.h>
+#endif
 
 @interface MMWormholeSessionFileTransiting () <WCSessionDelegate>
+#if TARGET_OS_IOS || TARGET_OS_WATCH
 @property (nonatomic, strong) WCSession *session;
+#endif
 @end
 
 @implementation MMWormholeSessionFileTransiting
@@ -34,49 +38,95 @@
 - (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
                                  optionalDirectory:(nullable NSString *)directory {
     if ((self = [super initWithApplicationGroupIdentifier:identifier optionalDirectory:directory])) {
+#if TARGET_OS_IOS || TARGET_OS_WATCH
         // Setup transiting with the default session
         _session = [WCSession defaultSession];
         
         // Ensure that the MMWormholeSession's delegate is set to enable message sending
         NSAssert(_session.delegate != nil, @"WCSession's delegate is required to be set before you can send messages. Please initialize the MMWormholeSession sharedListeningSession object prior to creating a separate wormhole using the MMWormholeSessionTransiting classes.");
+#endif
     }
     
     return self;
 }
+
+
+#pragma mark - MMWormholeFileTransiting Subclass Methods
+
+- (nullable NSString *)messagePassingDirectoryPath {
+    return nil;
+}
+
+
+#pragma mark - MMWormholeTransiting Protocol Methods
 
 - (BOOL)writeMessageObject:(id<NSCoding>)messageObject forIdentifier:(NSString *)identifier {
     if (identifier == nil) {
         return NO;
     }
     
-    if ([WCSession isSupported] == false) {
-        return NO;
-    }
-    
     if (messageObject) {
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+#if TARGET_OS_IOS || TARGET_OS_WATCH
+        NSData *data = nil;
+        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
+            NSError *error = nil;
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
+            if (error) {
+                NSLog(@"Error archiving message object: %@", error);
+                return NO;
+            }
+        } else {
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        }
         
         if (data == nil) {
             return NO;
         }
         
-        NSString *tempDir = [self messagePassingDirectoryPath];
-        
-        if (tempDir == nil) {
-            tempDir = NSTemporaryDirectory();
+        if ([self.session isReachable]) {
+            [self.session
+             sendMessage:@{identifier : data}
+             replyHandler:nil
+             errorHandler:^(NSError * __nonnull error) {
+                 
+             }];
         }
-        
-        NSString *tempPath = [tempDir stringByAppendingPathComponent:identifier];
-        NSURL *tempURL = [NSURL fileURLWithPath:tempPath];
-        
-        NSError *fileError = nil;
-        
-        [data writeToURL:tempURL options:NSDataWritingAtomic error:&fileError];
-        
-        [self.session transferFile:tempURL metadata:@{@"identifier" : identifier}];
+#endif
     }
     
     return NO;
 }
+
+- (nullable id<NSCoding>)messageObjectForIdentifier:(nullable NSString *)identifier {
+    return nil;
+}
+
+- (void)deleteContentForIdentifier:(nullable NSString *)identifier {
+}
+
+- (void)deleteContentForAllMessages {
+}
+
+#pragma mark - WCSessionDelegate Methods
+
+#if TARGET_OS_IOS || TARGET_OS_WATCH
+- (void)session:(WCSession *)session activationDidCompleteWithState:(WCSessionActivationState)activationState error:(nullable NSError *)error {
+    if (error) {
+        NSLog(@"WCSession activation failed with error: %@", error);
+    }
+}
+
+#if TARGET_OS_IOS
+- (void)sessionDidBecomeInactive:(WCSession *)session {
+    // Handle session becoming inactive
+}
+
+- (void)sessionDidDeactivate:(WCSession *)session {
+    // Handle session deactivation
+    // Typically you would reactivate the session
+    [WCSession.defaultSession activateSession];
+}
+#endif
+#endif
 
 @end

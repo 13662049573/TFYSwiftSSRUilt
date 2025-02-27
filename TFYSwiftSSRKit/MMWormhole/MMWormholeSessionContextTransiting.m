@@ -23,11 +23,14 @@
 
 #import "MMWormholeSessionContextTransiting.h"
 
+#if TARGET_OS_IOS || TARGET_OS_WATCH
 #import <WatchConnectivity/WatchConnectivity.h>
+#endif
 
 @interface MMWormholeSessionContextTransiting ()
+#if TARGET_OS_IOS || TARGET_OS_WATCH
 @property (nonatomic, strong) WCSession *session;
-@property (nonatomic, strong) NSMutableDictionary *lastContext;
+#endif
 @end
 
 @implementation MMWormholeSessionContextTransiting
@@ -35,84 +38,108 @@
 - (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
                                  optionalDirectory:(nullable NSString *)directory {
     if ((self = [super initWithApplicationGroupIdentifier:identifier optionalDirectory:directory])) {
+#if TARGET_OS_IOS || TARGET_OS_WATCH
         // Setup transiting with the default session
         _session = [WCSession defaultSession];
         
         // Ensure that the MMWormholeSession's delegate is set to enable message sending
         NSAssert(_session.delegate != nil, @"WCSession's delegate is required to be set before you can send messages. Please initialize the MMWormholeSession sharedListeningSession object prior to creating a separate wormhole using the MMWormholeSessionTransiting classes.");
+#endif
     }
     
     return self;
 }
+
+
+#pragma mark - MMWormholeFileTransiting Subclass Methods
+
+- (nullable NSString *)messagePassingDirectoryPath {
+    return nil;
+}
+
+
+#pragma mark - MMWormholeTransiting Protocol Methods
 
 - (BOOL)writeMessageObject:(id<NSCoding>)messageObject forIdentifier:(NSString *)identifier {
     if (identifier == nil) {
         return NO;
     }
     
-    if ([WCSession isSupported] == false) {
-        return NO;
-    }
-    
     if (messageObject) {
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+#if TARGET_OS_IOS || TARGET_OS_WATCH
+        NSData *data = nil;
+        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
+            NSError *error = nil;
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
+            if (error) {
+                NSLog(@"Error archiving message object: %@", error);
+                return NO;
+            }
+        } else {
+            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        }
         
         if (data == nil) {
             return NO;
         }
         
-        NSMutableDictionary *applicationContext = [self.session.applicationContext mutableCopy];
+        NSError *error = nil;
         
-        if (applicationContext == nil) {
-            applicationContext = [NSMutableDictionary new];
+        BOOL success = [self.session updateApplicationContext:@{identifier : data} error:&error];
+        
+        if (error) {
+            NSLog(@"Error updating application context: %@", error);
         }
         
-        if (self.lastContext == nil) {
-            self.lastContext = applicationContext;
-        }
-        
-        NSMutableDictionary *currentContext = applicationContext;
-        [currentContext addEntriesFromDictionary:self.lastContext];
-        currentContext[identifier] = data;
-        
-        self.lastContext = currentContext;
-        
-        [self.session updateApplicationContext:currentContext error:nil];
+        return success;
+#endif
     }
     
     return NO;
 }
 
 - (nullable id<NSCoding>)messageObjectForIdentifier:(nullable NSString *)identifier {
-    NSDictionary *receivedContext = self.session.receivedApplicationContext;
-    NSData *data = receivedContext[identifier];
-    
-    if (data == nil) {
-        NSDictionary *currentContext = self.session.applicationContext;
-        data = currentContext[identifier];
-        
-        if (data == nil) {
-            return nil;
-        }
+#if TARGET_OS_IOS || TARGET_OS_WATCH
+    if (identifier == nil) {
+        return nil;
     }
     
-    id messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSDictionary *applicationContext = self.session.applicationContext;
+    
+    if (applicationContext == nil) {
+        return nil;
+    }
+    
+    NSData *data = applicationContext[identifier];
+    
+    if (data == nil) {
+        return nil;
+    }
+    
+    id messageObject = nil;
+    if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
+        NSError *error = nil;
+        messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
+        if (error) {
+            NSLog(@"Error unarchiving message object: %@", error);
+            return nil;
+        }
+    } else {
+        messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    }
     
     return messageObject;
+#else
+    return nil;
+#endif
 }
 
 - (void)deleteContentForIdentifier:(nullable NSString *)identifier {
-    [self.lastContext removeObjectForKey:identifier];
-    
-    NSMutableDictionary *currentContext = [self.session.applicationContext mutableCopy];
-    [currentContext removeObjectForKey:identifier];
-    
-    [self.session updateApplicationContext:currentContext error:nil];
+    // Not supported for WatchConnectivity context
 }
 
 - (void)deleteContentForAllMessages {
-    [self.lastContext removeAllObjects];
-    [self.session updateApplicationContext:@{} error:nil];
+    // Not supported for WatchConnectivity context
 }
 
 @end

@@ -1,6 +1,6 @@
 {
   "name": "TFYSwiftSSRKit",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "summary": "iOS/macOS Shadowsocks客户端框架，集成Rust和Libev核心，支持Antinat和Privoxy",
   "description": "TFYSwiftSSRKit是一个iOS/macOS框架，提供Shadowsocks客户端功能。\n它同时支持Rust和Libev实现，以获得高性能和安全性，\n并使用Objective-C接口包装，便于集成到iOS/macOS应用中。\n该框架还包括用于网络连接管理的Antinat和\n具有过滤功能的HTTP代理Privoxy。",
   "homepage": "https://github.com/13662049573/TFYSwiftSSRUilt",
@@ -15,13 +15,12 @@
     "ios": "15.0",
     "osx": "12.0"
   },
-  "cocoapods_version": ">= 1.10.0",
   "swift_versions": [
     "5.0"
   ],
   "source": {
     "git": "https://github.com/13662049573/TFYSwiftSSRUilt.git",
-    "tag": "1.0.5"
+    "tag": "1.0.6"
   },
   "header_mappings_dir": "TFYSwiftSSRKit",
   "source_files": [
