@@ -35,14 +35,6 @@
     "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/config.h"
   ],
   "exclude_files": [
-    "TFYSwiftSSRKit/shadowsocks-libev/source/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/libipset/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/mbedtls/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/libcork/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/pcre/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/c-ares/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/libsodium/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/libev/**/*",
     "TFYSwiftSSRKit/shadowsocks-rust/src/**/*",
     "TFYSwiftSSRKit/shadowsocks-rust/Cargo.lock",
     "TFYSwiftSSRKit/shadowsocks-rust/Cargo.toml",
@@ -133,6 +125,8 @@
     "ENABLE_BITCODE": "NO",
     "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64",
     "EXCLUDED_ARCHS[sdk=macosx*]": "",
+    "IPHONEOS_DEPLOYMENT_TARGET": "15.0",
+    "MACOSX_DEPLOYMENT_TARGET": "12.0",
     "LIBRARY_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib",
     "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT) $(PODS_ROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include $(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass $(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass",
     "CLANG_ENABLE_MODULES": "YES",
@@ -146,7 +140,9 @@
   },
   "user_target_xcconfig": {
     "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64",
-    "EXCLUDED_ARCHS[sdk=macosx*]": ""
+    "EXCLUDED_ARCHS[sdk=macosx*]": "",
+    "IPHONEOS_DEPLOYMENT_TARGET": "15.0",
+    "MACOSX_DEPLOYMENT_TARGET": "12.0"
   },
   "swift_versions": "5.0",
   "dependencies": {

@@ -9,7 +9,9 @@ EXCLUDED_ARCHS[sdk=macosx*] =
 FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaAsyncSocket" "${PODS_CONFIGURATION_BUILD_DIR}/MMWormhole"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 $(inherited) HAVE_CONFIG_H=1
 HEADER_SEARCH_PATHS = $(inherited) $(PODS_ROOT) $(PODS_ROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include $(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass $(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass
+IPHONEOS_DEPLOYMENT_TARGET = 15.0
 LIBRARY_SEARCH_PATHS = $(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib
+MACOSX_DEPLOYMENT_TARGET = 12.0
 MODULEMAP_FILE = $(PODS_ROOT)/module.modulemap
 OTHER_LDFLAGS = $(inherited) -ObjC
 PODS_BUILD_DIR = ${BUILD_DIR}
