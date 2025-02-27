@@ -10,7 +10,7 @@ Pod::Spec.new do |spec|
                      具有过滤功能的HTTP代理Privoxy。
                      DESC
 
-  spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRKit"
+  spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRUilt"
   spec.license      = { :type => "MIT", :file => "LICENSE" }
   spec.author       = { "田风有" => "420144542@qq.com" }
   
@@ -19,7 +19,7 @@ Pod::Spec.new do |spec|
   spec.osx.deployment_target = '12.0'
   
   # 源代码
-  spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
+  spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRUilt.git", :tag => "#{spec.version}" }
   spec.header_mappings_dir = 'TFYSwiftSSRKit'
   spec.module_map = 'module.modulemap'
   
