@@ -14,9 +14,15 @@ Pod::Spec.new do |spec|
   spec.license      = { :type => "MIT", :file => "LICENSE" }
   spec.author       = { "田风有" => "420144542@qq.com" }
   
-  # 平台支持
+  # 平台支持 - 确保使用较高的部署目标版本
   spec.ios.deployment_target = '15.0'
   spec.osx.deployment_target = '12.0'
+  
+  # CocoaPods 版本要求
+  spec.cocoapods_version = '>= 1.10.0'
+  
+  # Swift 版本要求
+  spec.swift_versions = ['5.0']
   
   # 源代码
   spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRUilt.git", :tag => "#{spec.version}" }
@@ -242,17 +248,16 @@ Pod::Spec.new do |spec|
   spec.frameworks = ["Foundation", "NetworkExtension", "SystemConfiguration", "Security"]
   spec.requires_arc = true
   spec.static_framework = true
-  spec.swift_version = '5.0'
   
   # 依赖库 - 修改为使用与主项目相同的部署目标
   spec.dependency 'CocoaAsyncSocket', '~> 7.6.5'
   spec.dependency 'MMWormhole', '~> 2.0.0'
   
   # 确保依赖库使用正确的部署目标版本
-  spec.cocoapods_version = '>= 1.10.0'
-  
-  # 添加 Swift 版本要求
-  spec.swift_versions = ['5.0']
+  spec.user_target_xcconfig = { 
+    'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
+    'MACOSX_DEPLOYMENT_TARGET' => '12.0'
+  }
   
   # 确保所有依赖库使用相同的部署目标
   spec.subspec 'Core' do |ss|
