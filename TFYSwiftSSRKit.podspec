@@ -244,28 +244,4 @@ Pod::Spec.new do |spec|
   spec.dependency 'CocoaAsyncSocket', '~> 7.6.5'
   spec.dependency 'MMWormhole', '~> 2.0.0'
   
-  # 添加 pod_target_xcconfig 设置，确保所有目标都使用正确的部署目标
-  spec.pod_target_xcconfig = {
-    'HEADER_SEARCH_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include/module $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/include/shadowsocks $(PODS_ROOT)/TFYSwiftSSRKit/libsodium/include $(PODS_ROOT)/TFYSwiftSSRKit/mbedtls/include $(PODS_ROOT)/TFYSwiftSSRKit/openssl/include',
-    'LIBRARY_SEARCH_PATHS[sdk=iphoneos*]' => '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_ROOT)/TFYSwiftSSRKit/libsodium/lib $(PODS_ROOT)/TFYSwiftSSRKit/mbedtls/lib $(PODS_ROOT)/TFYSwiftSSRKit/openssl/lib',
-    'LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]' => '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_ROOT)/TFYSwiftSSRKit/libsodium/lib $(PODS_ROOT)/TFYSwiftSSRKit/mbedtls/lib $(PODS_ROOT)/TFYSwiftSSRKit/openssl/lib',
-    'LIBRARY_SEARCH_PATHS[sdk=macosx*]' => '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_ROOT)/TFYSwiftSSRKit/libsodium/lib $(PODS_ROOT)/TFYSwiftSSRKit/mbedtls/lib $(PODS_ROOT)/TFYSwiftSSRKit/openssl/lib',
-    'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-    'MACOSX_DEPLOYMENT_TARGET' => '12.0',
-    'SWIFT_VERSION' => '5.0',
-    'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++17',
-    'CLANG_CXX_LIBRARY' => 'libc++',
-    'OTHER_LDFLAGS' => '-ObjC',
-    'DEAD_CODE_STRIPPING' => 'YES',
-    'ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES' => 'YES'
-  }
-  
-  # 确保子规格也使用正确的部署目标
-  spec.subspec 'Dependencies' do |ss|
-    ss.ios.deployment_target = '15.0'
-    ss.osx.deployment_target = '12.0'
-    ss.dependency 'CocoaAsyncSocket', '~> 7.6.5'
-    ss.dependency 'MMWormhole', '~> 2.0.0'
-  end
-  
 end 
