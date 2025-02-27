@@ -249,10 +249,16 @@ Pod::Spec.new do |spec|
   spec.dependency 'MMWormhole', '~> 2.0.0'
   
   # 确保依赖库使用正确的部署目标版本
-  spec.user_target_xcconfig = { 
-    'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-    'MACOSX_DEPLOYMENT_TARGET' => '12.0'
-  }
+  spec.cocoapods_version = '>= 1.10.0'
+  
+  # 添加 Swift 版本要求
+  spec.swift_versions = ['5.0']
+  
+  # 确保所有依赖库使用相同的部署目标
+  spec.subspec 'Core' do |ss|
+    ss.ios.deployment_target = '15.0'
+    ss.osx.deployment_target = '12.0'
+  end
   
   # 添加预处理宏定义
   spec.xcconfig = {
