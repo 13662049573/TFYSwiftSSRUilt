@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "TFYSwiftSSRKit"
-  spec.version      = "1.0.3"
+  spec.version      = "1.0.4"
   spec.summary      = "iOS/macOS Shadowsocks客户端框架，集成Rust和Libev核心，支持Antinat和Privoxy"
   spec.description  = <<-DESC
                      TFYSwiftSSRKit是一个iOS/macOS框架，提供Shadowsocks客户端功能。
@@ -49,8 +49,7 @@ Pod::Spec.new do |spec|
   spec.exclude_files = [
     "TFYSwiftSSRKit/shadowsocks-rust/src/**/*",
     "TFYSwiftSSRKit/shadowsocks-rust/Cargo.lock",
-    "TFYSwiftSSRKit/shadowsocks-rust/Cargo.toml",
-    "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-rust/Cargo.toml"
   ]
   
   # 公共头文件
@@ -138,9 +137,9 @@ Pod::Spec.new do |spec|
   ios_xcconfig = common_xcconfig.merge({
     'SUPPORTS_MACCATALYST' => 'NO',
     'SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD' => 'NO',
-    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios',
+    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios -lprivoxy_ios',
     'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios"',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
     'LD_VERIFY_BITCODE' => 'NO'
   })
   
@@ -149,9 +148,9 @@ Pod::Spec.new do |spec|
   
   # macOS配置
   macos_xcconfig = common_xcconfig.merge({
-    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos',
+    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos -lprivoxy_macos',
     'MACOSX_DEPLOYMENT_TARGET' => '12.0',
-    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos"',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
     'LD_VERIFY_BITCODE' => 'NO'
   })
   
