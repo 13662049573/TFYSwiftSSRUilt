@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'TFYSwiftSSRUilt' in project 'TFYSwiftSSRUilt'
-➜ Explicit dependency on target 'PacketSwift' in project 'TFYSwiftSSRUilt'
-Target 'PacketSwift' in project 'TFYSwiftSSRUilt' (no dependencies)
