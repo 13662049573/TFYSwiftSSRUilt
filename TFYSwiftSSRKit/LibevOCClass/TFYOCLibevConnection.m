@@ -152,17 +152,13 @@ typedef NS_ENUM(NSInteger, TFYOCLibevConnectionErrorCode) {
         if (self.type == TFYConnectionTypeTCP) {
             [self.tcpSocket writeData:data withTimeout:30 tag:0];
         } else {
-            NSError *error = nil;
-            [self.udpSocket sendData:data toHost:self.remoteHost port:self.remotePort withTimeout:30 tag:0 error:&error];
-            if (error) {
-                [self handleError:error];
+            [self.udpSocket sendData:data toHost:self.remoteHost port:self.remotePort withTimeout:30 tag:0];
+            
+            self.uploadBytes += data.length;
+            
+            if ([self.delegate respondsToSelector:@selector(connection:didSendData:)]) {
+                [self.delegate connection:self didSendData:data];
             }
-        }
-        
-        self.uploadBytes += data.length;
-        
-        if ([self.delegate respondsToSelector:@selector(connection:didSendData:)]) {
-            [self.delegate connection:self didSendData:data];
         }
     });
     

@@ -118,20 +118,22 @@ static NSString * const kCommandIdentifier = @"command";
 // 定义私有属性和方法
 @interface TFYOCLibevManager () <GCDAsyncSocketDelegate, TFYOCLibevPrivoxyManagerDelegate>
 
-// 代理状态（使用原子操作）
-@property (atomic, assign, readwrite) TFYProxyStatus status;
+@property (nonatomic, assign) TFYProxyStatus status;
+@property (nonatomic, assign) uint64_t uploadBytes;
+@property (nonatomic, assign) uint64_t downloadBytes;
+@property (nonatomic, assign) uint64_t totalConnections;
+@property (nonatomic, assign) uint64_t activeConnections;
+
 // 代理线程
 @property (nonatomic, strong, nullable) NSThread *proxyThread;
 // 代理监听器
 @property (nonatomic, assign) void *proxyListener;
-// 流量统计（使用原子操作）
-@property (atomic, assign) uint64_t uploadBytes;
-@property (atomic, assign) uint64_t downloadBytes;
 // 上次流量统计时间
 @property (nonatomic, strong, nullable) NSDate *lastTrafficUpdateTime;
-// 上次上传和下载字节数（使用原子操作）
-@property (atomic, assign) uint64_t lastUploadBytes;
-@property (atomic, assign) uint64_t lastDownloadBytes;
+// 上次上传和下载字节数
+@property (nonatomic, assign) uint64_t lastUploadBytes;
+@property (nonatomic, assign) uint64_t lastDownloadBytes;
+
 // 流量统计定时器
 @property (nonatomic, strong, nullable) NSTimer *trafficTimer;
 // 进程间通信
@@ -224,8 +226,8 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
             if (!strongSelf) return;
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                atomic_store(&strongSelf->_uploadBytes, upload);
-                atomic_store(&strongSelf->_downloadBytes, download);
+                strongSelf.uploadBytes = upload;
+                strongSelf.downloadBytes = download;
                 
                 if ([strongSelf.delegate respondsToSelector:@selector(proxyTrafficUpdate:downloadBytes:)]) {
                     [strongSelf.delegate proxyTrafficUpdate:upload downloadBytes:download];
@@ -239,11 +241,11 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
 #pragma mark - 公共方法
 
 - (BOOL)startProxy {
-    if (atomic_load(&_status) != TFYProxyStatusStopped) {
+    if (self.status != TFYProxyStatusStopped) {
         return NO;
     }
     
-    atomic_store(&_status, TFYProxyStatusStarting);
+    self.status = TFYProxyStatusStarting;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(proxyStatusDidChange:)]) {
@@ -688,6 +690,36 @@ static void tfy_ss_local_callback(int socks_fd, int udp_fd, void *data) {
     if ([self.delegate respondsToSelector:@selector(proxyLogMessage:level:)]) {
         [self.delegate proxyLogMessage:[NSString stringWithFormat:@"[Privoxy] %@", message] level:1];
     }
+}
+
+- (NSDictionary *)getTrafficStatistics {
+    NSMutableDictionary *stats = [NSMutableDictionary dictionary];
+    
+    // 获取当前连接的流量统计
+    uint64_t totalUpload = 0;
+    uint64_t totalDownload = 0;
+    
+    for (TFYOCLibevConnection *connection in self.connections) {
+        totalUpload += connection.uploadBytes;
+        totalDownload += connection.downloadBytes;
+    }
+    
+    // 更新总流量
+    self.totalConnections = self.connections.count;
+    self.activeConnections = 0;
+    
+    for (TFYOCLibevConnection *connection in self.connections) {
+        if (connection.status == TFYConnectionStatusConnected) {
+            self.activeConnections++;
+        }
+    }
+    
+    stats[@"upload"] = @(totalUpload);
+    stats[@"download"] = @(totalDownload);
+    stats[@"totalConnections"] = @(self.totalConnections);
+    stats[@"activeConnections"] = @(self.activeConnections);
+    
+    return [stats copy];
 }
 
 @end

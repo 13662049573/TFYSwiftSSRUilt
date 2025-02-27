@@ -21,7 +21,8 @@ typedef NS_ENUM(NSInteger, TFYConnectionStatus) {
     TFYConnectionStatusConnecting = 0,  // 连接中
     TFYConnectionStatusConnected = 1,    // 已连接
     TFYConnectionStatusDisconnected = 2, // 已断开
-    TFYConnectionStatusError = 3         // 错误
+    TFYConnectionStatusDisconnecting = 3, // 断开连接中
+    TFYConnectionStatusError = 4         // 错误
 } NS_SWIFT_NAME(ConnectionStatus);
 
 @class TFYOCLibevConnection;
