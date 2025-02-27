@@ -25,4 +25,6 @@ framework module TFYSwiftSSRKit {
     exclude header "shadowsocks-libev/pcre/include/**/*.h"
     exclude header "shadowsocks-libev/libmaxminddb/include/**/*.h"
     exclude header "shadowsocks-libev/antinat/include/**/*.h"
+    exclude header "shadowsocks-libev/privoxy/include/**/*.h"
+    exclude header "shadowsocks-libev/libipset/include/**/*.h"
 } 
