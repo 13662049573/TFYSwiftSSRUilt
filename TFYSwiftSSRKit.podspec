@@ -236,4 +236,12 @@ Pod::Spec.new do |spec|
   # 依赖库
   spec.dependency 'CocoaAsyncSocket', '~> 7.6.5', :configurations => ['Debug', 'Release']
   spec.dependency 'MMWormhole', '~> 2.0.0', :configurations => ['Debug', 'Release']
+  
+  # 添加子规格配置，确保依赖库使用正确的部署目标
+  spec.subspec 'Dependencies' do |ss|
+    ss.ios.deployment_target = '15.0'
+    ss.osx.deployment_target = '12.0'
+    ss.dependency 'CocoaAsyncSocket', '~> 7.6.5'
+    ss.dependency 'MMWormhole', '~> 2.0.0'
+  end
 end 
