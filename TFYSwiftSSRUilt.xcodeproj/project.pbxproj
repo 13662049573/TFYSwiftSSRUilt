@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		179386EA8E7876E28204D118 /* Pods_TFYSwiftSSRUilt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B8A18B95507F28E7121A8C /* Pods_TFYSwiftSSRUilt.framework */; };
 		36C567AC2D51F85B00857950 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36C567972D51F81F00857950 /* NetworkExtension.framework */; };
 		36C567B42D51F85B00857950 /* PacketSwift.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 36C567AB2D51F85B00857950 /* PacketSwift.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		36C567C52D51F92900857950 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36C567BB2D51F92900857950 /* Assets.xcassets */; };
@@ -17,7 +16,8 @@
 		36C567CA2D51F92900857950 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C567C12D51F92900857950 /* SceneDelegate.swift */; };
 		36C567CB2D51F92900857950 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C567C32D51F92900857950 /* ViewController.swift */; };
 		36C567D02D51F92C00857950 /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C567CE2D51F92C00857950 /* PacketTunnelProvider.swift */; };
-		44F990B9D2A3D3EC8FF23875 /* Pods_TFYSwiftSSRUilt_PacketSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62971B068259A1C10B8CF7F8 /* Pods_TFYSwiftSSRUilt_PacketSwift.framework */; };
+		42FDBACCBC02B06DE9C29ECC /* Pods_TFYSwiftSSRUilt_PacketSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31BFE810E6061EF5AE0FE4E4 /* Pods_TFYSwiftSSRUilt_PacketSwift.framework */; };
+		C12B9E5A5432A6E0DEDBFD3F /* Pods_TFYSwiftSSRUilt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65B0FB24641B1F92D46F9B89 /* Pods_TFYSwiftSSRUilt.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,9 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		03B8A18B95507F28E7121A8C /* Pods_TFYSwiftSSRUilt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TFYSwiftSSRUilt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		06144748A78EEA1EFCE52339 /* Pods-PacketSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketSwift.debug.xcconfig"; path = "Target Support Files/Pods-PacketSwift/Pods-PacketSwift.debug.xcconfig"; sourceTree = "<group>"; };
-		282BACC2A0D204E2E3F495E0 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt.debug.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt/Pods-TFYSwiftSSRUilt.debug.xcconfig"; sourceTree = "<group>"; };
+		31BFE810E6061EF5AE0FE4E4 /* Pods_TFYSwiftSSRUilt_PacketSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TFYSwiftSSRUilt_PacketSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		363B3E9B2D4F6AE500BC628D /* TFYSwiftSSRUilt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TFYSwiftSSRUilt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36C567972D51F81F00857950 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		36C567AB2D51F85B00857950 /* PacketSwift.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PacketSwift.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -62,11 +60,11 @@
 		36C567CC2D51F92C00857950 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		36C567CD2D51F92C00857950 /* PacketSwift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PacketSwift.entitlements; sourceTree = "<group>"; };
 		36C567CE2D51F92C00857950 /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
-		62971B068259A1C10B8CF7F8 /* Pods_TFYSwiftSSRUilt_PacketSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TFYSwiftSSRUilt_PacketSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BA9FC14F2702E846C9F5BD49 /* Pods-TFYSwiftSSRUilt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt.release.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt/Pods-TFYSwiftSSRUilt.release.xcconfig"; sourceTree = "<group>"; };
-		C6E046B9DFC5D3C6E917F4F4 /* Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt-PacketSwift/Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig"; sourceTree = "<group>"; };
-		DC8EB12FA5FDC6AC343AEE1C /* Pods-PacketSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketSwift.release.xcconfig"; path = "Target Support Files/Pods-PacketSwift/Pods-PacketSwift.release.xcconfig"; sourceTree = "<group>"; };
-		F623852CF376F85965DF202C /* Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt-PacketSwift/Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig"; sourceTree = "<group>"; };
+		65B0FB24641B1F92D46F9B89 /* Pods_TFYSwiftSSRUilt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TFYSwiftSSRUilt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DE6995502F7111328921FF4 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt.debug.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt/Pods-TFYSwiftSSRUilt.debug.xcconfig"; sourceTree = "<group>"; };
+		90E7D344FC3A0CE1446247A3 /* Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt-PacketSwift/Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig"; sourceTree = "<group>"; };
+		E1D54A8FAB798E0101092205 /* Pods-TFYSwiftSSRUilt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt.release.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt/Pods-TFYSwiftSSRUilt.release.xcconfig"; sourceTree = "<group>"; };
+		FAB13A6684001172E658B325 /* Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig"; path = "Target Support Files/Pods-TFYSwiftSSRUilt-PacketSwift/Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				179386EA8E7876E28204D118 /* Pods_TFYSwiftSSRUilt.framework in Frameworks */,
+				C12B9E5A5432A6E0DEDBFD3F /* Pods_TFYSwiftSSRUilt.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +81,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				36C567AC2D51F85B00857950 /* NetworkExtension.framework in Frameworks */,
-				44F990B9D2A3D3EC8FF23875 /* Pods_TFYSwiftSSRUilt_PacketSwift.framework in Frameworks */,
+				42FDBACCBC02B06DE9C29ECC /* Pods_TFYSwiftSSRUilt_PacketSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,9 +91,9 @@
 		1C154AF9EB5D0A8F0DBAB122 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				03B8A18B95507F28E7121A8C /* Pods_TFYSwiftSSRUilt.framework */,
 				36C567972D51F81F00857950 /* NetworkExtension.framework */,
-				62971B068259A1C10B8CF7F8 /* Pods_TFYSwiftSSRUilt_PacketSwift.framework */,
+				65B0FB24641B1F92D46F9B89 /* Pods_TFYSwiftSSRUilt.framework */,
+				31BFE810E6061EF5AE0FE4E4 /* Pods_TFYSwiftSSRUilt_PacketSwift.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -148,12 +146,10 @@
 		DC88AF3896C6F8FBD085272E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				282BACC2A0D204E2E3F495E0 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */,
-				BA9FC14F2702E846C9F5BD49 /* Pods-TFYSwiftSSRUilt.release.xcconfig */,
-				06144748A78EEA1EFCE52339 /* Pods-PacketSwift.debug.xcconfig */,
-				DC8EB12FA5FDC6AC343AEE1C /* Pods-PacketSwift.release.xcconfig */,
-				C6E046B9DFC5D3C6E917F4F4 /* Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig */,
-				F623852CF376F85965DF202C /* Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig */,
+				8DE6995502F7111328921FF4 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */,
+				E1D54A8FAB798E0101092205 /* Pods-TFYSwiftSSRUilt.release.xcconfig */,
+				90E7D344FC3A0CE1446247A3 /* Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig */,
+				FAB13A6684001172E658B325 /* Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -165,7 +161,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 363B3EAE2D4F6AE600BC628D /* Build configuration list for PBXNativeTarget "TFYSwiftSSRUilt" */;
 			buildPhases = (
-				5820520CA1E19FD4F889EB1B /* [CP] Check Pods Manifest.lock */,
+				61D88B1B27FA7409A9EB88CF /* [CP] Check Pods Manifest.lock */,
 				363B3E972D4F6AE500BC628D /* Sources */,
 				363B3E982D4F6AE500BC628D /* Frameworks */,
 				363B3E992D4F6AE500BC628D /* Resources */,
@@ -185,7 +181,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 36C567B52D51F85B00857950 /* Build configuration list for PBXNativeTarget "PacketSwift" */;
 			buildPhases = (
-				05D11723F82B126157626C35 /* [CP] Check Pods Manifest.lock */,
+				5CED601F78297462659224C5 /* [CP] Check Pods Manifest.lock */,
 				36C567A72D51F85B00857950 /* Sources */,
 				36C567A82D51F85B00857950 /* Frameworks */,
 				36C567A92D51F85B00857950 /* Resources */,
@@ -258,7 +254,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		05D11723F82B126157626C35 /* [CP] Check Pods Manifest.lock */ = {
+		5CED601F78297462659224C5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -280,7 +276,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5820520CA1E19FD4F889EB1B /* [CP] Check Pods Manifest.lock */ = {
+		61D88B1B27FA7409A9EB88CF /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -355,7 +351,7 @@
 /* Begin XCBuildConfiguration section */
 		363B3EAF2D4F6AE600BC628D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 282BACC2A0D204E2E3F495E0 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */;
+			baseConfigurationReference = 8DE6995502F7111328921FF4 /* Pods-TFYSwiftSSRUilt.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -387,7 +383,7 @@
 		};
 		363B3EB02D4F6AE600BC628D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BA9FC14F2702E846C9F5BD49 /* Pods-TFYSwiftSSRUilt.release.xcconfig */;
+			baseConfigurationReference = E1D54A8FAB798E0101092205 /* Pods-TFYSwiftSSRUilt.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -538,7 +534,7 @@
 		};
 		36C567B62D51F85B00857950 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C6E046B9DFC5D3C6E917F4F4 /* Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig */;
+			baseConfigurationReference = 90E7D344FC3A0CE1446247A3 /* Pods-TFYSwiftSSRUilt-PacketSwift.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = PacketSwift/PacketSwift.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -567,7 +563,7 @@
 		};
 		36C567B72D51F85B00857950 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F623852CF376F85965DF202C /* Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig */;
+			baseConfigurationReference = FAB13A6684001172E658B325 /* Pods-TFYSwiftSSRUilt-PacketSwift.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = PacketSwift/PacketSwift.entitlements;
 				CODE_SIGN_STYLE = Automatic;

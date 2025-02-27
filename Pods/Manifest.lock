@@ -3,13 +3,11 @@ PODS:
   - MMWormhole (2.0.0):
     - MMWormhole/Core (= 2.0.0)
   - MMWormhole/Core (2.0.0)
-  - TFYSwiftSSRKit (1.0.1):
+  - TFYSwiftSSRKit (1.0.2):
     - CocoaAsyncSocket
     - MMWormhole
 
 DEPENDENCIES:
-  - CocoaAsyncSocket
-  - MMWormhole
   - TFYSwiftSSRKit (from `./`)
 
 SPEC REPOS:
@@ -24,8 +22,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
-  TFYSwiftSSRKit: 9b866c737e991cb09c0b400498c189cdf33c599a
+  TFYSwiftSSRKit: c624d32300500c4be908d60d3d4e6278a1dbb51a
 
-PODFILE CHECKSUM: cd0b543e8a509d50177b10a7cfd84e11a0fd0ebc
+PODFILE CHECKSUM: 7c8f994091d0cada530302f43aed21589ebd73c3
 
 COCOAPODS: 1.16.2

@@ -52,12 +52,26 @@ framework module TFYSwiftSSRKit {
         export *
     }
     
+    module Privoxy [system] {
+        requires !swift
+        header "privoxy/include/privoxy.h"
+        header "privoxy/include/config.h"
+        export *
+    }
+    
     explicit module LibevOCClass {
         header "LibevOCClass/TFYOCLibevConnection.h"
         header "LibevOCClass/TFYOCLibevManager.h"
         header "LibevOCClass/TFYOCLibevSOCKS5Handler.h"
         header "LibevOCClass/TFYOCLibevAntinatManager.h"
         header "LibevOCClass/TFYOCLibevPrivoxyManager.h"
+        
+        export *
+    }
+    
+    explicit module RustOCClass {
+        header "RustOCClass/TFYSSManager.h"
+        header "RustOCClass/TFYVPNManager.h"
         
         export *
     }
