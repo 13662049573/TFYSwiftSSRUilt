@@ -28,7 +28,8 @@ Pod::Spec.new do |spec|
     "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     "TFYSwiftSSRKit/LibevOCClass/*.{h,m}",
     "TFYSwiftSSRKit/RustOCClass/*.{h,m}",
-    "TFYSwiftSSRKit/shadowsocks-rust/output/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-rust/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-rust/include/module/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/antinat/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/privoxy.h",
@@ -61,7 +62,8 @@ Pod::Spec.new do |spec|
   
   # 私有头文件 - 这些头文件不会被暴露给使用者，但会被框架内部使用
   spec.private_header_files = [
-    "TFYSwiftSSRKit/shadowsocks-rust/output/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-rust/include/*.h",
+    "TFYSwiftSSRKit/shadowsocks-rust/include/module/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/antinat/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/privoxy.h",
@@ -80,7 +82,7 @@ Pod::Spec.new do |spec|
   
   # iOS静态库
   ios_libs = [
-    "shadowsocks-rust/output/ios/libss_ios.a",
+    "shadowsocks-rust/lib/libss_ios.a",
     "shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_ios.a",
     "shadowsocks-libev/antinat/lib/libantinat_ios.a",
     "shadowsocks-libev/privoxy/lib/libprivoxy_ios.a",
@@ -101,7 +103,7 @@ Pod::Spec.new do |spec|
   
   # macOS静态库
   macos_libs = [
-    "shadowsocks-rust/output/macos/libss_macos.a",
+    "shadowsocks-rust/lib/libss_macos.a",
     "shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_macos.a",
     "shadowsocks-libev/antinat/lib/libantinat_macos.a",
     "shadowsocks-libev/privoxy/lib/libprivoxy_macos.a",
@@ -139,7 +141,7 @@ Pod::Spec.new do |spec|
     'SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD' => 'NO',
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios -lprivoxy_ios',
     'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
     'LD_VERIFY_BITCODE' => 'NO'
   })
   
@@ -150,7 +152,7 @@ Pod::Spec.new do |spec|
   macos_xcconfig = common_xcconfig.merge({
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos -lprivoxy_macos',
     'MACOSX_DEPLOYMENT_TARGET' => '12.0',
-    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
     'LD_VERIFY_BITCODE' => 'NO'
   })
   
@@ -164,7 +166,8 @@ Pod::Spec.new do |spec|
     '$(SRCROOT)/TFYSwiftSSRKit',
     '$(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass',
     '$(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include/module',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include',
@@ -181,8 +184,8 @@ Pod::Spec.new do |spec|
   
   ios_lib_search_paths = [
     '$(inherited)',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios',
-    '$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
+    '$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
@@ -199,8 +202,8 @@ Pod::Spec.new do |spec|
   
   macos_lib_search_paths = [
     '$(inherited)',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos',
-    '$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos',
+    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
+    '$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
     '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
@@ -225,7 +228,10 @@ Pod::Spec.new do |spec|
     'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
     'MACOSX_DEPLOYMENT_TARGET' => '12.0',
     'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_IPHONEOS' => '15.0',
-    'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_MACOSX' => '12.0'
+    'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_MACOSX' => '12.0',
+    'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++17',
+    'CLANG_CXX_LIBRARY' => 'libc++',
+    'SWIFT_VERSION' => '5.0'
   }
   
   # 框架依赖
@@ -234,15 +240,8 @@ Pod::Spec.new do |spec|
   spec.static_framework = true
   spec.swift_version = '5.0'
   
-  # 依赖库
-  spec.dependency 'CocoaAsyncSocket', '~> 7.6.5', :configurations => ['Debug', 'Release']
-  spec.dependency 'MMWormhole', '~> 2.0.0', :configurations => ['Debug', 'Release']
+  # 依赖库 - 修改为使用与主项目相同的部署目标
+  spec.dependency 'CocoaAsyncSocket', '~> 7.6.5'
+  spec.dependency 'MMWormhole', '~> 2.0.0'
   
-  # 添加子规格配置，确保依赖库使用正确的部署目标
-  spec.subspec 'Dependencies' do |ss|
-    ss.ios.deployment_target = '15.0'
-    ss.osx.deployment_target = '12.0'
-    ss.dependency 'CocoaAsyncSocket', '~> 7.6.5'
-    ss.dependency 'MMWormhole', '~> 2.0.0'
-  end
 end 
