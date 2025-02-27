@@ -132,7 +132,7 @@ Pod::Spec.new do |spec|
   
   # iOS配置
   ios_xcconfig = common_xcconfig.merge({
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 x86_64 arm64',
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 x86_64',
     'SUPPORTS_MACCATALYST' => 'NO',
     'SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD' => 'NO',
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios',
@@ -146,7 +146,7 @@ Pod::Spec.new do |spec|
   
   # macOS配置
   macos_xcconfig = common_xcconfig.merge({
-    'EXCLUDED_ARCHS[sdk=macosx*]' => 'x86_64 i386',
+    'EXCLUDED_ARCHS[sdk=macosx*]' => 'i386',
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos',
     'MACOSX_DEPLOYMENT_TARGET' => '12.0',
     'LIBRARY_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos',
