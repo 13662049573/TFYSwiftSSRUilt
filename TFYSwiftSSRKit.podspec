@@ -247,10 +247,10 @@ Pod::Spec.new do |spec|
     'SWIFT_VERSION' => '5.0',
     'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++17',
     'CLANG_CXX_LIBRARY' => 'libc++',
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64 x86_64',
     'VALID_ARCHS[sdk=iphoneos*]' => 'arm64',
-    'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64',
-    'VALID_ARCHS[sdk=macosx*]' => 'arm64 x86_64'
+    'VALID_ARCHS[sdk=iphonesimulator*]' => '',
+    'VALID_ARCHS[sdk=macosx*]' => 'arm64'
   }
   
   # 框架依赖
@@ -272,19 +272,6 @@ Pod::Spec.new do |spec|
   
   # 静态框架
   spec.static_framework = true
-  
-  # 预编译标志
-  spec.prefix_header_contents = <<-EOS
-    #ifdef __OBJC__
-      #import <Foundation/Foundation.h>
-      #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_15_0
-        #error "This pod requires iOS 15.0 or later."
-      #endif
-      #if __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_12_0
-        #error "This pod requires macOS 12.0 or later."
-      #endif
-    #endif
-  EOS
   
   # 模块映射
   spec.module_map = 'module.modulemap'
