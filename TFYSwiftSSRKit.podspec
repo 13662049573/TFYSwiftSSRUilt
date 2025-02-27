@@ -26,7 +26,7 @@ Pod::Spec.new do |spec|
   # 明确指定源文件，避免自动扫描
   spec.source_files = [
     # 主头文件
-    "TFYSwiftSSRKit.h",
+    "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     
     # LibevOCClass 目录下的所有 Objective-C 文件
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.{h,m}",
@@ -102,7 +102,7 @@ Pod::Spec.new do |spec|
   # 公共头文件
   spec.public_header_files = [
     # 主头文件
-    "TFYSwiftSSRKit.h",
+    "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     
     # LibevOCClass 目录下的所有头文件
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.h",
@@ -152,7 +152,7 @@ Pod::Spec.new do |spec|
 
   # 保留路径 - 只保留必要的文件
   spec.preserve_paths = [
-    "TFYSwiftSSRKit.h",
+    "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     "module.modulemap",
     "TFYSwiftSSRKit/module.modulemap",
     "LICENSE",

@@ -20,7 +20,7 @@
     "tag": "1.0.1"
   },
   "source_files": [
-    "TFYSwiftSSRKit.h",
+    "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.{h,m}",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevManager.{h,m}",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevSOCKS5Handler.{h,m}",
@@ -80,7 +80,7 @@
     "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/win32.h"
   ],
   "public_header_files": [
-    "TFYSwiftSSRKit.h",
+    "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevConnection.h",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevManager.h",
     "TFYSwiftSSRKit/LibevOCClass/TFYOCLibevSOCKS5Handler.h",
@@ -119,7 +119,7 @@
   "requires_arc": true,
   "static_framework": true,
   "preserve_paths": [
-    "TFYSwiftSSRKit.h",
+    "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     "module.modulemap",
     "TFYSwiftSSRKit/module.modulemap",
     "LICENSE",

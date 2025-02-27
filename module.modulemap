@@ -1,5 +1,5 @@
 framework module TFYSwiftSSRKit {
-    umbrella header "TFYSwiftSSRKit.h"
+    umbrella header "TFYSwiftSSRKit/TFYSwiftSSRKit.h"
     
     export *
     module * { export * }

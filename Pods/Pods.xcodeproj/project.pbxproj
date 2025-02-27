@@ -23,13 +23,6 @@
 			remoteGlobalIDString = 0AA233C067C4C4EBB7483FC9B5AB2C05;
 			remoteInfo = MMWormhole;
 		};
-		1146F50A3107F36B16B397E2158C3251 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = FB91A0AEB6E26A36702599DEC2F1E0C8;
-			remoteInfo = TFYSwiftSSRKit;
-		};
 		1DEDE4D92EA2E7030632F7BB0B42646E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B8366A3E254186825278ED70C42773CC /* MMWormhole.xcodeproj */;
@@ -37,7 +30,7 @@
 			remoteGlobalIDString = 0AA233C067C4C4EBB7483FC9B5AB2C05;
 			remoteInfo = MMWormhole;
 		};
-		6311FC52DD72E6C40732FC703F1054A1 /* PBXContainerItemProxy */ = {
+		572D86C286381EF2BBA8EED2F8B477FB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
 			proxyType = 1;
@@ -50,6 +43,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 028565F879BDCF0F420E4AB07AAF9426;
 			remoteInfo = CocoaAsyncSocket;
+		};
+		B677C6FFEC548D85D38476FFE20BA676 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FB91A0AEB6E26A36702599DEC2F1E0C8;
+			remoteInfo = TFYSwiftSSRKit;
 		};
 		DB22E358CD46672BD75D24747B168FFC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -237,7 +237,7 @@
 			dependencies = (
 				1E82E8A8AEFEDF8AF2D034B92854CE3F /* PBXTargetDependency */,
 				4A8B11B6DABDA32F9FB64C10B903328C /* PBXTargetDependency */,
-				BB7F293D0E229FC3FEC7A93E1A640CD3 /* PBXTargetDependency */,
+				A6CDDE4C7B3E32DB7ED3CD6A4B6B39CA /* PBXTargetDependency */,
 			);
 			name = "Pods-TFYSwiftSSRUilt-PacketSwift";
 			productName = Pods_TFYSwiftSSRUilt_PacketSwift;
@@ -258,7 +258,7 @@
 			dependencies = (
 				E243E7885EDFBF41315216976023C3E6 /* PBXTargetDependency */,
 				AA25D20B5147758844B0D5481B24D722 /* PBXTargetDependency */,
-				5E61BB1190E700D6CAC9E557EE0F5130 /* PBXTargetDependency */,
+				56FF997CC1179EACAB60DBC1B604236F /* PBXTargetDependency */,
 			);
 			name = "Pods-TFYSwiftSSRUilt";
 			productName = Pods_TFYSwiftSSRUilt;
@@ -353,20 +353,20 @@
 			name = MMWormhole;
 			targetProxy = 1DEDE4D92EA2E7030632F7BB0B42646E /* PBXContainerItemProxy */;
 		};
-		5E61BB1190E700D6CAC9E557EE0F5130 /* PBXTargetDependency */ = {
+		56FF997CC1179EACAB60DBC1B604236F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = TFYSwiftSSRKit;
-			targetProxy = 6311FC52DD72E6C40732FC703F1054A1 /* PBXContainerItemProxy */;
+			targetProxy = 572D86C286381EF2BBA8EED2F8B477FB /* PBXContainerItemProxy */;
+		};
+		A6CDDE4C7B3E32DB7ED3CD6A4B6B39CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TFYSwiftSSRKit;
+			targetProxy = B677C6FFEC548D85D38476FFE20BA676 /* PBXContainerItemProxy */;
 		};
 		AA25D20B5147758844B0D5481B24D722 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MMWormhole;
 			targetProxy = 00240F4DA052D2A8B9F56E6221243D41 /* PBXContainerItemProxy */;
-		};
-		BB7F293D0E229FC3FEC7A93E1A640CD3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = TFYSwiftSSRKit;
-			targetProxy = 1146F50A3107F36B16B397E2158C3251 /* PBXContainerItemProxy */;
 		};
 		E243E7885EDFBF41315216976023C3E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
