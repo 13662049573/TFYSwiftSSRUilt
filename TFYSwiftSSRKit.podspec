@@ -57,7 +57,11 @@ Pod::Spec.new do |spec|
   spec.public_header_files = [
     "TFYSwiftSSRKit/TFYSwiftSSRKit.h",
     "TFYSwiftSSRKit/LibevOCClass/*.h",
-    "TFYSwiftSSRKit/RustOCClass/*.h",
+    "TFYSwiftSSRKit/RustOCClass/*.h"
+  ]
+  
+  # 私有头文件 - 这些头文件不会被暴露给使用者，但会被框架内部使用
+  spec.private_header_files = [
     "TFYSwiftSSRKit/shadowsocks-rust/output/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include/*.h",
     "TFYSwiftSSRKit/shadowsocks-libev/antinat/include/*.h",
@@ -132,12 +136,11 @@ Pod::Spec.new do |spec|
   
   # iOS配置
   ios_xcconfig = common_xcconfig.merge({
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 x86_64',
     'SUPPORTS_MACCATALYST' => 'NO',
     'SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD' => 'NO',
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios',
     'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-rust/output/ios"',
     'LD_VERIFY_BITCODE' => 'NO'
   })
   
@@ -146,10 +149,9 @@ Pod::Spec.new do |spec|
   
   # macOS配置
   macos_xcconfig = common_xcconfig.merge({
-    'EXCLUDED_ARCHS[sdk=macosx*]' => 'i386',
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos',
     'MACOSX_DEPLOYMENT_TARGET' => '12.0',
-    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-rust/output/macos"',
     'LD_VERIFY_BITCODE' => 'NO'
   })
   
@@ -159,56 +161,56 @@ Pod::Spec.new do |spec|
   # 搜索路径配置
   header_search_paths = [
     '$(inherited)',
-    '$(PODS_ROOT)/TFYSwiftSSRKit',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include'
+    '$(PODS_ROOT)/../TFYSwiftSSRKit',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/LibevOCClass',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/RustOCClass',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-rust/output/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/antinat/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/privoxy/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libev/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/c-ares/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libcork/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libipset/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/openssl/include'
   ].join(' ')
   
   ios_lib_search_paths = [
     '$(inherited)',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib'
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-rust/output/ios',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libev/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/pcre/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libcork/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libipset/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/openssl/lib'
   ].join(' ')
   
   macos_lib_search_paths = [
     '$(inherited)',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/macos',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib'
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-rust/output/macos',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libev/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/pcre/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libcork/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libipset/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib',
+    '$(PODS_ROOT)/../TFYSwiftSSRKit/shadowsocks-libev/openssl/lib'
   ].join(' ')
   
   spec.pod_target_xcconfig = {
