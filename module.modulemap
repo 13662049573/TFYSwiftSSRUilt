@@ -10,6 +10,7 @@ framework module TFYSwiftSSRKit {
         header "shadowsocks-rust/include/ss.h"
         header "GCDAsyncSocket/GCDAsyncSocket.h"
         header "GCDAsyncSocket/GCDAsyncUdpSocket.h"
+        header "shadowsocks-libev/shadowsocks/include/shadowsocks.h"
         export *
     }
     
