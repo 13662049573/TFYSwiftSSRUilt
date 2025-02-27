@@ -50,14 +50,6 @@ Pod::Spec.new do |spec|
   # 排除文件 - 添加这一部分来排除不需要的目录
   spec.exclude_files = [
     # 排除源代码目录，因为我们只需要编译好的库
-    "TFYSwiftSSRKit/shadowsocks-libev/source/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/libipset/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/mbedtls/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/libcork/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/pcre/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/c-ares/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/libsodium/**/*",
-    "TFYSwiftSSRKit/shadowsocks-libev/libev/**/*",
     "TFYSwiftSSRKit/shadowsocks-rust/src/**/*",
     
     # 排除 Cargo 文件
@@ -170,6 +162,8 @@ Pod::Spec.new do |spec|
     'ENABLE_BITCODE' => 'NO',
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
     'EXCLUDED_ARCHS[sdk=macosx*]' => '',
+    'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
+    'MACOSX_DEPLOYMENT_TARGET' => '12.0',
     'LIBRARY_SEARCH_PATHS' => [
       '$(inherited)',
       '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/output/ios',
@@ -198,7 +192,9 @@ Pod::Spec.new do |spec|
 
   spec.user_target_xcconfig = {
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
-    'EXCLUDED_ARCHS[sdk=macosx*]' => ''
+    'EXCLUDED_ARCHS[sdk=macosx*]' => '',
+    'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
+    'MACOSX_DEPLOYMENT_TARGET' => '12.0'
   }
 
   # Swift 支持
