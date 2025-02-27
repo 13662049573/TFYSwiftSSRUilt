@@ -212,5 +212,15 @@
       "~> 2.0.0"
     ]
   },
+  "configuration_pod_whitelist": {
+    "CocoaAsyncSocket": [
+      "debug",
+      "release"
+    ],
+    "MMWormhole": [
+      "debug",
+      "release"
+    ]
+  },
   "swift_version": "5.0"
 }

@@ -234,6 +234,6 @@ Pod::Spec.new do |spec|
   spec.swift_version = '5.0'
   
   # 依赖库
-  spec.dependency 'CocoaAsyncSocket', '~> 7.6.5'
-  spec.dependency 'MMWormhole', '~> 2.0.0'
+  spec.dependency 'CocoaAsyncSocket', '~> 7.6.5', :configurations => ['Debug', 'Release']
+  spec.dependency 'MMWormhole', '~> 2.0.0', :configurations => ['Debug', 'Release']
 end 
