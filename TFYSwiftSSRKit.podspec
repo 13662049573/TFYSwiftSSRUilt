@@ -249,21 +249,18 @@ Pod::Spec.new do |spec|
   spec.dependency 'CocoaAsyncSocket', '~> 7.6.5'
   spec.dependency 'MMWormhole', '~> 2.0.0'
   
-  # 添加子规格，确保依赖库使用正确的部署目标版本
-  spec.subspec 'Dependencies' do |ss|
-    ss.ios.deployment_target = '15.0'
-    ss.osx.deployment_target = '12.0'
-    
-    ss.dependency 'CocoaAsyncSocket', '~> 7.6.5'
-    ss.dependency 'MMWormhole', '~> 2.0.0'
-    
-    # 确保子规格也使用正确的部署目标版本
-    ss.pod_target_xcconfig = {
-      'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-      'MACOSX_DEPLOYMENT_TARGET' => '12.0',
-      'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_IPHONEOS' => '15.0',
-      'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_MACOSX' => '12.0'
-    }
-  end
+  # 确保依赖库使用正确的部署目标版本
+  spec.user_target_xcconfig = { 
+    'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
+    'MACOSX_DEPLOYMENT_TARGET' => '12.0'
+  }
+  
+  # 添加预处理宏定义
+  spec.xcconfig = {
+    'GCC_PREPROCESSOR_DEFINITIONS' => 'COCOAPODS=1 SS_BUILTIN_GETADDRINFO=1'
+  }
+  
+  # 添加模块映射
+  spec.module_map = 'shadowsocks-rust/include/module/module.modulemap'
   
 end 
