@@ -23,11 +23,25 @@
 
 #import "MMWormhole.h"
 
+#import <Foundation/Foundation.h>
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 #import <WatchConnectivity/WatchConnectivity.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ This class creates a wormhole that is designed to use the Watch Connectivity framework's
+ application context to pass messages from the iOS containing app to a watchOS extension.
+ This class requires iOS 9.0+ and watchOS 2.0+.
+ */
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 @interface MMWormholeSession : MMWormhole <WCSessionDelegate>
+#else
+@interface MMWormholeSession : MMWormhole
+#endif
 
 /**
  This method returns a specific instance of MMWormholeSession that should be used for listening. You
