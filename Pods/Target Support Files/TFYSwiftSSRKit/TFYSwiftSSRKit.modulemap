@@ -7,7 +7,7 @@ framework module TFYSwiftSSRKit {
     // 明确排除C库头文件，避免警告
     explicit module Private {
         // 这些模块不会被公开，但会在内部使用
-        header "shadowsocks-rust/include/ss.h"
+        header "TFYSwiftSSRKit/shadowsocks-rust/include/ss.h"
         export *
     }
 } 
