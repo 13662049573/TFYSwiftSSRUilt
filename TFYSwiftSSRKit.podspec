@@ -21,7 +21,6 @@ Pod::Spec.new do |spec|
   # 源代码
   spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRUilt.git", :tag => "#{spec.version}" }
   spec.header_mappings_dir = 'TFYSwiftSSRKit'
-  spec.module_map = 'module.modulemap'
   
   # 源文件和头文件
   spec.source_files = [
@@ -130,7 +129,7 @@ Pod::Spec.new do |spec|
     'CLANG_ENABLE_MODULES' => 'YES',
     'DEFINES_MODULE' => 'YES',
     'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'HAVE_CONFIG_H=1'],
-    'MODULEMAP_FILE' => '$(PODS_ROOT)/module.modulemap',
+    'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/module.modulemap',
     'SWIFT_OBJC_INTERFACE_HEADER_NAME' => 'TFYSwiftSSRKit-Swift.h',
     'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES'
   }
@@ -259,8 +258,5 @@ Pod::Spec.new do |spec|
   spec.xcconfig = {
     'GCC_PREPROCESSOR_DEFINITIONS' => 'COCOAPODS=1 SS_BUILTIN_GETADDRINFO=1'
   }
-  
-  # 添加模块映射
-  spec.module_map = 'module.modulemap'
   
 end 

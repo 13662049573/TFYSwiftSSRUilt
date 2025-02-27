@@ -30,20 +30,6 @@
 			remoteGlobalIDString = 0AA233C067C4C4EBB7483FC9B5AB2C05;
 			remoteInfo = MMWormhole;
 		};
-		529DEC3772CC909D5E9A5825653D8ED5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = FB91A0AEB6E26A36702599DEC2F1E0C8;
-			remoteInfo = TFYSwiftSSRKit;
-		};
-		773313627E7987DA8CA14B8FF1B6495B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = FB91A0AEB6E26A36702599DEC2F1E0C8;
-			remoteInfo = TFYSwiftSSRKit;
-		};
 		8A8B18670B561C85887EE04D4369E65B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7BF76F8AD8E4DA494C72CE46E26F1C4A /* CocoaAsyncSocket.xcodeproj */;
@@ -51,12 +37,26 @@
 			remoteGlobalIDString = 028565F879BDCF0F420E4AB07AAF9426;
 			remoteInfo = CocoaAsyncSocket;
 		};
+		976A000A7AC18FC834B3F8DB6C4C4865 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FB91A0AEB6E26A36702599DEC2F1E0C8;
+			remoteInfo = TFYSwiftSSRKit;
+		};
 		DB22E358CD46672BD75D24747B168FFC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7BF76F8AD8E4DA494C72CE46E26F1C4A /* CocoaAsyncSocket.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 028565F879BDCF0F420E4AB07AAF9426;
 			remoteInfo = CocoaAsyncSocket;
+		};
+		EBB4FA358D875B2781F2B649DDF0A3F8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FB91A0AEB6E26A36702599DEC2F1E0C8;
+			remoteInfo = TFYSwiftSSRKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -237,7 +237,7 @@
 			dependencies = (
 				1E82E8A8AEFEDF8AF2D034B92854CE3F /* PBXTargetDependency */,
 				4A8B11B6DABDA32F9FB64C10B903328C /* PBXTargetDependency */,
-				989ED27FD52B7F9A5208AD631112F839 /* PBXTargetDependency */,
+				43C189A70C01005A079AAC9DB918444E /* PBXTargetDependency */,
 			);
 			name = "Pods-TFYSwiftSSRUilt-PacketSwift";
 			productName = Pods_TFYSwiftSSRUilt_PacketSwift;
@@ -258,7 +258,7 @@
 			dependencies = (
 				E243E7885EDFBF41315216976023C3E6 /* PBXTargetDependency */,
 				AA25D20B5147758844B0D5481B24D722 /* PBXTargetDependency */,
-				BD5571CFDCD93D93454C06BD497F2D53 /* PBXTargetDependency */,
+				1C194F5E8E471DF157AE32F3DF580DF7 /* PBXTargetDependency */,
 			);
 			name = "Pods-TFYSwiftSSRUilt";
 			productName = Pods_TFYSwiftSSRUilt;
@@ -343,30 +343,30 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1C194F5E8E471DF157AE32F3DF580DF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TFYSwiftSSRKit;
+			targetProxy = 976A000A7AC18FC834B3F8DB6C4C4865 /* PBXContainerItemProxy */;
+		};
 		1E82E8A8AEFEDF8AF2D034B92854CE3F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = CocoaAsyncSocket;
 			targetProxy = 8A8B18670B561C85887EE04D4369E65B /* PBXContainerItemProxy */;
+		};
+		43C189A70C01005A079AAC9DB918444E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TFYSwiftSSRKit;
+			targetProxy = EBB4FA358D875B2781F2B649DDF0A3F8 /* PBXContainerItemProxy */;
 		};
 		4A8B11B6DABDA32F9FB64C10B903328C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MMWormhole;
 			targetProxy = 1DEDE4D92EA2E7030632F7BB0B42646E /* PBXContainerItemProxy */;
 		};
-		989ED27FD52B7F9A5208AD631112F839 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = TFYSwiftSSRKit;
-			targetProxy = 773313627E7987DA8CA14B8FF1B6495B /* PBXContainerItemProxy */;
-		};
 		AA25D20B5147758844B0D5481B24D722 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MMWormhole;
 			targetProxy = 00240F4DA052D2A8B9F56E6221243D41 /* PBXContainerItemProxy */;
-		};
-		BD5571CFDCD93D93454C06BD497F2D53 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = TFYSwiftSSRKit;
-			targetProxy = 529DEC3772CC909D5E9A5825653D8ED5 /* PBXContainerItemProxy */;
 		};
 		E243E7885EDFBF41315216976023C3E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
