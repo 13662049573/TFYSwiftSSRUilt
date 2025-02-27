@@ -9,6 +9,7 @@
 #import "TFYOCLibevSOCKS5Handler.h"
 #import <arpa/inet.h>
 #import <netdb.h>
+#import "GCDAsyncSocket.h"
 
 // 错误域和错误码
 NSString * const TFYOCLibevSOCKS5ErrorDomain = @"com.tfyswiftssrkit.socks5";

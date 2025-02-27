@@ -1,5 +1,5 @@
 #import "TFYSSManager.h"
-#import "ss.h"
+#import "shadowsocks-rust/include/ss.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
