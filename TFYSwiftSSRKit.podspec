@@ -221,6 +221,7 @@ Pod::Spec.new do |spec|
   spec.pod_target_xcconfig = {
     'HEADER_SEARCH_PATHS' => header_search_paths,
     'LIBRARY_SEARCH_PATHS[sdk=iphoneos*]' => ios_lib_search_paths,
+    'LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]' => ios_lib_search_paths,
     'LIBRARY_SEARCH_PATHS[sdk=macosx*]' => macos_lib_search_paths,
     'DEAD_CODE_STRIPPING' => 'YES',
     'ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES' => 'YES',
@@ -231,7 +232,11 @@ Pod::Spec.new do |spec|
     'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_MACOSX' => '12.0',
     'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++17',
     'CLANG_CXX_LIBRARY' => 'libc++',
-    'SWIFT_VERSION' => '5.0'
+    'SWIFT_VERSION' => '5.0',
+    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++',
+    'VALID_ARCHS' => 'arm64',
+    'ONLY_ACTIVE_ARCH' => 'YES',
+    'ENABLE_BITCODE' => 'NO'
   }
   
   # 框架依赖
@@ -243,5 +248,22 @@ Pod::Spec.new do |spec|
   # 依赖库 - 修改为使用与主项目相同的部署目标
   spec.dependency 'CocoaAsyncSocket', '~> 7.6.5'
   spec.dependency 'MMWormhole', '~> 2.0.0'
+  
+  # 添加子规格，确保依赖库使用正确的部署目标版本
+  spec.subspec 'Dependencies' do |ss|
+    ss.ios.deployment_target = '15.0'
+    ss.osx.deployment_target = '12.0'
+    
+    ss.dependency 'CocoaAsyncSocket', '~> 7.6.5'
+    ss.dependency 'MMWormhole', '~> 2.0.0'
+    
+    # 确保子规格也使用正确的部署目标版本
+    ss.pod_target_xcconfig = {
+      'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
+      'MACOSX_DEPLOYMENT_TARGET' => '12.0',
+      'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_IPHONEOS' => '15.0',
+      'COCOAPODS_DEPLOYMENT_TARGET_OVERRIDES_MACOSX' => '12.0'
+    }
+  end
   
 end 
