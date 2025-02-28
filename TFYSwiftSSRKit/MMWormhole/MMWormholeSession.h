@@ -11,15 +11,19 @@
 #import <Foundation/Foundation.h>
 #import "MMWormhole.h"
 
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 #import <WatchConnectivity/WatchConnectivity.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ This class extends MMWormhole to provide WatchConnectivity support.
+ It manages the WCSession for communication between iOS app and WatchKit extension.
+ */
 @interface MMWormholeSession : MMWormhole
 
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 @property (nonatomic, strong, readonly) WCSession *session;
 #endif
 
@@ -29,6 +33,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)sharedListeningSession;
 
+/**
+ Designated initializer that creates a new wormhole with an application group identifier,
+ optional directory, and transiting type.
+ 
+ @param identifier An application group identifier
+ @param directory An optional directory to read/write messages
+ @param transitingType The type of message transiting to use
+ */
 - (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
                                  optionalDirectory:(nullable NSString *)directory
                                     transitingType:(MMWormholeTransitingType)transitingType NS_DESIGNATED_INITIALIZER;
@@ -38,11 +50,15 @@ NS_ASSUME_NONNULL_BEGIN
  This should be called after setting up all initial listeners.
  */
 - (void)activateSessionListening;
+
+/**
+ Deactivates the session and stops listening for messages.
+ */
 - (void)deactivateSessionListening;
 
 @end
 
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 @interface MMWormholeSession (WatchConnectivity) <WCSessionDelegate>
 @end
 #endif
