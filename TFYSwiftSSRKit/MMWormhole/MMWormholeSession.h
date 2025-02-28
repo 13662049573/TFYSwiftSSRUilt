@@ -5,6 +5,9 @@
 //  Created by 田风有 on 2025/2/26.
 //
 
+#ifndef MMWormholeSession_h
+#define MMWormholeSession_h
+
 #import <Foundation/Foundation.h>
 #import "MMWormhole.h"
 
@@ -14,11 +17,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
-@interface MMWormholeSession : MMWormhole <WCSessionDelegate>
-@property (nonatomic, strong, readonly) WCSession *session;
-#else
 @interface MMWormholeSession : MMWormhole
+
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
+@property (nonatomic, strong, readonly) WCSession *session;
 #endif
 
 /**
@@ -40,5 +42,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
+@interface MMWormholeSession (WatchConnectivity) <WCSessionDelegate>
+@end
+#endif
+
 NS_ASSUME_NONNULL_END
+
+#endif /* MMWormholeSession_h */
 
