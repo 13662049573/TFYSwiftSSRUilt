@@ -203,8 +203,8 @@ Pod::Spec.new do |spec|
   
   # 框架依赖
   spec.frameworks = 'Foundation'
-  spec.ios.frameworks = 'UIKit', 'WatchConnectivity'
-  spec.osx.frameworks = 'AppKit'
+  spec.ios.frameworks = ['UIKit', 'WatchConnectivity']
+  spec.osx.frameworks = ['AppKit']
   
   # 其他依赖
   spec.libraries = 'c++', 'z'

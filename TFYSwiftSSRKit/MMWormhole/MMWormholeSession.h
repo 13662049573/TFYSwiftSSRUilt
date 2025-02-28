@@ -8,21 +8,14 @@
 #import <Foundation/Foundation.h>
 #import "MMWormhole.h"
 
-#if !__has_feature(objc_arc)
-#error This class requires automatic reference counting
-#endif
-
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+#if ( defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000 )
 #import <WatchConnectivity/WatchConnectivity.h>
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if TARGET_OS_IOS || TARGET_OS_WATCH
 @interface MMWormholeSession : MMWormhole <WCSessionDelegate>
-#else
-@interface MMWormholeSession : MMWormhole
-#endif
+
+@property (nonatomic, strong, readonly) WCSession *session;
 
 /**
  Returns the shared listening session instance.
@@ -30,13 +23,20 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)sharedListeningSession;
 
+- (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
+                                 optionalDirectory:(nullable NSString *)directory
+                                    transitingType:(MMWormholeTransitingType)transitingType NS_DESIGNATED_INITIALIZER;
+
 /**
  Activates the session for listening to messages.
  This should be called after setting up all initial listeners.
  */
 - (void)activateSessionListening;
+- (void)deactivateSessionListening;
 
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif
 
