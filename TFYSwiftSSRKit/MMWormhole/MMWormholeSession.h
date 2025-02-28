@@ -5,15 +5,9 @@
 //  Created by 田风有 on 2025/2/26.
 //
 
-#ifndef MMWormholeSession_h
-#define MMWormholeSession_h
-
 #import <Foundation/Foundation.h>
 #import "MMWormhole.h"
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 #import <WatchConnectivity/WatchConnectivity.h>
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,9 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MMWormholeSession : MMWormhole
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 @property (nonatomic, strong, readonly) WCSession *session;
-#endif
 
 /**
  Returns the shared listening session instance.
@@ -43,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
                                  optionalDirectory:(nullable NSString *)directory
-                                    transitingType:(MMWormholeTransitingType)transitingType NS_DESIGNATED_INITIALIZER;
+                                    transitingType:(MMWormholeTransitingType)transitingType;
 
 /**
  Activates the session for listening to messages.
@@ -58,12 +50,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 @interface MMWormholeSession (WatchConnectivity) <WCSessionDelegate>
 @end
-#endif
+
 
 NS_ASSUME_NONNULL_END
 
-#endif /* MMWormholeSession_h */
 

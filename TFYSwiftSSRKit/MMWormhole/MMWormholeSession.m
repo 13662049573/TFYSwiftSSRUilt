@@ -23,19 +23,13 @@
 
 #import "MMWormholeSession.h"
 
-#if TARGET_OS_IOS || TARGET_OS_WATCH
-#import <WatchConnectivity/WatchConnectivity.h>
-#endif
 
-// Define the missing enum value
-#ifndef MMWormholeTransitingTypeSessionUserInfo
-#define MMWormholeTransitingTypeSessionUserInfo 5
-#endif
+#import <WatchConnectivity/WatchConnectivity.h>
 
 @interface MMWormholeSession ()
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+
 @property (nonatomic, strong) WCSession *session;
-#endif
+
 @property (nonatomic, strong) NSOperationQueue *messageQueue;
 @property (nonatomic, strong) NSMutableDictionary *listenerBlocks;
 @property (nonatomic, assign) MMWormholeTransitingType transitingType;
@@ -49,8 +43,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedSession = [[MMWormholeSession alloc] initWithApplicationGroupIdentifier:nil
-                                                                     optionalDirectory:nil
-                                                                            transitingType:MMWormholeTransitingTypeSessionContext];
+                                                                   optionalDirectory:nil
+                                                                      transitingType:MMWormholeTransitingTypeSessionContext];
     });
     
     return sharedSession;
@@ -59,10 +53,10 @@
 - (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
                                  optionalDirectory:(nullable NSString *)directory
                                     transitingType:(MMWormholeTransitingType)transitingType {
-    if ((self = [super initWithApplicationGroupIdentifier:identifier
-                                        optionalDirectory:directory
-                                           transitingType:transitingType])) {
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+    self = [super initWithApplicationGroupIdentifier:identifier
+                                  optionalDirectory:directory];
+    if (self) {
+
         // Setup the default session
         _session = [WCSession defaultSession];
         _session.delegate = self;
@@ -72,14 +66,14 @@
         _messageQueue = [[NSOperationQueue alloc] init];
         _listenerBlocks = [NSMutableDictionary dictionary];
         _transitingType = transitingType;
-#endif
+
     }
     
     return self;
 }
 
 - (void)activateSessionListening {
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+
     if (_session) {
         // Activate the session if it's not already activated
         if (_session.activationState != WCSessionActivationStateActivated) {
@@ -96,12 +90,21 @@
             NSLog(@"WCSession has pending content. Listeners will receive it when available.");
         }
     }
-#endif
+
+}
+
+- (void)deactivateSessionListening {
+
+    if (_session && _session.activationState == WCSessionActivationStateActivated) {
+
+        [_session deactivate];
+
+    }
 }
 
 #pragma mark - WCSessionDelegate Methods
 
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+
 - (void)session:(WCSession *)session didReceiveMessage:(NSDictionary<NSString *,id> *)message {
     for (NSString *identifier in message) {
         NSData *data = message[identifier];
@@ -156,7 +159,6 @@
     }
 }
 
-#if TARGET_OS_IOS
 - (void)sessionDidBecomeInactive:(WCSession *)session {
     // Handle session becoming inactive
 }
@@ -166,8 +168,7 @@
     // Typically you would reactivate the session
     [WCSession.defaultSession activateSession];
 }
-#endif
-#endif
+
 
 - (void)notifyListenerForMessageWithIdentifier:(NSString *)identifier {
     // Get the message object from the parent class
@@ -201,7 +202,6 @@
 }
 
 - (void)sendMessageWithIdentifier:(NSString *)identifier messageObject:(id<NSCoding>)messageObject {
-#if TARGET_OS_IOS || TARGET_OS_WATCH
     if (messageObject) {
         NSError *error = nil;
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
@@ -227,9 +227,8 @@
             }
         }
     }
-#else
+
     [super passMessageObject:messageObject identifier:identifier];
-#endif
 }
 
 - (void)listenForMessageWithIdentifier:(NSString *)identifier listener:(void (^)(id messageObject))listener {
