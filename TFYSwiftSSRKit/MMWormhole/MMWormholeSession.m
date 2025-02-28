@@ -109,15 +109,11 @@
         NSData *data = message[identifier];
         
         id messageObject = nil;
-        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
-            NSError *error = nil;
-            messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
-            if (error) {
-                NSLog(@"Error unarchiving message object: %@", error);
-                continue;
-            }
-        } else {
-            messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        NSError *error = nil;
+        messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
+        if (error) {
+            NSLog(@"Error unarchiving message object: %@", error);
+            continue;
         }
         
         [self passMessageObject:messageObject identifier:identifier];
@@ -129,15 +125,11 @@
         NSData *data = userInfo[identifier];
         
         id messageObject = nil;
-        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
-            NSError *error = nil;
-            messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
-            if (error) {
-                NSLog(@"Error unarchiving message object: %@", error);
-                continue;
-            }
-        } else {
-            messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        NSError *error = nil;
+        messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
+        if (error) {
+            NSLog(@"Error unarchiving message object: %@", error);
+            continue;
         }
         
         [self passMessageObject:messageObject identifier:identifier];
@@ -149,15 +141,11 @@
         NSData *data = applicationContext[identifier];
         
         id messageObject = nil;
-        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
-            NSError *error = nil;
-            messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
-            if (error) {
-                NSLog(@"Error unarchiving message object: %@", error);
-                continue;
-            }
-        } else {
-            messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        NSError *error = nil;
+        messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
+        if (error) {
+            NSLog(@"Error unarchiving message object: %@", error);
+            continue;
         }
         
         [self passMessageObject:messageObject identifier:identifier];
@@ -218,16 +206,11 @@
 - (void)sendMessageWithIdentifier:(NSString *)identifier messageObject:(id<NSCoding>)messageObject {
 #if TARGET_OS_IOS || TARGET_OS_WATCH
     if (messageObject) {
-        NSData *data = nil;
-        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
-            NSError *error = nil;
-            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
-            if (error) {
-                NSLog(@"Error archiving message object: %@", error);
-                return;
-            }
-        } else {
-            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        NSError *error = nil;
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
+        if (error) {
+            NSLog(@"Error archiving message object: %@", error);
+            return;
         }
         
         if (data) {
