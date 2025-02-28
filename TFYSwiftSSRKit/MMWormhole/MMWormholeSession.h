@@ -21,12 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import <WatchConnectivity/WatchConnectivity.h>
 #import "MMWormhole.h"
+
+#if TARGET_OS_IOS || TARGET_OS_WATCH
+#import <WatchConnectivity/WatchConnectivity.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if TARGET_OS_IOS || TARGET_OS_WATCH
 @interface MMWormholeSession : MMWormhole <WCSessionDelegate>
+#else
+@interface MMWormholeSession : MMWormhole
+#endif
 
 /**
  This method returns a specific instance of MMWormholeSession that should be used for listening. You

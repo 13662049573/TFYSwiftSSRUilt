@@ -79,8 +79,6 @@
 }
 
 - (void)activateSessionListening {
-    // Implementation of the method declared in the header
-    // This method is called after all initial listeners are set up
 #if TARGET_OS_IOS || TARGET_OS_WATCH
     if (_session) {
         // Activate the session if it's not already activated
@@ -192,7 +190,6 @@
         [super passMessageObject:messageObject identifier:identifier];
         
         // Then directly notify our listeners with the message object
-        // (No need to call notifyListenerForMessageWithIdentifier: as it would get the message again)
         [self.messageQueue addOperationWithBlock:^{
             [self.listenerBlocks enumerateKeysAndObjectsUsingBlock:^(NSString *blockIdentifier, id listenerBlock, BOOL *stop) {
                 if ([blockIdentifier isEqualToString:identifier]) {
