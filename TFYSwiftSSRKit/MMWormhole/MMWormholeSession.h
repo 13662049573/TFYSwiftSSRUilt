@@ -8,9 +8,8 @@
 #import <Foundation/Foundation.h>
 #import "MMWormhole.h"
 
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+#if defined(__IPHONE_15_0)
 #import <WatchConnectivity/WatchConnectivity.h>
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,4 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif
 
