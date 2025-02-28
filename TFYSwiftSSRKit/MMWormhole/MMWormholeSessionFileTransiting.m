@@ -23,27 +23,28 @@
 
 #import "MMWormholeSessionFileTransiting.h"
 
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
 #import <WatchConnectivity/WatchConnectivity.h>
-#endif
 
 @interface MMWormholeSessionFileTransiting () <WCSessionDelegate>
-#if TARGET_OS_IOS || TARGET_OS_WATCH
 @property (nonatomic, strong) WCSession *session;
-#endif
 @end
+#else
+@interface MMWormholeSessionFileTransiting ()
+@end
+#endif
 
 @implementation MMWormholeSessionFileTransiting
 
 - (instancetype)initWithApplicationGroupIdentifier:(nullable NSString *)identifier
                                  optionalDirectory:(nullable NSString *)directory {
     if ((self = [super initWithApplicationGroupIdentifier:identifier optionalDirectory:directory])) {
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
         // Setup transiting with the default session
         _session = [WCSession defaultSession];
         
         // Ensure that the MMWormholeSession's delegate is set to enable message sending
-        NSAssert(_session.delegate != nil, @"WCSession's delegate is required to be set before you can send messages. Please initialize the MMWormholeSession sharedListeningSession object prior to creating a separate wormhole using the MMWormholeSessionTransiting classes.");
+        NSAssert(_session.delegate != nil, @"WCSession's delegate is required to be set before you can send messages.");
 #endif
     }
     
@@ -66,7 +67,7 @@
     }
     
     if (messageObject) {
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
         NSData *data = nil;
         NSError *error = nil;
         data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
@@ -105,14 +106,14 @@
 
 #pragma mark - WCSessionDelegate Methods
 
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
 - (void)session:(WCSession *)session activationDidCompleteWithState:(WCSessionActivationState)activationState error:(nullable NSError *)error {
     if (error) {
         NSLog(@"WCSession activation failed with error: %@", error);
     }
 }
 
-#if TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 - (void)sessionDidBecomeInactive:(WCSession *)session {
     // Handle session becoming inactive
 }

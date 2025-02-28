@@ -8,15 +8,18 @@
 #import <Foundation/Foundation.h>
 #import "MMWormhole.h"
 
-#if TARGET_OS_IOS || TARGET_OS_WATCH
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
 #import <WatchConnectivity/WatchConnectivity.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) || defined(__WATCH_OS_VERSION_MIN_REQUIRED)
 @interface MMWormholeSession : MMWormhole <WCSessionDelegate>
-
 @property (nonatomic, strong, readonly) WCSession *session;
+#else
+@interface MMWormholeSession : MMWormhole
+#endif
 
 /**
  Returns the shared listening session instance.
