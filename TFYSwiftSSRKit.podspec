@@ -150,7 +150,9 @@ Pod::Spec.new do |spec|
       'HAVE_CONFIG_H=1',
       'TARGET_OS_IOS=1',
       'TARGET_OS_WATCH=0',
-      'COCOAPODS=1'
+      'COCOAPODS=1',
+      '__IPHONE_OS_VERSION_MAX_ALLOWED=150000',
+      '__IPHONE_15_0=150000'
     ],
     'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/module.modulemap',
     'SWIFT_OBJC_INTERFACE_HEADER_NAME' => 'TFYSwiftSSRKit-Swift.h',
@@ -165,7 +167,9 @@ Pod::Spec.new do |spec|
     'OTHER_CFLAGS' => [
       '$(inherited)',
       '-DTARGET_OS_IOS=1',
-      '-DTARGET_OS_WATCH=0'
+      '-DTARGET_OS_WATCH=0',
+      '-D__IPHONE_OS_VERSION_MAX_ALLOWED=150000',
+      '-D__IPHONE_15_0=150000'
     ].join(' ')
   }
   

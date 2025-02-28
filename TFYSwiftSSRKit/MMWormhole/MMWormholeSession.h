@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "MMWormhole.h"
 
-#if ( defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000 )
+#if defined(__IPHONE_15_0)
 #import <WatchConnectivity/WatchConnectivity.h>
 
 NS_ASSUME_NONNULL_BEGIN
