@@ -253,7 +253,8 @@ Pod::Spec.new do |spec|
     'CoreFoundation', 
     'Security', 
     'SystemConfiguration', 
-    'NetworkExtension'
+    'NetworkExtension',
+    'WatchConnectivity'
   ]
   
   # 库依赖

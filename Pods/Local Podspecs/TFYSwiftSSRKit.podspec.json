@@ -206,8 +206,7 @@
     "CoreFoundation",
     "Security",
     "SystemConfiguration",
-    "NetworkExtension",
-    "WatchConnectivity"
+    "NetworkExtension"
   ],
   "libraries": [
     "c++",

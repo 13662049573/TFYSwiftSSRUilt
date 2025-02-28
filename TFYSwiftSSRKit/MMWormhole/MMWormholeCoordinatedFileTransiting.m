@@ -34,15 +34,11 @@
     
     if (messageObject) {
         NSData *data = nil;
-        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
-            NSError *error = nil;
-            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
-            if (error) {
-                NSLog(@"Error archiving message object: %@", error);
-                return NO;
-            }
-        } else {
-            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        NSError *error = nil;
+        data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
+        if (error) {
+            NSLog(@"Error archiving message object: %@", error);
+            return NO;
         }
         
         if (data == nil) {
@@ -59,7 +55,6 @@
         
         NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
         __block BOOL success = NO;
-        __block NSError *error = nil;
         
         [coordinator coordinateWritingItemAtURL:fileURL options:0 error:&error byAccessor:^(NSURL *newURL) {
             success = [data writeToFile:filePath atomically:YES];
@@ -103,15 +98,11 @@
     }
     
     id messageObject = nil;
-    if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
-        NSError *unarchiveError = nil;
-        messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&unarchiveError];
-        if (unarchiveError) {
-            NSLog(@"Error unarchiving message object: %@", unarchiveError);
-            return nil;
-        }
-    } else {
-        messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSError *unarchiveError = nil;
+    messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&unarchiveError];
+    if (unarchiveError) {
+        NSLog(@"Error unarchiving message object: %@", unarchiveError);
+        return nil;
     }
     
     return messageObject;

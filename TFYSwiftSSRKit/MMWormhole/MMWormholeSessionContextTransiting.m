@@ -68,22 +68,16 @@
     if (messageObject) {
 #if TARGET_OS_IOS || TARGET_OS_WATCH
         NSData *data = nil;
-        if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
-            NSError *error = nil;
-            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
-            if (error) {
-                NSLog(@"Error archiving message object: %@", error);
-                return NO;
-            }
-        } else {
-            data = [NSKeyedArchiver archivedDataWithRootObject:messageObject];
+        NSError *error = nil;
+        data = [NSKeyedArchiver archivedDataWithRootObject:messageObject requiringSecureCoding:NO error:&error];
+        if (error) {
+            NSLog(@"Error archiving message object: %@", error);
+            return NO;
         }
         
         if (data == nil) {
             return NO;
         }
-        
-        NSError *error = nil;
         
         BOOL success = [self.session updateApplicationContext:@{identifier : data} error:&error];
         
@@ -117,15 +111,11 @@
     }
     
     id messageObject = nil;
-    if (@available(iOS 12.0, macOS 10.14, watchOS 5.0, tvOS 12.0, *)) {
-        NSError *error = nil;
-        messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
-        if (error) {
-            NSLog(@"Error unarchiving message object: %@", error);
-            return nil;
-        }
-    } else {
-        messageObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSError *error = nil;
+    messageObject = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
+    if (error) {
+        NSLog(@"Error unarchiving message object: %@", error);
+        return nil;
     }
     
     return messageObject;
