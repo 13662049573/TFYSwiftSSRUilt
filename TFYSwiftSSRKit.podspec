@@ -213,4 +213,14 @@ Pod::Spec.new do |spec|
   # 其他依赖
   spec.libraries = 'c++', 'z'
   spec.requires_arc = true
+
+  # Header search paths
+  spec.pod_target_xcconfig = {
+    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include',
+    'SWIFT_INCLUDE_PATHS' => '$(PODS_TARGET_SRCROOT)',
+    'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES'
+  }
+
+  # Module map
+  spec.module_map = 'module.modulemap'
 end 
