@@ -145,10 +145,28 @@ Pod::Spec.new do |spec|
     'ENABLE_BITCODE' => 'NO',
     'CLANG_ENABLE_MODULES' => 'YES',
     'DEFINES_MODULE' => 'YES',
-    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'HAVE_CONFIG_H=1'],
+    'GCC_PREPROCESSOR_DEFINITIONS' => [
+      '$(inherited)',
+      'HAVE_CONFIG_H=1',
+      'TARGET_OS_IOS=1',
+      'TARGET_OS_WATCH=0',
+      'COCOAPODS=1'
+    ],
     'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/module.modulemap',
     'SWIFT_OBJC_INTERFACE_HEADER_NAME' => 'TFYSwiftSSRKit-Swift.h',
-    'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES'
+    'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES',
+    'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+    'CLANG_ENABLE_OBJC_ARC' => 'YES',
+    'HEADER_SEARCH_PATHS' => [
+      '$(inherited)',
+      '$(PODS_ROOT)/TFYSwiftSSRKit/**',
+      '$(SRCROOT)/TFYSwiftSSRKit/**'
+    ].join(' '),
+    'OTHER_CFLAGS' => [
+      '$(inherited)',
+      '-DTARGET_OS_IOS=1',
+      '-DTARGET_OS_WATCH=0'
+    ].join(' ')
   }
   
   # iOS配置
@@ -157,7 +175,11 @@ Pod::Spec.new do |spec|
     'SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD' => 'NO',
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios -lprivoxy_ios',
     'IPHONEOS_DEPLOYMENT_TARGET' => '15.0',
-    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
+    'LIBRARY_SEARCH_PATHS' => [
+      '$(inherited)',
+      '$(PODS_ROOT)/TFYSwiftSSRKit/**',
+      '$(SRCROOT)/TFYSwiftSSRKit/**'
+    ].join(' '),
     'LD_VERIFY_BITCODE' => 'NO'
   })
   
@@ -168,122 +190,23 @@ Pod::Spec.new do |spec|
   macos_xcconfig = common_xcconfig.merge({
     'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos -lprivoxy_macos',
     'MACOSX_DEPLOYMENT_TARGET' => '12.0',
-    'LIBRARY_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib" "$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib" "$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib"',
+    'LIBRARY_SEARCH_PATHS' => [
+      '$(inherited)',
+      '$(PODS_ROOT)/TFYSwiftSSRKit/**',
+      '$(SRCROOT)/TFYSwiftSSRKit/**'
+    ].join(' '),
     'LD_VERIFY_BITCODE' => 'NO'
   })
   
   spec.osx.pod_target_xcconfig = macos_xcconfig
   spec.osx.user_target_xcconfig = macos_xcconfig
   
-  # 搜索路径配置
-  header_search_paths = [
-    '$(inherited)',
-    '$(PODS_ROOT)/TFYSwiftSSRKit',
-    '$(SRCROOT)/TFYSwiftSSRKit',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/LibevOCClass',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/RustOCClass',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/include/module',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/include',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include',
-    # 添加 GCDAsyncSocket 和 MMWormhole 头文件搜索路径
-    '$(PODS_ROOT)/TFYSwiftSSRKit/GCDAsyncSocket',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/MMWormhole'
-  ].join(' ')
-  
-  ios_lib_search_paths = [
-    '$(inherited)',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
-    '$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib'
-  ].join(' ')
-  
-  macos_lib_search_paths = [
-    '$(inherited)',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
-    '$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/c-ares/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libipset/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib',
-    '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/lib'
-  ].join(' ')
-  
-  spec.pod_target_xcconfig = {
-    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include',
-    'LIBRARY_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
-    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'GCD_ASYNC_SOCKET_HEADER="GCDAsyncSocket.h"', 'HAVE_CONFIG_H=1', 'TARGET_OS_IOS=1', 'TARGET_OS_WATCH=0'],
-    'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
-    'DEFINES_MODULE' => 'YES',
-    'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/module.modulemap',
-    'OTHER_CFLAGS' => '$(inherited) -DTARGET_OS_IOS=1'
-  }
-  
   # 框架依赖
-  spec.ios.frameworks = ['Foundation', 'Security', 'SystemConfiguration', 'CoreFoundation', 'WatchConnectivity']
-  spec.osx.frameworks = ['Foundation', 'Security', 'SystemConfiguration', 'CoreFoundation']
+  spec.frameworks = 'Foundation'
+  spec.ios.frameworks = 'UIKit', 'WatchConnectivity'
+  spec.osx.frameworks = 'AppKit'
   
-  # 库依赖
-  spec.libraries = ['c++', 'z']
-  
-  # 要求ARC
+  # 其他依赖
+  spec.libraries = 'c++', 'z'
   spec.requires_arc = true
-  
-  # 静态框架
-  spec.static_framework = true
-  
-  # 模块映射
-  spec.module_map = 'module.modulemap'
-  
-  # 添加 preserve_paths 确保库文件被保留
-  spec.preserve_paths = 'TFYSwiftSSRKit/shadowsocks-rust/include/**/*.h', 'TFYSwiftSSRKit/shadowsocks-rust/lib/*.a', 'TFYSwiftSSRKit/shadowsocks-libev/**/*.h', 'TFYSwiftSSRKit/shadowsocks-libev/**/*.a', 'module.modulemap'
-  
-  # 确保静态库路径正确
-  spec.vendored_libraries = 'TFYSwiftSSRKit/shadowsocks-rust/lib/libss.a', 'TFYSwiftSSRKit/shadowsocks-libev/lib/*.a'
-  
-  # 条件编译设置
-  spec.pod_target_xcconfig = {
-    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include',
-    'LIBRARY_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
-    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'GCD_ASYNC_SOCKET_HEADER="GCDAsyncSocket.h"', 'HAVE_CONFIG_H=1', 'TARGET_OS_IOS=1', 'TARGET_OS_WATCH=0'],
-    'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
-    'DEFINES_MODULE' => 'YES',
-    'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/module.modulemap'
-  }
-  
-  spec.ios.pod_target_xcconfig = {
-    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'TARGET_OS_IOS=1', 'TARGET_OS_WATCH=0']
-  }
-  
-  spec.osx.pod_target_xcconfig = {
-    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'TARGET_OS_IOS=0', 'TARGET_OS_WATCH=0']
-  }
 end 
