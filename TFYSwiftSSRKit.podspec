@@ -162,8 +162,11 @@ Pod::Spec.new do |spec|
     'HEADER_SEARCH_PATHS' => [
       '$(inherited)',
       '$(PODS_ROOT)/TFYSwiftSSRKit/**',
-      '$(SRCROOT)/TFYSwiftSSRKit/**'
+      '$(SRCROOT)/TFYSwiftSSRKit/**',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include',
+      '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include'
     ].join(' '),
+    'SWIFT_INCLUDE_PATHS' => '$(PODS_TARGET_SRCROOT)',
     'OTHER_CFLAGS' => [
       '$(inherited)',
       '-DTARGET_OS_IOS=1',

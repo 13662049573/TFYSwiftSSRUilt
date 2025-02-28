@@ -11,6 +11,7 @@ framework module TFYSwiftSSRKit {
         header "GCDAsyncSocket/GCDAsyncSocket.h"
         header "GCDAsyncSocket/GCDAsyncUdpSocket.h"
         header "shadowsocks-libev/shadowsocks/include/shadowsocks.h"
+        header "MMWormhole/MMWormholeSession.h"
         export *
     }
     

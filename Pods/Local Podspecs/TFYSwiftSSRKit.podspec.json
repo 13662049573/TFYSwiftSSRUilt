@@ -96,11 +96,34 @@
       "TFYSwiftSSRKit/shadowsocks-libev/openssl/lib/libssl_ios.a"
     ],
     "pod_target_xcconfig": {
+      "VALID_ARCHS": "arm64",
+      "ONLY_ACTIVE_ARCH": "YES",
+      "ENABLE_BITCODE": "NO",
+      "CLANG_ENABLE_MODULES": "YES",
+      "DEFINES_MODULE": "YES",
       "GCC_PREPROCESSOR_DEFINITIONS": [
         "$(inherited)",
+        "HAVE_CONFIG_H=1",
         "TARGET_OS_IOS=1",
-        "TARGET_OS_WATCH=0"
-      ]
+        "TARGET_OS_WATCH=0",
+        "COCOAPODS=1",
+        "__IPHONE_OS_VERSION_MAX_ALLOWED=150000",
+        "__IPHONE_15_0=150000"
+      ],
+      "MODULEMAP_FILE": "$(PODS_TARGET_SRCROOT)/module.modulemap",
+      "SWIFT_OBJC_INTERFACE_HEADER_NAME": "TFYSwiftSSRKit-Swift.h",
+      "BUILD_LIBRARY_FOR_DISTRIBUTION": "YES",
+      "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES",
+      "CLANG_ENABLE_OBJC_ARC": "YES",
+      "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/** $(SRCROOT)/TFYSwiftSSRKit/** $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include",
+      "SWIFT_INCLUDE_PATHS": "$(PODS_TARGET_SRCROOT)",
+      "OTHER_CFLAGS": "$(inherited) -DTARGET_OS_IOS=1 -DTARGET_OS_WATCH=0 -D__IPHONE_OS_VERSION_MAX_ALLOWED=150000 -D__IPHONE_15_0=150000",
+      "SUPPORTS_MACCATALYST": "NO",
+      "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "NO",
+      "OTHER_LDFLAGS": "$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios -lprivoxy_ios",
+      "IPHONEOS_DEPLOYMENT_TARGET": "15.0",
+      "LIBRARY_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/** $(SRCROOT)/TFYSwiftSSRKit/**",
+      "LD_VERIFY_BITCODE": "NO"
     },
     "user_target_xcconfig": {
       "VALID_ARCHS": "arm64",
@@ -110,23 +133,30 @@
       "DEFINES_MODULE": "YES",
       "GCC_PREPROCESSOR_DEFINITIONS": [
         "$(inherited)",
-        "HAVE_CONFIG_H=1"
+        "HAVE_CONFIG_H=1",
+        "TARGET_OS_IOS=1",
+        "TARGET_OS_WATCH=0",
+        "COCOAPODS=1",
+        "__IPHONE_OS_VERSION_MAX_ALLOWED=150000",
+        "__IPHONE_15_0=150000"
       ],
       "MODULEMAP_FILE": "$(PODS_TARGET_SRCROOT)/module.modulemap",
       "SWIFT_OBJC_INTERFACE_HEADER_NAME": "TFYSwiftSSRKit-Swift.h",
       "BUILD_LIBRARY_FOR_DISTRIBUTION": "YES",
+      "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES",
+      "CLANG_ENABLE_OBJC_ARC": "YES",
+      "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/** $(SRCROOT)/TFYSwiftSSRKit/** $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include",
+      "SWIFT_INCLUDE_PATHS": "$(PODS_TARGET_SRCROOT)",
+      "OTHER_CFLAGS": "$(inherited) -DTARGET_OS_IOS=1 -DTARGET_OS_WATCH=0 -D__IPHONE_OS_VERSION_MAX_ALLOWED=150000 -D__IPHONE_15_0=150000",
       "SUPPORTS_MACCATALYST": "NO",
       "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "NO",
       "OTHER_LDFLAGS": "$(inherited) -ObjC -lc++ -lmbedtls_ios -lmbedcrypto_ios -lmbedx509_ios -lsodium_ios -lss_ios -lprivoxy_ios",
       "IPHONEOS_DEPLOYMENT_TARGET": "15.0",
-      "LIBRARY_SEARCH_PATHS": "$(inherited) \"$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib\" \"$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib\" \"$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib\" \"$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib\"",
+      "LIBRARY_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/** $(SRCROOT)/TFYSwiftSSRKit/**",
       "LD_VERIFY_BITCODE": "NO"
     },
     "frameworks": [
-      "Foundation",
-      "Security",
-      "SystemConfiguration",
-      "CoreFoundation",
+      "UIKit",
       "WatchConnectivity"
     ]
   },
@@ -150,11 +180,32 @@
       "TFYSwiftSSRKit/shadowsocks-libev/openssl/lib/libssl_macos.a"
     ],
     "pod_target_xcconfig": {
+      "VALID_ARCHS": "arm64",
+      "ONLY_ACTIVE_ARCH": "YES",
+      "ENABLE_BITCODE": "NO",
+      "CLANG_ENABLE_MODULES": "YES",
+      "DEFINES_MODULE": "YES",
       "GCC_PREPROCESSOR_DEFINITIONS": [
         "$(inherited)",
-        "TARGET_OS_IOS=0",
-        "TARGET_OS_WATCH=0"
-      ]
+        "HAVE_CONFIG_H=1",
+        "TARGET_OS_IOS=1",
+        "TARGET_OS_WATCH=0",
+        "COCOAPODS=1",
+        "__IPHONE_OS_VERSION_MAX_ALLOWED=150000",
+        "__IPHONE_15_0=150000"
+      ],
+      "MODULEMAP_FILE": "$(PODS_TARGET_SRCROOT)/module.modulemap",
+      "SWIFT_OBJC_INTERFACE_HEADER_NAME": "TFYSwiftSSRKit-Swift.h",
+      "BUILD_LIBRARY_FOR_DISTRIBUTION": "YES",
+      "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES",
+      "CLANG_ENABLE_OBJC_ARC": "YES",
+      "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/** $(SRCROOT)/TFYSwiftSSRKit/** $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include",
+      "SWIFT_INCLUDE_PATHS": "$(PODS_TARGET_SRCROOT)",
+      "OTHER_CFLAGS": "$(inherited) -DTARGET_OS_IOS=1 -DTARGET_OS_WATCH=0 -D__IPHONE_OS_VERSION_MAX_ALLOWED=150000 -D__IPHONE_15_0=150000",
+      "OTHER_LDFLAGS": "$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos -lprivoxy_macos",
+      "MACOSX_DEPLOYMENT_TARGET": "12.0",
+      "LIBRARY_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/** $(SRCROOT)/TFYSwiftSSRKit/**",
+      "LD_VERIFY_BITCODE": "NO"
     },
     "user_target_xcconfig": {
       "VALID_ARCHS": "arm64",
@@ -164,54 +215,41 @@
       "DEFINES_MODULE": "YES",
       "GCC_PREPROCESSOR_DEFINITIONS": [
         "$(inherited)",
-        "HAVE_CONFIG_H=1"
+        "HAVE_CONFIG_H=1",
+        "TARGET_OS_IOS=1",
+        "TARGET_OS_WATCH=0",
+        "COCOAPODS=1",
+        "__IPHONE_OS_VERSION_MAX_ALLOWED=150000",
+        "__IPHONE_15_0=150000"
       ],
       "MODULEMAP_FILE": "$(PODS_TARGET_SRCROOT)/module.modulemap",
       "SWIFT_OBJC_INTERFACE_HEADER_NAME": "TFYSwiftSSRKit-Swift.h",
       "BUILD_LIBRARY_FOR_DISTRIBUTION": "YES",
+      "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES",
+      "CLANG_ENABLE_OBJC_ARC": "YES",
+      "HEADER_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/** $(SRCROOT)/TFYSwiftSSRKit/** $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include",
+      "SWIFT_INCLUDE_PATHS": "$(PODS_TARGET_SRCROOT)",
+      "OTHER_CFLAGS": "$(inherited) -DTARGET_OS_IOS=1 -DTARGET_OS_WATCH=0 -D__IPHONE_OS_VERSION_MAX_ALLOWED=150000 -D__IPHONE_15_0=150000",
       "OTHER_LDFLAGS": "$(inherited) -ObjC -lc++ -lmbedtls_macos -lmbedcrypto_macos -lmbedx509_macos -lsodium_macos -lss_macos -lprivoxy_macos",
       "MACOSX_DEPLOYMENT_TARGET": "12.0",
-      "LIBRARY_SEARCH_PATHS": "$(inherited) \"$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib\" \"$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib\" \"$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib\" \"$(SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib\"",
+      "LIBRARY_SEARCH_PATHS": "$(inherited) $(PODS_ROOT)/TFYSwiftSSRKit/** $(SRCROOT)/TFYSwiftSSRKit/**",
       "LD_VERIFY_BITCODE": "NO"
     },
     "frameworks": [
-      "Foundation",
-      "Security",
-      "SystemConfiguration",
-      "CoreFoundation"
+      "AppKit"
     ]
   },
-  "pod_target_xcconfig": {
-    "HEADER_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/GCDAsyncSocket $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/MMWormhole $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/openssl/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include",
-    "LIBRARY_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib",
-    "GCC_PREPROCESSOR_DEFINITIONS": [
-      "$(inherited)",
-      "GCD_ASYNC_SOCKET_HEADER=\"GCDAsyncSocket.h\"",
-      "HAVE_CONFIG_H=1",
-      "TARGET_OS_IOS=1",
-      "TARGET_OS_WATCH=0"
-    ],
-    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES",
-    "DEFINES_MODULE": "YES",
-    "MODULEMAP_FILE": "$(PODS_TARGET_SRCROOT)/module.modulemap"
-  },
+  "frameworks": "Foundation",
   "libraries": [
     "c++",
     "z"
   ],
   "requires_arc": true,
-  "static_framework": true,
+  "pod_target_xcconfig": {
+    "HEADER_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-rust/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/include",
+    "SWIFT_INCLUDE_PATHS": "$(PODS_TARGET_SRCROOT)",
+    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES"
+  },
   "module_map": "module.modulemap",
-  "preserve_paths": [
-    "TFYSwiftSSRKit/shadowsocks-rust/include/**/*.h",
-    "TFYSwiftSSRKit/shadowsocks-rust/lib/*.a",
-    "TFYSwiftSSRKit/shadowsocks-libev/**/*.h",
-    "TFYSwiftSSRKit/shadowsocks-libev/**/*.a",
-    "module.modulemap"
-  ],
-  "vendored_libraries": [
-    "TFYSwiftSSRKit/shadowsocks-rust/lib/libss.a",
-    "TFYSwiftSSRKit/shadowsocks-libev/lib/*.a"
-  ],
   "swift_version": "5.0"
 }
