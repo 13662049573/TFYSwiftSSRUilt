@@ -11,6 +11,7 @@
 @property (nonatomic, assign) uint64_t uploadTraffic;
 @property (nonatomic, assign) uint64_t downloadTraffic;
 @property (nonatomic, strong) dispatch_source_t trafficTimer;
+@property (nonatomic, assign) BOOL tunnelActive;
 
 @end
 
@@ -62,7 +63,7 @@
     [self startTunnelWithConfig:config completionHandler:completionHandler];
 }
 
-- (void)startTunnelWithConfig:(TFYSSConfig *)config completionHandler:(void (^)(NSError * _Nullable))completionHandler {
+- (void)startTunnelWithConfig:(TFYSSConfig *)config completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(startTunnel(with:completionHandler:)) {
     // 保存配置
     self.currentConfig = config;
     
@@ -125,11 +126,14 @@
         // 启动流量统计定时器
         [self setupTrafficTimer];
         
+        // 设置隧道状态为活跃
+        self.tunnelActive = YES;
+        
         completionHandler(nil);
     }];
 }
 
-- (void)stopTunnelWithReason:(NEProviderStopReason)reason completionHandler:(void (^)(void))completionHandler {
+- (void)stopTunnelWithReason:(NEProviderStopReason)reason completionHandler:(void (^)(void))completionHandler NS_SWIFT_NAME(stopTunnel(with:completionHandler:)) {
     // 停止流量统计定时器
     if (self.trafficTimer) {
         dispatch_source_cancel(self.trafficTimer);
@@ -148,6 +152,9 @@
     }
     
     self.currentConfig = nil;
+    
+    // 设置隧道状态为非活跃
+    self.tunnelActive = NO;
     
     completionHandler();
 }
@@ -221,15 +228,16 @@
     }
 }
 
-- (void)getTrafficWithUpload:(uint64_t *)upload download:(uint64_t *)download {
+- (void)getTrafficWithUpload:(uint64_t *)upload download:(uint64_t *)download NS_SWIFT_NAME(getTraffic(withUpload:download:)) {
     if (!self.ssCore) {
         if (upload) *upload = 0;
         if (download) *download = 0;
         return;
     }
     
-    // 直接从 shadowsocks 获取流量统计
-    shadowsocks_get_traffic(upload, download);
+    // 使用实例变量返回流量统计
+    if (upload) *upload = self.uploadTraffic;
+    if (download) *download = self.downloadTraffic;
 }
 
 #pragma mark - Private Methods
@@ -313,11 +321,95 @@ function FindProxyForURL(url, host) {\
 - (void)updateTrafficStats {
     if (!self.ssCore) return;
     
-    uint64_t upload = 0, download = 0;
-    shadowsocks_get_traffic(&upload, &download);
+    // 尝试从 ssCore 获取流量统计
+    if ([self.ssCore respondsToSelector:@selector(getTrafficWithUpload:download:)]) {
+        uint64_t upload = 0, download = 0;
+        [self.ssCore getTrafficWithUpload:&upload download:&download];
+        
+        self.uploadTraffic = upload;
+        self.downloadTraffic = download;
+    }
+}
+
+#pragma mark - 新增方法
+
+- (void)sendMessageToApp:(NSData *)messageData completionHandler:(nullable void (^)(NSData * _Nullable responseData))completionHandler NS_SWIFT_NAME(sendMessage(toApp:completionHandler:)) {
+    // 在 NetworkExtension 框架中，隧道提供者不能主动向应用发送消息
+    // 应用必须先通过 NETunnelProviderSession 的 sendProviderMessage 方法发送消息
+    // 然后隧道提供者可以在 handleAppMessage 方法中响应
+    NSLog(@"Warning: sendMessageToApp called but tunnel provider cannot initiate messages to the app");
+    if (completionHandler) {
+        completionHandler(nil);
+    }
+}
+
+- (void)updateConfig:(TFYSSConfig *)config completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(update(config:completionHandler:)) {
+    // 停止当前连接
+    if (self.ssCore) {
+        [self.ssCore stop];
+    }
     
-    self.uploadTraffic = upload;
-    self.downloadTraffic = download;
+    // 如果启用了 HTTP 代理，停止 Privoxy
+    if (self.currentConfig.enableHTTP) {
+        ss_privoxy_stop();
+    }
+    
+    // 创建新的 Shadowsocks 核心（如果需要）
+    if (!self.ssCore || self.currentConfig.preferredCoreType != config.preferredCoreType) {
+        self.ssCore = [TFYSSCoreFactory createCoreWithType:config.preferredCoreType];
+        if (!self.ssCore) {
+            NSError *error = [NSError errorWithDomain:TFYSSErrorDomain code:TFYSSErrorStartFailed userInfo:@{NSLocalizedDescriptionKey: @"Failed to create core instance"}];
+            completionHandler(error);
+            return;
+        }
+        
+        // 初始化引擎
+        if (![self.ssCore initializeEngine]) {
+            NSError *error = [NSError errorWithDomain:TFYSSErrorDomain code:TFYSSErrorStartFailed userInfo:@{NSLocalizedDescriptionKey: @"Failed to initialize engine"}];
+            completionHandler(error);
+            return;
+        }
+    }
+    
+    // 启动新连接
+    NSError *startError = nil;
+    if (![self.ssCore startWithConfig:config error:&startError]) {
+        completionHandler(startError);
+        return;
+    }
+    
+    // 更新当前配置
+    self.currentConfig = config;
+    
+    // 如果启用了 HTTP 代理，启动 Privoxy
+    if (config.enableHTTP) {
+        privoxy_config_t privoxyConfig;
+        privoxyConfig.socks5_address = [config.localAddress UTF8String];
+        privoxyConfig.socks5_port = config.localPort;
+        privoxyConfig.listen_address = "127.0.0.1";
+        privoxyConfig.listen_port = config.httpPort;
+        
+        ss_privoxy_init();
+        ss_privoxy_start(&privoxyConfig);
+    }
+    
+    // 更新网络设置
+    [self setupTunnelNetworkSettings:config completionHandler:completionHandler];
+}
+
+- (void)resetTrafficStats NS_SWIFT_NAME(resetTrafficStats()) {
+    self.uploadTraffic = 0;
+    self.downloadTraffic = 0;
+    
+    // 注意：由于 TFYSSLibevCore 类或 shadowsocks_reset_traffic 函数可能未正确声明
+    // 我们需要检查 ssCore 是否支持重置流量的方法
+    if ([self.ssCore respondsToSelector:@selector(resetTraffic)]) {
+        [self.ssCore performSelector:@selector(resetTraffic)];
+    }
+}
+
+- (BOOL)isTunnelActive {
+    return self.tunnelActive && self.ssCore != nil;
 }
 
 @end
