@@ -20,7 +20,10 @@ static NSDictionary *TFYSSErrorDescriptions() {
             @(TFYSSErrorHTTPInitFailed): @"HTTP 代理初始化失败",
             @(TFYSSErrorAuthenticationFailed): @"认证失败",
             @(TFYSSErrorEncryptionFailed): @"加密失败",
-            @(TFYSSErrorDecryptionFailed): @"解密失败"
+            @(TFYSSErrorDecryptionFailed): @"解密失败",
+            @(TFYSSErrorUpdateConfigFailed): @"更新配置失败",
+            @(TFYSSErrorVPNStartFailure): @"VPN 启动失败",
+            @(TFYSSErrorDisconnectTimeout): @"断开连接超时"
         };
     });
     return descriptions;

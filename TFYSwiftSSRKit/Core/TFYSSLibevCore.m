@@ -109,6 +109,22 @@
     _ssConfig.password = strdup([self.config.password UTF8String]);
     _ssConfig.timeout = (int)self.config.timeout;
     
+    // 添加 SSR 特有字段
+    if (self.config.isSSR) {
+        if (self.config.protocol && self.config.protocol.length > 0) {
+            _ssConfig.protocol = strdup([self.config.protocol UTF8String]);
+        }
+        if (self.config.protocolParam && self.config.protocolParam.length > 0) {
+            _ssConfig.protocol_param = strdup([self.config.protocolParam UTF8String]);
+        }
+        if (self.config.obfs && self.config.obfs.length > 0) {
+            _ssConfig.obfs = strdup([self.config.obfs UTF8String]);
+        }
+        if (self.config.obfsParam && self.config.obfsParam.length > 0) {
+            _ssConfig.obfs_param = strdup([self.config.obfsParam UTF8String]);
+        }
+    }
+    
     // 启动 shadowsocks
     int result = shadowsocks_start(&_ssConfig);
     if (result != 0) {
@@ -158,6 +174,11 @@
     if (_ssConfig.local_addr) free((void *)_ssConfig.local_addr);
     if (_ssConfig.method) free((void *)_ssConfig.method);
     if (_ssConfig.password) free((void *)_ssConfig.password);
+    // 释放 SSR 特有字段
+    if (_ssConfig.protocol) free((void *)_ssConfig.protocol);
+    if (_ssConfig.protocol_param) free((void *)_ssConfig.protocol_param);
+    if (_ssConfig.obfs) free((void *)_ssConfig.obfs);
+    if (_ssConfig.obfs_param) free((void *)_ssConfig.obfs_param);
     memset(&_ssConfig, 0, sizeof(shadowsocks_config_t));
     
     _isRunning = NO;

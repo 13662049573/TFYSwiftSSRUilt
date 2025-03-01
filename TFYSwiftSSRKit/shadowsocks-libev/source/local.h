@@ -48,6 +48,13 @@ typedef struct listen_ctx {
     int fd;
     int mptcp;
     struct sockaddr **remote_addr;
+
+    // SSR
+    char *protocol_name;
+    char *obfs_name;
+    char *obfs_param;
+    void **list_protocol_global;
+    void **list_obfs_global;
 } listen_ctx_t;
 
 typedef struct server_ctx {

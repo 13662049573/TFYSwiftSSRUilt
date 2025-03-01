@@ -1803,6 +1803,9 @@ _start_ss_local_server(profile_t profile, ss_local_callback callback, void *udat
     int timeout       = profile.timeout;
     int mtu           = profile.mtu;
     int mptcp         = profile.mptcp;
+    char *protocol    = profile.protocol; // SSR
+    char *obfs        = profile.obfs; // SSR
+    char *obfs_param  = profile.obfs_param; // SSR
     char *iface       = NULL;
     int timeout_int   = timeout;
 
@@ -1871,6 +1874,14 @@ _start_ss_local_server(profile_t profile, ss_local_callback callback, void *udat
     listen_ctx.iface          = iface;
     listen_ctx.mptcp          = mptcp;
 
+    // SSR
+    listen_ctx.protocol_name = profile.protocol_name;
+    listen_ctx.obfs_name = profile.obfs_name;
+    listen_ctx.obfs_param = profile.obfs_param;
+    listen_ctx.list_protocol_global = malloc(sizeof(void *) * remote_num);
+    listen_ctx.list_obfs_global = malloc(sizeof(void *) * remote_num);
+    memset(listen_ctx.list_protocol_global, 0, sizeof(void *) * remote_num);
+    memset(listen_ctx.list_obfs_global, 0, sizeof(void *) * remote_num);
     if (ss_is_ipv6addr(local_addr))
         LOGI("listening at [%s]:%s", local_addr, local_port_str);
     else

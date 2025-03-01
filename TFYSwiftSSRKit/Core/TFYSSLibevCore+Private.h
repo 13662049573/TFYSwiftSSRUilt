@@ -24,13 +24,28 @@
 
 // shadowsocks 配置结构
 typedef struct {
-    const char *server;
-    int server_port;
-    const char *local_addr;
-    int local_port;
-    const char *method;
-    const char *password;
-    int timeout;
+    const char *server;          // hostname or ip of remote server
+    int server_port;             // port number of remote server
+    const char *local_addr;      // local ip to bind
+    int local_port;              // port number of local server
+    const char *method;          // encryption method
+    const char *password;        // password of remote server
+    int timeout;                 // connection timeout
+    
+    // Optional fields
+    const char *acl;             // file path to acl
+    const char *log;             // file path to log
+    int fast_open;               // enable tcp fast open
+    int mode;                    // enable udp relay
+    int mtu;                     // MTU of interface
+    int mptcp;                   // enable multipath TCP
+    int verbose;                 // verbose mode
+    
+    // SSR specific fields
+    const char *protocol;        // SSR protocol
+    const char *protocol_param;  // SSR protocol parameter
+    const char *obfs;            // SSR obfuscation
+    const char *obfs_param;      // SSR obfuscation parameter
 } shadowsocks_config_t;
 
 // 声明全局错误码

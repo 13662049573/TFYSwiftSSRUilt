@@ -15,6 +15,17 @@ NS_SWIFT_NAME(TFYConfig)
 @property (nonatomic, copy, nullable) NSString *password;        // 密码
 @property (nonatomic, assign) NSTimeInterval timeout;  // 超时时间
 
+// SSR 特有配置
+@property (nonatomic, assign, getter=isSSR) BOOL SSR NS_SWIFT_NAME(isSSR);            // 是否为 SSR
+@property (nonatomic, copy, nullable) NSString *protocol;        // SSR 协议
+@property (nonatomic, copy, nullable) NSString *obfs;            // SSR 混淆
+@property (nonatomic, copy, nullable) NSString *protocolParam;   // SSR 协议参数
+@property (nonatomic, copy, nullable) NSString *obfsParam;       // SSR 混淆参数
+
+//VPN 配置
+@property (nonatomic, copy, nullable) NSString *tunnelID NS_SWIFT_NAME(tunnelID);
+@property (nonatomic, copy, nullable) NSString *vpnName NS_SWIFT_NAME(vpnName);
+
 // 高级配置
 @property (nonatomic, assign) TFYSSCoreType preferredCoreType NS_SWIFT_NAME(preferredCore);  // 首选核心类型
 @property (nonatomic, assign, getter=isUseRust) BOOL useRust NS_SWIFT_NAME(useRust);         // 使用 Rust 核心

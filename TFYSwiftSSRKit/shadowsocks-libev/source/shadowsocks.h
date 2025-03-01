@@ -40,8 +40,14 @@ typedef struct {
     int mtu;              // MTU of interface
     int mptcp;            // enable multipath TCP
     int verbose;          // verbose mode
-} profile_t;
 
+    // SSR
+    char *protocol_name;
+    char *obfs_name;
+    char *obfs_param;
+    void **list_protocol_global;
+    void **list_obfs_global;
+} profile_t;
 /* An example profile
  *
  * const profile_t EXAMPLE_PROFILE = {

@@ -54,6 +54,15 @@ NS_SWIFT_NAME(TFYVPNService)
 - (void)checkVPNPermissionWithCompletion:(void (^)(BOOL granted, NSError * _Nullable error))completion
     NS_SWIFT_NAME(checkVPNPermission(completion:));
 
+// 自动重连
+@property (nonatomic, readonly) BOOL autoReconnect NS_SWIFT_NAME(autoReconnect);
+
+/**
+ * 设置是否自动重连
+ * @param enable 是否启用自动重连
+ */
+- (void)setAutoReconnectEnabled:(BOOL)enable NS_SWIFT_NAME(setAutoReconnectEnabled(_:));
+
 @end
 
 // VPN 服务回调协议

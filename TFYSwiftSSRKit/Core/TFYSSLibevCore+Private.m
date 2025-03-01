@@ -47,14 +47,20 @@ int shadowsocks_start(shadowsocks_config_t *config) {
     profile.password = (char *)config->password;
     profile.timeout = config->timeout;
     
-    // 其他可选参数设置为NULL或0
-    profile.acl = NULL;
-    profile.log = NULL;
-    profile.fast_open = 0;
-    profile.mode = 1; // 启用UDP
-    profile.mtu = 0;
-    profile.mptcp = 0;
-    profile.verbose = 0;
+    // 其他可选参数从config中获取，而不是使用硬编码的默认值
+    profile.acl = (char *)config->acl;
+    profile.log = (char *)config->log;
+    profile.fast_open = config->fast_open;
+    profile.mode = config->mode;
+    profile.mtu = config->mtu;
+    profile.mptcp = config->mptcp;
+    profile.verbose = config->verbose;
+    
+    // 设置SSR特有字段
+//    profile.protocol = (char *)config->protocol;
+//    profile.protocol_param = (char *)config->protocol_param;
+//    profile.obfs = (char *)config->obfs;
+//    profile.obfs_param = (char *)config->obfs_param;
     
     // 调用shadowsocks库的函数，使用回调来获取 listener
     return start_ss_local_server_with_callback(profile, ss_callback, NULL);
