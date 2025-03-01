@@ -19,7 +19,6 @@ NS_SWIFT_NAME(TFYConfig)
 @property (nonatomic, assign, getter=isSSR) BOOL SSR NS_SWIFT_NAME(isSSR);            // 是否为 SSR
 @property (nonatomic, copy, nullable) NSString *protocol;        // SSR 协议
 @property (nonatomic, copy, nullable) NSString *obfs;            // SSR 混淆
-@property (nonatomic, copy, nullable) NSString *protocolParam;   // SSR 协议参数
 @property (nonatomic, copy, nullable) NSString *obfsParam;       // SSR 混淆参数
 
 //VPN 配置

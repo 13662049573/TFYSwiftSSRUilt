@@ -57,10 +57,9 @@ int shadowsocks_start(shadowsocks_config_t *config) {
     profile.verbose = config->verbose;
     
     // 设置SSR特有字段
-//    profile.protocol = (char *)config->protocol;
-//    profile.protocol_param = (char *)config->protocol_param;
-//    profile.obfs = (char *)config->obfs;
-//    profile.obfs_param = (char *)config->obfs_param;
+    profile.protocol = (char *)config->protocol;
+    profile.obfs = (char *)config->obfs;
+    profile.obfs_param = (char *)config->obfs_param;
     
     // 调用shadowsocks库的函数，使用回调来获取 listener
     return start_ss_local_server_with_callback(profile, ss_callback, NULL);

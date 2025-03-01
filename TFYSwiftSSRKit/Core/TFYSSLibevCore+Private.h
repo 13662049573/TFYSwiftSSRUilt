@@ -43,7 +43,6 @@ typedef struct {
     
     // SSR specific fields
     const char *protocol;        // SSR protocol
-    const char *protocol_param;  // SSR protocol parameter
     const char *obfs;            // SSR obfuscation
     const char *obfs_param;      // SSR obfuscation parameter
 } shadowsocks_config_t;

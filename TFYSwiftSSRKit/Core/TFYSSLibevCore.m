@@ -114,9 +114,6 @@
         if (self.config.protocol && self.config.protocol.length > 0) {
             _ssConfig.protocol = strdup([self.config.protocol UTF8String]);
         }
-        if (self.config.protocolParam && self.config.protocolParam.length > 0) {
-            _ssConfig.protocol_param = strdup([self.config.protocolParam UTF8String]);
-        }
         if (self.config.obfs && self.config.obfs.length > 0) {
             _ssConfig.obfs = strdup([self.config.obfs UTF8String]);
         }
@@ -176,7 +173,6 @@
     if (_ssConfig.password) free((void *)_ssConfig.password);
     // 释放 SSR 特有字段
     if (_ssConfig.protocol) free((void *)_ssConfig.protocol);
-    if (_ssConfig.protocol_param) free((void *)_ssConfig.protocol_param);
     if (_ssConfig.obfs) free((void *)_ssConfig.obfs);
     if (_ssConfig.obfs_param) free((void *)_ssConfig.obfs_param);
     memset(&_ssConfig, 0, sizeof(shadowsocks_config_t));
