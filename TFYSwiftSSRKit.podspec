@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "TFYSwiftSSRKit"
-  spec.version      = "1.0.9"
+  spec.version      = "1.0.8"
   spec.summary      = "iOS/macOS Shadowsocks/SSR 客户端框架，支持 Rust 和 C 两种实现"
   spec.description  = <<-DESC
                     TFYSwiftSSRKit 是一个用于 iOS 和 macOS 的 Shadowsocks/SSR 客户端框架，
