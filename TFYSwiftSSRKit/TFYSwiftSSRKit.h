@@ -2,37 +2,40 @@
 //  TFYSwiftSSRKit.h
 //  TFYSwiftSSRKit
 //
-//  Created by 田风有 on 2025/2/26.
+//  Created by tianfengyou on 2024/03/15.
+//  Copyright © 2024 tianfengyou. All rights reserved.
 //
 
 #ifndef TFYSwiftSSRKit_h
 #define TFYSwiftSSRKit_h
 
-// Objective-C 包装类
-#import "LibevOCClass/TFYOCLibevConnection.h"
-#import "LibevOCClass/TFYOCLibevManager.h"
-#import "LibevOCClass/TFYOCLibevSOCKS5Handler.h"
-#import "LibevOCClass/TFYOCLibevAntinatManager.h"
-#import "LibevOCClass/TFYOCLibevPrivoxyManager.h"
-#import "RustOCClass/TFYSSManager.h"
-#import "RustOCClass/TFYVPNManager.h"
+#import <Foundation/Foundation.h>
 
-// GCDAsyncSocket
-#import "GCDAsyncSocket/GCDAsyncSocket.h"
-#import "GCDAsyncSocket/GCDAsyncUdpSocket.h"
+//! Project version number for TFYSwiftSSRKit.
+FOUNDATION_EXPORT double TFYSwiftSSRKitVersionNumber;
 
-// MMWormhole
-#import "MMWormhole/MMWormhole.h"
-#import "MMWormhole/MMWormholeSession.h"
-#import "MMWormhole/MMWormholeTransiting.h"
-#import "MMWormhole/MMWormholeFileTransiting.h"
-#import "MMWormhole/MMWormholeCoordinatedFileTransiting.h"
-#import "MMWormhole/MMWormholeSessionContextTransiting.h"
-#import "MMWormhole/MMWormholeSessionFileTransiting.h"
-#import "MMWormhole/MMWormholeSessionMessageTransiting.h"
+//! Project version string for TFYSwiftSSRKit.
+FOUNDATION_EXPORT const unsigned char TFYSwiftSSRKitVersionString[];
 
-// 注意：以下C库头文件不需要在此处导入
-// 它们会在各自的实现文件中按需导入
-// 这样可以避免"umbrella header"警告
+// Base
+#import "TFYSSTypes.h"
+#import "TFYSSError.h"
+#import "TFYSSConfig.h"
+
+// Core
+#import "TFYSSCoreProtocol.h"
+#import "TFYSSRustCore.h"
+#import "TFYSSLibevCore.h"
+#import "TFYSSCoreFactory.h"
+
+// Service
+#import "TFYSSProxyService.h"
+#import "TFYSSVPNService.h"
+#import "TFYSSPacketTunnelProvider.h"
+
+// 注意：以下组件需要单独添加到项目中
+// - LibevOCClass: Objective-C 包装类
+// - RustOCClass: Rust 包装类
+// - NetworkExtension: 需要在项目中添加 NetworkExtension.framework
 
 #endif /* TFYSwiftSSRKit_h */

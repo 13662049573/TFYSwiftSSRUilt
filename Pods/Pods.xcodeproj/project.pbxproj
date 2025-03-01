@@ -16,14 +16,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1D9F0429087962015CC85C90E3AB7B62 /* PBXContainerItemProxy */ = {
+		11E373C0DB89FDFA4A90D38D2667104B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = FB91A0AEB6E26A36702599DEC2F1E0C8;
 			remoteInfo = TFYSwiftSSRKit;
 		};
-		BDF61A0CD3EB37D45D91183575C929F4 /* PBXContainerItemProxy */ = {
+		A11FAC53BF2F1CD86A85242C99A96D82 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 338D4B93AB3BF686EC485486385F33C7 /* TFYSwiftSSRKit.xcodeproj */;
 			proxyType = 1;
@@ -195,7 +195,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				0D709D084D95998F087C6DC9E31AEECC /* PBXTargetDependency */,
+				5F61C653F00BB9680C7384DA7869D790 /* PBXTargetDependency */,
 			);
 			name = "Pods-TFYSwiftSSRUilt-PacketSwift";
 			productName = Pods_TFYSwiftSSRUilt_PacketSwift;
@@ -214,7 +214,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				A30A13A19CBED5C89DC9001B40099017 /* PBXTargetDependency */,
+				AFBC3008AA3F867F3A769D41740B6AAA /* PBXTargetDependency */,
 			);
 			name = "Pods-TFYSwiftSSRUilt";
 			productName = Pods_TFYSwiftSSRUilt;
@@ -293,15 +293,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0D709D084D95998F087C6DC9E31AEECC /* PBXTargetDependency */ = {
+		5F61C653F00BB9680C7384DA7869D790 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = TFYSwiftSSRKit;
-			targetProxy = BDF61A0CD3EB37D45D91183575C929F4 /* PBXContainerItemProxy */;
+			targetProxy = A11FAC53BF2F1CD86A85242C99A96D82 /* PBXContainerItemProxy */;
 		};
-		A30A13A19CBED5C89DC9001B40099017 /* PBXTargetDependency */ = {
+		AFBC3008AA3F867F3A769D41740B6AAA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = TFYSwiftSSRKit;
-			targetProxy = 1D9F0429087962015CC85C90E3AB7B62 /* PBXContainerItemProxy */;
+			targetProxy = 11E373C0DB89FDFA4A90D38D2667104B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

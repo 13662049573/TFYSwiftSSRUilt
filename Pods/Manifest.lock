@@ -1,5 +1,9 @@
 PODS:
-  - TFYSwiftSSRKit (1.0.6)
+  - TFYSwiftSSRKit (1.0.7):
+    - TFYSwiftSSRKit/shadowsocks-libev (= 1.0.7)
+    - TFYSwiftSSRKit/shadowsocks-rust (= 1.0.7)
+  - TFYSwiftSSRKit/shadowsocks-libev (1.0.7)
+  - TFYSwiftSSRKit/shadowsocks-rust (1.0.7)
 
 DEPENDENCIES:
   - TFYSwiftSSRKit (from `./`)
@@ -9,7 +13,7 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  TFYSwiftSSRKit: df1de1b3f7f433cd87ea031ef03da30b2ea9fa82
+  TFYSwiftSSRKit: 49ba337363279e024e298ea8c31f545c6f1b21a8
 
 PODFILE CHECKSUM: c18d9b8f03c0e776594d3ee5c9e24aa8ebcc4132
 
