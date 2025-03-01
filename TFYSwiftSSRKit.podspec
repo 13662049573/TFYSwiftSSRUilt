@@ -9,14 +9,14 @@ Pod::Spec.new do |spec|
                     现已添加规则管理功能，支持黑白名单和自定义规则。
                     DESC
 
-  spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRKit"
+  spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRUilt"
   spec.license      = { :type => "MIT", :file => "LICENSE" }
   spec.author       = { "tianfengyou" => "420144542@qq.com" }
   
   spec.ios.deployment_target = "15.0"
   spec.osx.deployment_target = "12.0"
   
-  spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRKit.git", :tag => "#{spec.version}" }
+  spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRUilt.git", :tag => "#{spec.version}" }
   
   # 核心文件
   spec.source_files = "TFYSwiftSSRKit/*.{h,m}", 
