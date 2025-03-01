@@ -15,6 +15,8 @@
         _enableNAT = NO;
         _enableHTTP = NO;
         _httpPort = 8118;
+        _enableRule = NO;
+        _activeRuleSetName = nil;
     }
     return self;
 }
@@ -33,6 +35,8 @@
         if (json[@"enable_nat"]) _enableNAT = [json[@"enable_nat"] boolValue];
         if (json[@"enable_http"]) _enableHTTP = [json[@"enable_http"] boolValue];
         if (json[@"http_port"]) _httpPort = [json[@"http_port"] unsignedShortValue];
+        if (json[@"enable_rule"]) _enableRule = [json[@"enable_rule"] boolValue];
+        if (json[@"active_rule_set"]) _activeRuleSetName = json[@"active_rule_set"];
     }
     return self;
 }
@@ -51,6 +55,8 @@
     json[@"enable_nat"] = @(_enableNAT);
     json[@"enable_http"] = @(_enableHTTP);
     json[@"http_port"] = @(_httpPort);
+    json[@"enable_rule"] = @(_enableRule);
+    if (_activeRuleSetName) json[@"active_rule_set"] = _activeRuleSetName;
     
     return [json copy];
 }
@@ -115,6 +121,8 @@
     copy.enableNAT = _enableNAT;
     copy.enableHTTP = _enableHTTP;
     copy.httpPort = _httpPort;
+    copy.enableRule = _enableRule;
+    copy.activeRuleSetName = [_activeRuleSetName copy];
     return copy;
 }
 

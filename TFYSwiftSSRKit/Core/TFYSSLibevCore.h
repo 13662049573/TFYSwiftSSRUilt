@@ -3,6 +3,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// C回调函数声明
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+BOOL TFYSSLibevShouldProxyHost(const char *host);
+BOOL TFYSSLibevShouldProxyIP(const char *ip);
+
+#ifdef __cplusplus
+}
+#endif
+
 NS_SWIFT_NAME(TFYLibevCore)
 @interface TFYSSLibevCore : NSObject <TFYSSCoreProtocol>
 

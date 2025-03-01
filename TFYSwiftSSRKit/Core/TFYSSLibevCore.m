@@ -1,6 +1,7 @@
 #import "TFYSSLibevCore.h"
 #import "TFYSSLibevCore+Private.h"
 #import "TFYSSError.h"
+#import "TFYSSProxyService.h"
 
 @interface TFYSSLibevCore () {
     shadowsocks_config_t _ssConfig;
@@ -13,6 +14,8 @@
 @property (nonatomic, copy, readwrite) NSString *version;
 @property (nonatomic, assign, readwrite) TFYSSCoreType type;
 @property (nonatomic, assign, readwrite) TFYSSCoreCapability capabilities;
+@property (nonatomic, copy) TFYSSTrafficStatsCallback trafficCallback;
+@property (nonatomic, strong) TFYSSConfig *currentConfig;
 
 @end
 
@@ -21,6 +24,8 @@
 @synthesize type = _type;
 @synthesize version = _version;
 @synthesize capabilities = _capabilities;
+@synthesize enableNAT = _enableNAT;
+@synthesize enableHTTP = _enableHTTP;
 
 #pragma mark - Initialization
 
@@ -287,4 +292,55 @@
     }
 }
 
-@end 
+#pragma mark - Rule-based Routing
+
+- (BOOL)shouldProxyHost:(NSString *)host {
+    if (!self.config.enableRule) {
+        return YES;
+    }
+    
+    TFYSSProxyService *proxyService = [TFYSSProxyService sharedInstance];
+    return [proxyService shouldProxyHost:host];
+}
+
+- (BOOL)shouldProxyURL:(NSURL *)url {
+    if (!self.config.enableRule) {
+        return YES;
+    }
+    
+    TFYSSProxyService *proxyService = [TFYSSProxyService sharedInstance];
+    return [proxyService shouldProxyURL:url];
+}
+
+- (BOOL)shouldProxyIP:(NSString *)ip {
+    if (!self.config.enableRule) {
+        return YES;
+    }
+    
+    TFYSSProxyService *proxyService = [TFYSSProxyService sharedInstance];
+    return [proxyService shouldProxyIP:ip];
+}
+
+@end
+
+#pragma mark - C Callbacks for Libev
+
+// C回调函数，用于判断主机是否应该使用代理
+BOOL TFYSSLibevShouldProxyHost(const char *host) {
+    if (host == NULL) {
+        return YES;
+    }
+    
+    NSString *hostString = [NSString stringWithUTF8String:host];
+    return [[TFYSSProxyService sharedInstance] shouldProxyHost:hostString];
+}
+
+// C回调函数，用于判断IP是否应该使用代理
+BOOL TFYSSLibevShouldProxyIP(const char *ip) {
+    if (ip == NULL) {
+        return YES;
+    }
+    
+    NSString *ipString = [NSString stringWithUTF8String:ip];
+    return [[TFYSSProxyService sharedInstance] shouldProxyIP:ipString];
+} 

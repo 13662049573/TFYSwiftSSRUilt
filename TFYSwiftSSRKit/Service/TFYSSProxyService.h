@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "TFYSSConfig.h"
 #import "TFYSSTypes.h"
+#import "TFYSSRuleManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,6 +19,9 @@ NS_SWIFT_NAME(TFYProxyService)
 
 // 代理配置
 @property (nonatomic, readonly, strong) TFYSSConfig *currentConfig NS_SWIFT_NAME(currentConfig);
+
+// 规则管理器
+@property (nonatomic, readonly, strong) TFYSSRuleManager *ruleManager NS_SWIFT_NAME(ruleManager);
 
 // 代理回调
 @property (nonatomic, weak) id<TFYSSProxyServiceDelegate> delegate;
@@ -42,6 +46,20 @@ NS_SWIFT_NAME(TFYProxyService)
 // 重置流量统计
 - (void)resetTrafficStats NS_SWIFT_NAME(resetTrafficStats());
 
+// 规则相关方法
+- (void)enableRuleRouting:(BOOL)enable 
+               completion:(nullable void (^)(NSError * _Nullable error))completion
+    NS_SWIFT_NAME(enableRuleRouting(_:completion:));
+
+- (void)setActiveRuleSet:(nullable NSString *)ruleSetName 
+              completion:(nullable void (^)(NSError * _Nullable error))completion
+    NS_SWIFT_NAME(setActiveRuleSet(_:completion:));
+
+// 判断主机是否应该使用代理
+- (BOOL)shouldProxyHost:(NSString *)host NS_SWIFT_NAME(shouldProxy(host:));
+- (BOOL)shouldProxyURL:(NSURL *)url NS_SWIFT_NAME(shouldProxy(url:));
+- (BOOL)shouldProxyIP:(NSString *)ip NS_SWIFT_NAME(shouldProxy(ip:));
+
 @end
 
 // 代理服务回调协议
@@ -64,6 +82,13 @@ NS_SWIFT_NAME(TFYProxyServiceDelegate)
 - (void)proxyService:(TFYSSProxyService *)service 
     didEncounterError:(NSError *)error
     NS_SWIFT_NAME(proxyService(_:didEncounterError:));
+
+// 规则匹配回调
+- (void)proxyService:(TFYSSProxyService *)service 
+         didMatchHost:(NSString *)host 
+              result:(TFYSSRuleMatchResult)result 
+             ruleSet:(nullable TFYSSRuleSet *)ruleSet
+    NS_SWIFT_NAME(proxyService(_:didMatchHost:result:ruleSet:));
 
 @end
 

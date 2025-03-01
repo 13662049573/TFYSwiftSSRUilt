@@ -33,6 +33,11 @@ FOUNDATION_EXPORT const unsigned char TFYSwiftSSRKitVersionString[];
 #import "TFYSSVPNService.h"
 #import "TFYSSPacketTunnelProvider.h"
 
+// Rules
+#import "TFYSSRule.h"
+#import "TFYSSRuleSet.h"
+#import "TFYSSRuleManager.h"
+
 // 注意：以下组件需要单独添加到项目中
 // - LibevOCClass: Objective-C 包装类
 // - RustOCClass: Rust 包装类

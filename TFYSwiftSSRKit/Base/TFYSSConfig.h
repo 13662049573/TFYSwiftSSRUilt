@@ -17,9 +17,14 @@ NS_SWIFT_NAME(TFYConfig)
 
 // 高级配置
 @property (nonatomic, assign) TFYSSCoreType preferredCoreType NS_SWIFT_NAME(preferredCore);  // 首选核心类型
+@property (nonatomic, assign, getter=isUseRust) BOOL useRust NS_SWIFT_NAME(useRust);         // 使用 Rust 核心
 @property (nonatomic, assign, getter=isNATEnabled) BOOL enableNAT NS_SWIFT_NAME(natEnabled);          // 启用 NAT 穿透
 @property (nonatomic, assign, getter=isHTTPEnabled) BOOL enableHTTP NS_SWIFT_NAME(httpEnabled);         // 启用 HTTP 代理
 @property (nonatomic, assign) uint16_t httpPort;       // HTTP 代理端口
+
+// 规则配置
+@property (nonatomic, assign, getter=isRuleEnabled) BOOL enableRule NS_SWIFT_NAME(ruleEnabled);        // 启用规则路由
+@property (nonatomic, copy, nullable) NSString *activeRuleSetName NS_SWIFT_NAME(activeRuleSet);        // 当前激活的规则集名称
 
 // 初始化方法
 - (instancetype)initWithServer:(NSString *)server 

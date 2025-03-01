@@ -1,11 +1,12 @@
 Pod::Spec.new do |spec|
   spec.name         = "TFYSwiftSSRKit"
-  spec.version      = "1.0.7"
+  spec.version      = "1.0.9"
   spec.summary      = "iOS/macOS Shadowsocks/SSR 客户端框架，支持 Rust 和 C 两种实现"
   spec.description  = <<-DESC
                     TFYSwiftSSRKit 是一个用于 iOS 和 macOS 的 Shadowsocks/SSR 客户端框架，
                     支持 Rust 和 C 两种实现。提供统一的 API 接口，支持 TCP 和 UDP 代理，
                     以及 NAT 穿透和 HTTP 代理功能（仅 libev 实现）。
+                    现已添加规则管理功能，支持黑白名单和自定义规则。
                     DESC
 
   spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRKit"
@@ -22,7 +23,8 @@ Pod::Spec.new do |spec|
                       "TFYSwiftSSRKit/Base/*.{h,m}", 
                       "TFYSwiftSSRKit/Core/*.{h,m}", 
                       "TFYSwiftSSRKit/Service/*.{h,m}",
-                      "TFYSwiftSSRKit/TFYCoreFactory/*.{h,m}"
+                      "TFYSwiftSSRKit/TFYCoreFactory/*.{h,m}",
+                      "TFYSwiftSSRKit/Rules/*.{h,m}"
   
   # 模块映射文件
   spec.module_map = "module.modulemap"
@@ -38,7 +40,10 @@ Pod::Spec.new do |spec|
                             "TFYSwiftSSRKit/TFYCoreFactory/TFYSSCoreFactory.h",
                             "TFYSwiftSSRKit/Service/TFYSSProxyService.h",
                             "TFYSwiftSSRKit/Service/TFYSSVPNService.h",
-                            "TFYSwiftSSRKit/Service/TFYSSPacketTunnelProvider.h"
+                            "TFYSwiftSSRKit/Service/TFYSSPacketTunnelProvider.h",
+                            "TFYSwiftSSRKit/Rules/TFYSSRule.h",
+                            "TFYSwiftSSRKit/Rules/TFYSSRuleSet.h",
+                            "TFYSwiftSSRKit/Rules/TFYSSRuleManager.h"
   
   # Shadowsocks-libev
   spec.subspec 'shadowsocks-libev' do |ss|
