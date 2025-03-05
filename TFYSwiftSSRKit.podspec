@@ -67,7 +67,8 @@ Pod::Spec.new do |spec|
                                "TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib/libmbedx509_ios.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib/libmaxminddb_ios.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_ios.a",
-                               "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_ios.a"
+                               "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_ios.a",
+                               "TFYSwiftSSRKit/shadowsocks-libev/udns/lib/libudns_ios.a"
     
     # macOS 静态库
     ss.osx.vendored_libraries = "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_macos.a",
@@ -85,7 +86,8 @@ Pod::Spec.new do |spec|
                                "TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib/libmbedx509_macos.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib/libmaxminddb_macos.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_macos.a",
-                               "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_macos.a"
+                               "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_macos.a",
+                               "TFYSwiftSSRKit/shadowsocks-libev/udns/lib/libudns_macos.a"
     
     ss.private_header_files = "TFYSwiftSSRKit/shadowsocks-libev/**/*.h"
     ss.libraries = "c", "resolv", "z"
@@ -137,4 +139,5 @@ Pod::Spec.new do |spec|
   
   # Swift版本兼容性
   spec.swift_versions = ['5.0']
+  
 end 

@@ -1,7 +1,7 @@
 /*
  * shadowsocks.h - Header files of library interfaces
  *
- * Copyright (C) 2013 - 2019, Max Lv <max.c.lv@gmail.com>
+ * Copyright (C) 2013 - 2016, Max Lv <max.c.lv@gmail.com>
  *
  * This file is part of the shadowsocks-libev.
  * shadowsocks-libev is free software; you can redistribute it and/or modify
@@ -22,6 +22,8 @@
 #ifndef _SHADOWSOCKS_H
 #define _SHADOWSOCKS_H
 
+#include <stddef.h>  // for size_t
+
 typedef struct {
     /*  Required  */
     char *remote_host;    // hostname or ip of remote server
@@ -32,15 +34,19 @@ typedef struct {
     int local_port;       // port number of local server
     int timeout;          // connection timeout
 
+    /* SSR */
     char *protocol;
     char *obfs;
     char *obfs_param;
-    
+
     /*  Optional, set NULL if not valid   */
     char *acl;            // file path to acl
+    char *rules;          // file path to rules
     char *log;            // file path to log
+    int use_sys_log;            // file path to log
     int fast_open;        // enable tcp fast open
     int mode;             // enable udp relay
+    int auth;             // enable one-time authentication
     int mtu;              // MTU of interface
     int mptcp;            // enable multipath TCP
     int verbose;          // verbose mode
@@ -57,9 +63,11 @@ typedef struct {
  *  .local_port = 1080,
  *  .timeout = 600;
  *  .acl = NULL,
+ *  .rules = NULL,
  *  .log = NULL,
  *  .fast_open = 0,
  *  .mode = 0,
+ *  .auth = 0,
  *  .verbose = 0
  * };
  */
@@ -68,32 +76,36 @@ typedef struct {
 extern "C" {
 #endif
 
-typedef void (*ss_local_callback)(int socks_fd, int udp_fd, void *data);
+    typedef void (*shadowsocks_cb) (int fd, void*);
 
-/*
- * Create and start a shadowsocks local server.
- *
- * Calling this function will block the current thread forever if the server
- * starts successfully.
- *
- * Make sure start the server in a separate process to avoid any potential
- * memory and socket leak.
- *
- * If failed, -1 is returned. Errors will output to the log file.
- */
-int start_ss_local_server(profile_t profile);
+    /*
+     * Create and start a shadowsocks local server.
+     *
+     * Calling this function will block the current thread forever if the server
+     * starts successfully.
+     *
+     * Make sure start the server in a separate process to avoid any potential
+     * memory and socket leak.
+     *
+     * If failed, -1 is returned. Errors will output to the log file.
+     */
+    int start_ss_local_server(profile_t profile, shadowsocks_cb cb, void *data);
 
-/*
- * Create and start a shadowsocks local server, specifying a callback.
- *
- * The callback is invoked when the local server has started successfully. It passes the SOCKS
- * server and UDP relay file descriptors, along with any supplied user data.
- *
- * Returns -1 on failure.
- */
-int start_ss_local_server_with_callback(profile_t profile, ss_local_callback callback, void *udata);
+    /*
+     * Stop the shadowsocks local server.
+     *
+     * @param listener: The listener context returned by start_ss_local_server.
+     */
+    void start_ss_local_server_stop(void* listener);
 
-void plexsocks_servver_stop(void* listener);
+    /*
+     * Check if a host matches any rule.
+     *
+     * @param host: The host to check.
+     * @param host_len: Length of the host string.
+     * @return: 1 if matched, 0 if not matched.
+     */
+    int start_ss_local_check_rule(const char *host, size_t host_len);
 
 #ifdef __cplusplus
 }
