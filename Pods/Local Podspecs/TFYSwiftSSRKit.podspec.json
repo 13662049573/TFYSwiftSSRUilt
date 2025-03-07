@@ -1,9 +1,9 @@
 {
   "name": "TFYSwiftSSRKit",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "summary": "iOS/macOS Shadowsocks/SSR 客户端框架，支持 Rust 和 C 两种实现",
   "description": "TFYSwiftSSRKit 是一个用于 iOS 和 macOS 的 Shadowsocks/SSR 客户端框架，\n支持 Rust 和 C 两种实现。提供统一的 API 接口，支持 TCP 和 UDP 代理，\n以及 NAT 穿透和 HTTP 代理功能（仅 libev 实现）。\n现已添加规则管理功能，支持黑白名单和自定义规则。",
-  "homepage": "https://github.com/13662049573/TFYSwiftSSRKit",
+  "homepage": "https://github.com/13662049573/TFYSwiftSSRUilt",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -16,8 +16,8 @@
     "osx": "12.0"
   },
   "source": {
-    "git": "https://github.com/13662049573/TFYSwiftSSRKit.git",
-    "tag": "1.0.8"
+    "git": "https://github.com/13662049573/TFYSwiftSSRUilt.git",
+    "tag": "1.0.9"
   },
   "source_files": [
     "TFYSwiftSSRKit/*.{h,m}",
@@ -112,7 +112,8 @@
           "TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib/libmbedx509_ios.a",
           "TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib/libmaxminddb_ios.a",
           "TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_ios.a",
-          "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_ios.a"
+          "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_ios.a",
+          "TFYSwiftSSRKit/shadowsocks-libev/udns/lib/libudns_ios.a"
         ]
       },
       "osx": {
@@ -132,7 +133,8 @@
           "TFYSwiftSSRKit/shadowsocks-libev/mbedtls/lib/libmbedx509_macos.a",
           "TFYSwiftSSRKit/shadowsocks-libev/libmaxminddb/lib/libmaxminddb_macos.a",
           "TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_macos.a",
-          "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_macos.a"
+          "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_macos.a",
+          "TFYSwiftSSRKit/shadowsocks-libev/udns/lib/libudns_macos.a"
         ]
       },
       "private_header_files": "TFYSwiftSSRKit/shadowsocks-libev/**/*.h",

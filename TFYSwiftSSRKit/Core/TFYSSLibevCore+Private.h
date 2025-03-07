@@ -17,10 +17,16 @@
 // 定义 Libev 核心类型
 #define TFYSSCoreTypeLibev 2    // Libev 核心实现
 
+// Define sodium.h path to resolve include issues
+#define SODIUM_H "../shadowsocks-libev/libsodium/include/sodium.h"
+
+// 添加 libsodium 的包含路径
+#include SODIUM_H
+
 // 包含 shadowsocks-libev 的头文件
-#include "../shadowsocks-libev/shadowsocks/include/shadowsocks.h"
+#include "../shadowsocks-libev/shadowsocks/include/shadowsocks-libev.h"
 #include "../shadowsocks-libev/antinat/include/antinat.h"
-#include "../shadowsocks-libev/privoxy/include/privoxy.h"
+#include "../shadowsocks-libev/privoxy/include/privoxy_api.h"
 
 // shadowsocks 配置结构
 typedef struct {
@@ -89,10 +95,10 @@ int antinat_detect(antinat_info_t *info);
 int antinat_set_credentials(const char *username, const char *password);
 int antinat_set_auth_scheme(unsigned int scheme);
 int antinat_clear_auth_schemes(void);
-int antinat_connect_to_hostname(const char *hostname, unsigned short port);
-int antinat_connect_to_sockaddr(struct sockaddr *sa, int sa_len);
-int antinat_bind_to_hostname(const char *hostname, unsigned short port);
-int antinat_bind_to_sockaddr(struct sockaddr *sa, int sa_len);
+int antinat_connect_tohostname(const char *hostname, unsigned short port);
+int antinat_connect_tosockaddr(struct sockaddr *sa, int sa_len);
+int antinat_bind_tohostname(const char *hostname, unsigned short port);
+int antinat_bind_tosockaddr(struct sockaddr *sa, int sa_len);
 int antinat_listen(void);
 int antinat_accept(struct sockaddr *sa, int sa_len);
 int antinat_send(void *buf, int len, int flags);
@@ -105,10 +111,10 @@ int antinat_gethostbyname(const char *name, struct hostent *result, char *buf, i
 
 // 新增 antinat 直接连接函数声明
 int antinat_direct_accept(struct sockaddr *sa, int sa_len);
-int antinat_direct_bind_to_hostname(const char *hostname, unsigned short port);
-int antinat_direct_bind_to_sockaddr(struct sockaddr *sa, int sa_len);
-int antinat_direct_connect_to_hostname(const char *hostname, unsigned short port);
-int antinat_direct_connect_to_sockaddr(struct sockaddr *sa, int sa_len);
+int antinat_direct_bind_tohostname(const char *hostname, unsigned short port);
+int antinat_direct_bind_tosockaddr(struct sockaddr *sa, int sa_len);
+int antinat_direct_connect_tohostname(const char *hostname, unsigned short port);
+int antinat_direct_connect_tosockaddr(struct sockaddr *sa, int sa_len);
 int antinat_direct_close(void);
 int antinat_direct_getpeername(struct sockaddr *sa, int sa_len);
 int antinat_direct_getsockname(struct sockaddr *sa, int sa_len);
@@ -118,10 +124,10 @@ int antinat_direct_recv(void *buf, int len, int flags);
 
 // 新增 antinat SOCKS4 函数声明
 int antinat_socks4_accept(struct sockaddr *sa, int sa_len);
-int antinat_socks4_bind_to_hostname(const char *hostname, unsigned short port);
-int antinat_socks4_bind_to_sockaddr(struct sockaddr *sa, int sa_len);
-int antinat_socks4_connect_to_hostname(const char *hostname, unsigned short port);
-int antinat_socks4_connect_to_sockaddr(struct sockaddr *sa, int sa_len);
+int antinat_socks4_bind_tohostname(const char *hostname, unsigned short port);
+int antinat_socks4_bind_tosockaddr(struct sockaddr *sa, int sa_len);
+int antinat_socks4_connect_tohostname(const char *hostname, unsigned short port);
+int antinat_socks4_connect_tosockaddr(struct sockaddr *sa, int sa_len);
 int antinat_socks4_close(void);
 int antinat_socks4_getpeername(struct sockaddr *sa, int sa_len);
 int antinat_socks4_getsockname(struct sockaddr *sa, int sa_len);
@@ -131,10 +137,10 @@ int antinat_socks4_recv(void *buf, int len, int flags);
 
 // 新增 antinat SOCKS5 函数声明
 int antinat_socks5_accept(struct sockaddr *sa, int sa_len);
-int antinat_socks5_bind_to_hostname(const char *hostname, unsigned short port);
-int antinat_socks5_bind_to_sockaddr(struct sockaddr *sa, int sa_len);
-int antinat_socks5_connect_to_hostname(const char *hostname, unsigned short port);
-int antinat_socks5_connect_to_sockaddr(struct sockaddr *sa, int sa_len);
+int antinat_socks5_bind_tohostname(const char *hostname, unsigned short port);
+int antinat_socks5_bind_tosockaddr(struct sockaddr *sa, int sa_len);
+int antinat_socks5_connect_tohostname(const char *hostname, unsigned short port);
+int antinat_socks5_connect_tosockaddr(struct sockaddr *sa, int sa_len);
 int antinat_socks5_close(void);
 int antinat_socks5_getpeername(struct sockaddr *sa, int sa_len);
 int antinat_socks5_getsockname(struct sockaddr *sa, int sa_len);
@@ -143,8 +149,8 @@ int antinat_socks5_send(void *buf, int len, int flags);
 int antinat_socks5_recv(void *buf, int len, int flags);
 
 // 新增 antinat SSL 函数声明
-int antinat_ssl_connect_to_hostname(const char *hostname, unsigned short port);
-int antinat_ssl_connect_to_sockaddr(struct sockaddr *sa, int sa_len);
+int antinat_ssl_connect_tohostname(const char *hostname, unsigned short port);
+int antinat_ssl_connect_tosockaddr(struct sockaddr *sa, int sa_len);
 int antinat_ssl_close(void);
 int antinat_ssl_send(void *buf, int len, int flags);
 int antinat_ssl_recv(void *buf, int len, int flags);
@@ -157,16 +163,7 @@ int antinat_fd_set(fd_set *fds, int max_fd);
 int antinat_fd_isset(fd_set *fds);
 
 // privoxy 函数声明
-int ss_privoxy_init(void);
 int ss_privoxy_start(privoxy_config_t *config);
 void ss_privoxy_stop(void);
-
-// 新增 privoxy 函数声明
-int ss_privoxy_add_filter(const char *rule);
-int ss_privoxy_remove_filter(const char *rule);
-int ss_privoxy_clear_filters(void);
-int ss_privoxy_toggle_compression(int enabled);
-int ss_privoxy_toggle_filtering(int enabled);
-int ss_privoxy_get_status(void);
 
 #endif /* TFYSSLibevCore_Private_h */

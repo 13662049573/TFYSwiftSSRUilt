@@ -1,7 +1,10 @@
 Pod::Spec.new do |spec|
   spec.name         = "TFYSwiftSSRKit"
-  spec.version      = "1.0.8"
+
+  spec.version      = "1.0.9"
+
   spec.summary      = "iOS/macOS Shadowsocks/SSR 客户端框架，支持 Rust 和 C 两种实现"
+
   spec.description  = <<-DESC
                     TFYSwiftSSRKit 是一个用于 iOS 和 macOS 的 Shadowsocks/SSR 客户端框架，
                     支持 Rust 和 C 两种实现。提供统一的 API 接口，支持 TCP 和 UDP 代理，
@@ -10,10 +13,13 @@ Pod::Spec.new do |spec|
                     DESC
 
   spec.homepage     = "https://github.com/13662049573/TFYSwiftSSRUilt"
+  
   spec.license      = { :type => "MIT", :file => "LICENSE" }
+
   spec.author       = { "tianfengyou" => "420144542@qq.com" }
   
   spec.ios.deployment_target = "15.0"
+
   spec.osx.deployment_target = "12.0"
   
   spec.source       = { :git => "https://github.com/13662049573/TFYSwiftSSRUilt.git", :tag => "#{spec.version}" }
@@ -46,13 +52,13 @@ Pod::Spec.new do |spec|
                             "TFYSwiftSSRKit/Rules/TFYSSRuleManager.h"
   
   # Shadowsocks-libev
-  spec.subspec 'shadowsocks-libev' do |ss|
-    ss.source_files = "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include/*.h",
+  spec.subspec 'shadowsocks-libev' do |libev|
+    libev.source_files = "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/include/*.h",
                       "TFYSwiftSSRKit/shadowsocks-libev/antinat/include/**/*.h",
                       "TFYSwiftSSRKit/shadowsocks-libev/privoxy/include/*.h"
     
     # iOS 静态库
-    ss.ios.vendored_libraries = "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_ios.a",
+    libev.ios.vendored_libraries = "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_ios.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/libev/lib/libev_ios.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib/libsodium_ios.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/openssl/lib/libcrypto_ios.a",
@@ -71,7 +77,7 @@ Pod::Spec.new do |spec|
                                "TFYSwiftSSRKit/shadowsocks-libev/udns/lib/libudns_ios.a"
     
     # macOS 静态库
-    ss.osx.vendored_libraries = "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_macos.a",
+    libev.osx.vendored_libraries = "TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_macos.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/libev/lib/libev_macos.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib/libsodium_macos.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/openssl/lib/libcrypto_macos.a",
@@ -89,21 +95,21 @@ Pod::Spec.new do |spec|
                                "TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_macos.a",
                                "TFYSwiftSSRKit/shadowsocks-libev/udns/lib/libudns_macos.a"
     
-    ss.private_header_files = "TFYSwiftSSRKit/shadowsocks-libev/**/*.h"
-    ss.libraries = "c", "resolv", "z"
+    libev.private_header_files = "TFYSwiftSSRKit/shadowsocks-libev/**/*.h"
+    libev.libraries = "c", "resolv", "z"
   end
   
   # Shadowsocks-rust
-  spec.subspec 'shadowsocks-rust' do |ss|
-    ss.source_files = "TFYSwiftSSRKit/shadowsocks-rust/include/*.h"
+  spec.subspec 'shadowsocks-rust' do |rust|
+    rust.source_files = "TFYSwiftSSRKit/shadowsocks-rust/include/*.h"
     
     # iOS 静态库
-    ss.ios.vendored_libraries = "TFYSwiftSSRKit/shadowsocks-rust/lib/libss_ios.a"
+    rust.ios.vendored_libraries = "TFYSwiftSSRKit/shadowsocks-rust/lib/libss_ios.a"
     
     # macOS 静态库
-    ss.osx.vendored_libraries = "TFYSwiftSSRKit/shadowsocks-rust/lib/libss_macos.a"
+    rust.osx.vendored_libraries = "TFYSwiftSSRKit/shadowsocks-rust/lib/libss_macos.a"
     
-    ss.private_header_files = "TFYSwiftSSRKit/shadowsocks-rust/include/*.h"
+    rust.private_header_files = "TFYSwiftSSRKit/shadowsocks-rust/include/*.h"
   end
   
   # 框架设置

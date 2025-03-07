@@ -23,6 +23,7 @@ typedef NS_ENUM(NSInteger, TFYSSErrorCode) {
     TFYSSErrorUpdateConfigFailed,      // 更新配置失败
     TFYSSErrorVPNStartFailure,         // VPN 启动失败
     TFYSSErrorDisconnectTimeout,       // 断开连接超时
+    TFYSSErrorFeatureNotSupported,     // 功能不支持
 } NS_SWIFT_NAME(TFYError);
 
 // 为了保持兼容性，定义 TFYSSError 作为 TFYSSErrorCode 的别名

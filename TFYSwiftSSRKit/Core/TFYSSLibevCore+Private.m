@@ -17,7 +17,7 @@ static uint64_t ss_upload_traffic = 0; // 上传流量统计
 static uint64_t ss_download_traffic = 0; // 下载流量统计
 
 // 回调函数，用于获取 listener
-static void ss_callback(int socks_fd, int udp_fd, void *data) {
+static void ss_callback(int fd, void *data) {
     // 保存 listener（这里假设 data 就是 listener）
     ss_listener = data;
 }
@@ -37,8 +37,14 @@ int shadowsocks_init(void) {
 }
 
 int shadowsocks_start(shadowsocks_config_t *config) {
+    if (!config || !config->server || !config->local_addr || !config->method || !config->password) {
+        return -2; // 无效配置
+    }
+    
     // 将我们的配置结构转换为shadowsocks库的profile_t结构
     profile_t profile;
+    memset(&profile, 0, sizeof(profile_t)); // 确保结构体初始化为零
+    
     profile.remote_host = (char *)config->server;
     profile.remote_port = config->server_port;
     profile.local_addr = (char *)config->local_addr;
@@ -61,20 +67,34 @@ int shadowsocks_start(shadowsocks_config_t *config) {
     profile.obfs = (char *)config->obfs;
     profile.obfs_param = (char *)config->obfs_param;
     
-    // 调用shadowsocks库的函数，使用回调来获取 listener
-    return start_ss_local_server_with_callback(profile, ss_callback, NULL);
+    // 流量统计注意事项:
+    // 在 shadowsocks.h 中没有定义 set_traffic_status_callback 函数
+    // 根据项目设计，我们通过 ss_callback 回调函数获取到 ss_listener 后，
+    // 可以在 shadowsocks_get_traffic 函数中实现流量统计的获取
+    // 每次调用 shadowsocks_get_traffic 时，可通过 ss_listener 或其他方式获取当前流量
+    
+    // 调用shadowsocks库的函数，使用回调来获取listener
+    return start_ss_local_server(profile, ss_callback, NULL);
 }
 
 void shadowsocks_stop(void) {
     // 调用 shadowsocks 库的停止函数
     if (ss_listener) {
-        plexsocks_servver_stop(ss_listener);
+        start_ss_local_server_stop(ss_listener);
         ss_listener = NULL;
     }
 }
 
 void shadowsocks_get_traffic(uint64_t *upload, uint64_t *download) {
     // 返回流量统计
+    // 注意：由于 shadowsocks 库本身没有提供直接的流量统计接口
+    // 这里使用全局变量来存储流量统计信息
+    // 理想情况下，应该通过某种方式从 ss_listener 获取实时流量信息
+    // 或者通过 API hook / 系统网络接口获取
+    
+    // 如果有需要，可以在这里添加实时获取流量的代码
+    // 例如，通过查询系统网络接口、解析日志文件等方式
+    
     if (upload) *upload = ss_upload_traffic;
     if (download) *download = ss_download_traffic;
 }
@@ -177,7 +197,11 @@ int antinat_detect(antinat_info_t *info) {
     // 填充 NAT 信息
     // 这里简化处理，实际 NAT 类型检测需要更复杂的逻辑
     info->nat_type = TFYSSNATTypeFullCone; // 假设是完全锥形 NAT
-    info->public_ip = inet_ntoa(peer_addr.sin_addr);
+    
+    // 安全地处理IP地址，使用静态缓冲区以避免内存问题
+    static char ip_buffer[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &peer_addr.sin_addr, ip_buffer, sizeof(ip_buffer));
+    info->public_ip = ip_buffer;
     info->public_port = ntohs(peer_addr.sin_port);
     
     return AN_ERROR_SUCCESS;
@@ -712,11 +736,20 @@ int antinat_fd_isset(fd_set *fds) {
 
 // privoxy 包装函数实现 - 使用更新后的函数名
 int ss_privoxy_init(void) {
-    // 调用privoxy库的初始化函数
-    return privoxy_init();
+    // 调用privoxy库的初始化函数，传递NULL参数表示使用默认配置
+    return privoxy_init(NULL);
 }
 
 int ss_privoxy_start(privoxy_config_t *config) {
+    if (!config || !config->socks5_address || !config->listen_address) {
+        return -1; // 无效的参数
+    }
+    
+    // 初始化 Privoxy（如果还没有初始化）
+    if (privoxy_init(NULL) != 0) {
+        return -3; // 初始化失败
+    }
+    
     // 创建一个简单的配置文件内容，指定 SOCKS5 代理
     char config_content[1024];
     snprintf(config_content, sizeof(config_content), 
@@ -747,13 +780,26 @@ int ss_privoxy_start(privoxy_config_t *config) {
     // 将配置内容写入临时文件
     char temp_file[] = "/tmp/privoxy_config_XXXXXX";
     int fd = mkstemp(temp_file);
-    if (fd == -1) return -1;
+    if (fd == -1) {
+        return -1; // 创建临时文件失败
+    }
     
-    write(fd, config_content, strlen(config_content));
+    // 写入配置内容，并检查是否成功
+    ssize_t bytes_written = write(fd, config_content, strlen(config_content));
+    if (bytes_written == -1 || (size_t)bytes_written != strlen(config_content)) {
+        close(fd);
+        unlink(temp_file);
+        return -2; // 写入配置失败
+    }
+    
     close(fd);
     
-    // 启动 privoxy 服务，使用临时配置文件
-    int result = privoxy_start(config->listen_port, temp_file);
+    // 启动 privoxy 服务，仅使用端口参数
+    int init = privoxy_init(config);
+    if ( init != 0) {
+        return -1;
+    }
+    int result = privoxy_start(config->listen_port);
     
     // 删除临时文件
     unlink(temp_file);
@@ -765,37 +811,5 @@ void ss_privoxy_stop(void) {
     // 停止privoxy服务
     privoxy_stop();
     privoxy_cleanup();
-}
-
-// 新增 privoxy 功能实现
-
-// 添加过滤规则
-int ss_privoxy_add_filter(const char *rule) {
-    return privoxy_add_filter(rule);
-}
-
-// 移除过滤规则
-int ss_privoxy_remove_filter(const char *rule) {
-    return privoxy_remove_filter(rule);
-}
-
-// 清除所有过滤规则
-int ss_privoxy_clear_filters(void) {
-    return privoxy_clear_filters();
-}
-
-// 切换压缩功能
-int ss_privoxy_toggle_compression(int enabled) {
-    return privoxy_toggle_compression(enabled);
-}
-
-// 切换过滤功能
-int ss_privoxy_toggle_filtering(int enabled) {
-    return privoxy_toggle_filtering(enabled);
-}
-
-// 获取 Privoxy 状态
-int ss_privoxy_get_status(void) {
-    return privoxy_get_status();
 }
 

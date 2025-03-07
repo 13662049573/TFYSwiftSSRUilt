@@ -1,7 +1,7 @@
 #import "TFYSSRustCore.h"
 #import "TFYSSProxyService.h"
 #import "TFYSSError.h"
-#import "../shadowsocks-rust/include/ss.h"
+#import "../shadowsocks-rust/include/TFYSSshadowsocksRust.h"
 
 @interface TFYSSRustCore () {
     BOOL _isInitialized;
@@ -28,6 +28,7 @@
     if (self) {
         _type = TFYSSCoreTypeRust;
         _version = [self getVersion];
+        // Rust 核心支持 TCP、UDP 和 FastOpen, 但不支持 NAT 穿透或 HTTP 代理
         _capabilities = TFYSSCoreCapabilityTCP | TFYSSCoreCapabilityUDP | TFYSSCoreCapabilityFastOpen;
         _isInitialized = NO;
         _isRunning = NO;
@@ -44,10 +45,11 @@
 #pragma mark - TFYSSCoreProtocol
 
 - (BOOL)initializeEngine {
-    if (_isInitialized) return YES;
+    // 初始化 shadowsocks-rust 引擎
+    // 设置日志级别
+    ss_set_log_level(3); // 设置为信息级别
     
-    // 初始化 Rust 引擎
-    ss_init();
+    // 初始化成功
     _isInitialized = YES;
     return YES;
 }
@@ -89,6 +91,21 @@
         [serverConfig setObject:config.method forKey:@"method"];
     }
     
+    // 设置 SSR 特有配置
+    if (config.isSSR) {
+        if (config.protocol) {
+            [serverConfig setObject:config.protocol forKey:@"protocol"];
+        }
+        
+        if (config.obfs) {
+            [serverConfig setObject:config.obfs forKey:@"obfs"];
+        }
+        
+        if (config.obfsParam) {
+            [serverConfig setObject:config.obfsParam forKey:@"obfs_param"];
+        }
+    }
+    
     // 设置本地地址和端口
     [jsonConfig setObject:@"127.0.0.1" forKey:@"local_address"];
     [jsonConfig setObject:@(config.localPort) forKey:@"local_port"];
@@ -119,18 +136,22 @@
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     
     // 启动 shadowsocks-rust
-    int result = ss_start([jsonString UTF8String]);
-    if (result != 0) {
-        if (error) {
-            const char *errorMsg = ss_get_last_error();
-            NSString *errorString = errorMsg ? [NSString stringWithUTF8String:errorMsg] : @"Unknown error";
-            *error = [NSError errorWithDomain:TFYSSErrorDomain
-                                       code:TFYSSErrorStartFailed
-                                   userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to start shadowsocks: %@", errorString]}];
+    int init = ss_init([jsonString UTF8String]);
+    if (init == 0) {
+        int result = ss_start();
+        
+        if (result != 0) {
+            if (error) {
+                const char *errorMsg = ss_get_last_error();
+                NSString *errorString = errorMsg ? [NSString stringWithUTF8String:errorMsg] : @"Unknown error";
+                *error = [NSError errorWithDomain:TFYSSErrorDomain
+                                           code:TFYSSErrorStartFailed
+                                       userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to start shadowsocks: %@", errorString]}];
+            }
+            return NO;
         }
-        return NO;
     }
-    
+
     _isRunning = YES;
     
     // 重置流量统计
@@ -217,6 +238,33 @@
     
     TFYSSProxyService *proxyService = [TFYSSProxyService sharedInstance];
     return [proxyService shouldProxyIP:ip];
+}
+
+#pragma mark - HTTP Proxy
+
+- (BOOL)setupHTTPProxyWithPort:(uint16_t)port error:(NSError **)error {
+    // 当前 Rust 核心不支持 HTTP 代理功能
+    if (error) {
+        *error = [NSError errorWithDomain:TFYSSErrorDomain
+                                   code:TFYSSErrorFeatureNotSupported
+                               userInfo:@{NSLocalizedDescriptionKey: @"HTTP proxy is not supported by Rust core"}];
+    }
+    return NO;
+}
+
+- (void)stopHTTPProxy {
+    // 当前 Rust 核心不支持 HTTP 代理功能，所以这里不需要做任何事情
+}
+
+#pragma mark - NAT Type Detection
+
+- (void)detectNATTypeWithCompletion:(void (^)(NSString *natType))completion {
+    // 当前 Rust 核心不支持 NAT 类型检测功能
+    if (completion) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(@"Unknown");
+        });
+    }
 }
 
 @end
