@@ -120,7 +120,7 @@ Pod::Spec.new do |spec|
   
   # 编译设置
   spec.pod_target_xcconfig = { 
-    'VALID_ARCHS' => 'arm64 arm64e x86_64',
+    'VALID_ARCHS' => 'arm64 arm64e',
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
     'SWIFT_VERSION' => '5.0',
     'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT) $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit',
