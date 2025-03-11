@@ -123,7 +123,7 @@ Pod::Spec.new do |spec|
     'VALID_ARCHS' => 'arm64 arm64e',
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
     'SWIFT_VERSION' => '5.0',
-    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT) $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit',
+    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT) $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
     'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
     'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'HAVE_CONFIG_H=1'],
     'DEFINES_MODULE' => 'YES',
@@ -135,7 +135,7 @@ Pod::Spec.new do |spec|
   
   spec.user_target_xcconfig = { 
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
-    'HEADER_SEARCH_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit',
+    'HEADER_SEARCH_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
     'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit',
     'FRAMEWORK_SEARCH_PATHS' => '$(PODS_CONFIGURATION_BUILD_DIR)'
   }
