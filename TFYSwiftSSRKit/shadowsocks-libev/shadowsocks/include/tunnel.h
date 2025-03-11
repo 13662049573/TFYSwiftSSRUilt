@@ -27,70 +27,14 @@
 #include "encrypt.h"
 #include "obfs.h"
 #include "jconf.h"
-
 #include "common.h"
 
-typedef struct listen_ctx {
-    ev_io io;
-    ss_addr_t tunnel_addr;
-    char *iface;
-    int remote_num;
-    int method;
-    int timeout;
-    int fd;
-    int mptcp;
-    struct sockaddr **remote_addr;
+// Function declarations
+void start_ss_tunnel(const char *server_host, const char *server_port,
+                    const char *local_addr, const char *local_port,
+                    const char *password, const char *method,
+                    const char *timeout, const char *iface);
 
-    // SSR
-    char *protocol_name;
-    char *obfs_name;
-    char *obfs_param;
-    void **list_protocol_global;
-    void **list_obfs_global;
-} listen_ctx_t;
-
-typedef struct server_ctx {
-    ev_io io;
-    int connected;
-    struct server *server;
-} server_ctx_t;
-
-typedef struct server {
-    int fd;
-    buffer_t *buf;
-    ssize_t buf_capacity;
-    struct enc_ctx *e_ctx;
-    struct enc_ctx *d_ctx;
-    struct server_ctx *recv_ctx;
-    struct server_ctx *send_ctx;
-    struct remote *remote;
-    ss_addr_t destaddr;
-
-    // SSR
-    obfs *protocol;
-    obfs *obfs;
-    obfs_class *protocol_plugin;
-    obfs_class *obfs_plugin;
-} server_t;
-
-typedef struct remote_ctx {
-    ev_io io;
-    ev_timer watcher;
-    int connected;
-    struct remote *remote;
-} remote_ctx_t;
-
-typedef struct remote {
-    int fd;
-    buffer_t *buf;
-    ssize_t buf_capacity;
-    struct remote_ctx *recv_ctx;
-    struct remote_ctx *send_ctx;
-    struct server *server;
-    uint32_t counter;
-
-    // SSR
-    int remote_index;
-} remote_t;
+void stop_ss_tunnel(void);
 
 #endif // _TUNNEL_H

@@ -97,9 +97,7 @@
         privoxyConfig.listen_address = "127.0.0.1";
         privoxyConfig.listen_port = config.httpPort;
         
-        if (ss_privoxy_init() != 0) {
-            NSLog(@"Failed to initialize Privoxy");
-        } else if (ss_privoxy_start(&privoxyConfig) != 0) {
+        if (ss_privoxy_start(&privoxyConfig) != 0) {
             NSLog(@"Failed to start Privoxy");
             ss_privoxy_stop();
         } else {
@@ -207,8 +205,6 @@
                         privoxyConfig.socks5_port = config.localPort;
                         privoxyConfig.listen_address = "127.0.0.1";
                         privoxyConfig.listen_port = config.httpPort;
-                        
-                        ss_privoxy_init();
                         ss_privoxy_start(&privoxyConfig);
                     }
                     
@@ -388,8 +384,6 @@ function FindProxyForURL(url, host) {\
         privoxyConfig.socks5_port = config.localPort;
         privoxyConfig.listen_address = "127.0.0.1";
         privoxyConfig.listen_port = config.httpPort;
-        
-        ss_privoxy_init();
         ss_privoxy_start(&privoxyConfig);
     }
     

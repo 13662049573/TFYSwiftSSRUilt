@@ -123,9 +123,18 @@ Pod::Spec.new do |spec|
     'VALID_ARCHS' => 'arm64 arm64e x86_64',
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
     'SWIFT_VERSION' => '5.0',
-    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT) $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
+    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT) $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
     'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
-    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 'HAVE_CONFIG_H=1'],
+    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 
+                                     'HAVE_CONFIG_H=1',
+                                     'PCRE_STATIC=1',
+                                     'SUPPORT_UTF8=1',
+                                     'SUPPORT_UCP=1',
+                                     'SUPPORT_PCRE8=1',
+                                     'HAVE_PCRE_H=1',
+                                     'PCRE_DEFINITION_CHANGED=1',
+                                     'PCRE_OVERRIDE_MALLOC=1',
+                                     'NO_RECURSE=1'],
     'DEFINES_MODULE' => 'YES',
     'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/module.modulemap',
     'SWIFT_INCLUDE_PATHS' => '$(PODS_TARGET_SRCROOT)',
@@ -135,9 +144,18 @@ Pod::Spec.new do |spec|
   
   spec.user_target_xcconfig = { 
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
-    'HEADER_SEARCH_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include',
+    'HEADER_SEARCH_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
     'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit',
-    'FRAMEWORK_SEARCH_PATHS' => '$(PODS_CONFIGURATION_BUILD_DIR)'
+    'FRAMEWORK_SEARCH_PATHS' => '$(PODS_CONFIGURATION_BUILD_DIR)',
+    'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 
+                                     'PCRE_STATIC=1',
+                                     'SUPPORT_UTF8=1',
+                                     'SUPPORT_UCP=1',
+                                     'SUPPORT_PCRE8=1',
+                                     'HAVE_PCRE_H=1',
+                                     'PCRE_DEFINITION_CHANGED=1',
+                                     'PCRE_OVERRIDE_MALLOC=1',
+                                     'NO_RECURSE=1']
   }
   
   # 保留路径，确保模块映射文件和头文件被正确包含

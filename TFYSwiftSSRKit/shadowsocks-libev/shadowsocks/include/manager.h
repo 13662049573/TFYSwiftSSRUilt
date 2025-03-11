@@ -51,7 +51,7 @@ struct manager_ctx {
     int nameserver_num;
 };
 
-struct server {
+struct manager_server {
     char port[8];
     char password[128];
     uint64_t traffic;

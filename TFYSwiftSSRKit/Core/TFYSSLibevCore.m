@@ -274,13 +274,6 @@
     if (!_isRunning) {
         return NO;
     }
-    
-    // 初始化 Privoxy
-    if (ss_privoxy_init() != 0) {
-        NSLog(@"Failed to initialize Privoxy");
-        return NO;
-    }
-    
     // 配置 Privoxy
     privoxy_config_t config;
     memset(&config, 0, sizeof(privoxy_config_t));
@@ -295,11 +288,6 @@
         NSLog(@"Failed to start Privoxy");
         return NO;
     }
-    
-    // 添加一些基本过滤规则
-    ss_privoxy_add_filter("s@^Accept-Encoding:.*@Accept-Encoding: identity@");
-    ss_privoxy_toggle_compression(1);  // 启用压缩
-    
     return YES;
 }
 

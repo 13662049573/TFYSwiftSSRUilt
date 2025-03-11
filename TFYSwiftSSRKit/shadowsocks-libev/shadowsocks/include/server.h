@@ -37,86 +37,22 @@
 #include "encrypt.h"
 #include "jconf.h"
 #include "resolv.h"
-
 #include "common.h"
 
-// 常量定义
+// Constants
 #define BUF_SIZE 2048
 #define MAX_CONNECTIONS 1024
 #define UPDATE_INTERVAL 30
 
-// 上下文结构体
-typedef struct listen_ctx {
-    ev_io io;
-    int fd;
-    int timeout;
-    int method;
-    char *iface;
-    struct ev_loop *loop;
-#ifdef __APPLE__
-    CFSocketRef socket;
-    CFRunLoopSourceRef source;
-#endif
-} listen_ctx_t;
-
-typedef struct server_ctx {
-    ev_io io;
-    ev_timer watcher;
-    int connected;
-    struct server *server;
-} server_ctx_t;
-
-typedef struct server {
-    int fd;
-    int stage;
-    buffer_t *buf;
-    ssize_t buf_capacity;
-
-    int auth;
-    struct chunk *chunk;
-
-    struct enc_ctx *e_ctx;
-    struct enc_ctx *d_ctx;
-    struct server_ctx *recv_ctx;
-    struct server_ctx *send_ctx;
-    struct listen_ctx *listen_ctx;
-    struct remote *remote;
-
-    struct ResolvQuery *query;
-
-    struct cork_dllist_item entries;
-
-#ifdef __APPLE__
-    CFSocketRef socket;
-    CFRunLoopSourceRef source;
-#endif
-} server_t;
+// Type definitions
+typedef listen_ctx_t listener_t;
 
 typedef struct query {
     server_t *server;
     char hostname[257];
 } query_t;
 
-typedef struct remote_ctx {
-    ev_io io;
-    int connected;
-    struct remote *remote;
-} remote_ctx_t;
-
-typedef struct remote {
-    int fd;
-    buffer_t *buf;
-    ssize_t buf_capacity;
-    struct remote_ctx *recv_ctx;
-    struct remote_ctx *send_ctx;
-    struct server *server;
-#ifdef __APPLE__
-    CFSocketRef socket;
-    CFRunLoopSourceRef source;
-#endif
-} remote_t;
-
-// 函数声明
+// Function declarations
 void start_ss_server(const char *server_host, const char *server_port,
                     const char *password, const char *method,
                     const char *timeout, const char *iface);
