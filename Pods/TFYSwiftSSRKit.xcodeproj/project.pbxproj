@@ -160,7 +160,7 @@
 		33493FD7067CA5A78F272A93389A70E4 /* encode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = encode.h; sourceTree = "<group>"; };
 		3497AFE3A71536D4AED30551825A97BB /* cgi.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = cgi.h; sourceTree = "<group>"; };
 		3695D47164516FE202B653FD9E8AE3BB /* xmltok.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = xmltok.h; sourceTree = "<group>"; };
-		36B7009629B7AF805BC7576A36EDEB8A /* TFYSwiftSSRKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = TFYSwiftSSRKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		36B7009629B7AF805BC7576A36EDEB8A /* TFYSwiftSSRKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = TFYSwiftSSRKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		36CD08FD51378AD0FD04ABE2B2DA455A /* ssl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ssl.h; sourceTree = "<group>"; };
 		379552FC0B8DA5B8454FF6D61C200324 /* TFYSSshadowsocksRust.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TFYSSshadowsocksRust.h; path = "TFYSwiftSSRKit/shadowsocks-rust/include/TFYSSshadowsocksRust.h"; sourceTree = "<group>"; };
 		37DB2C6296609F758ADE097F18C96C96 /* ascii.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ascii.h; sourceTree = "<group>"; };
@@ -169,7 +169,7 @@
 		3D9914ABA1ED048B9C3E506B9051F3E8 /* libantinat_ios.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libantinat_ios.a; path = "TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_ios.a"; sourceTree = "<group>"; };
 		3F66F156F904FA45B89DCECAC837F54F /* netutils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = netutils.h; sourceTree = "<group>"; };
 		41F1C2172C39A57F6F08490B0C4E6879 /* win32.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = win32.h; sourceTree = "<group>"; };
-		41F7A5D908CD08584DCA8A2FE79EC67A /* TFYSwiftSSRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TFYSwiftSSRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		41F7A5D908CD08584DCA8A2FE79EC67A /* TFYSwiftSSRKit */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = TFYSwiftSSRKit; path = TFYSwiftSSRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49DEE7CB248C8364D865B9C06629BF62 /* auth.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = auth.h; sourceTree = "<group>"; };
 		49F709F1E01A3EBA85AE381E19DBA295 /* loadcfg.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = loadcfg.h; sourceTree = "<group>"; };
 		4FCAC7C84F0F23B52D3F9896A9171332 /* project.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = project.h; sourceTree = "<group>"; };
@@ -233,7 +233,7 @@
 		C6FC62F93E9A6D09976E3347C8090886 /* acl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = acl.h; sourceTree = "<group>"; };
 		C7D238A65699427AFFC3AE77E8A85202 /* rule.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = rule.h; sourceTree = "<group>"; };
 		C8DEDBE0EBA49F6F42BF46745ACEBBCE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		CCB8C36072665129FD6184908E723083 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		CCB8C36072665129FD6184908E723083 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
 		CD44ED73D817E51D55E0F810979A997E /* jconf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = jconf.h; sourceTree = "<group>"; };
 		CF67E4551A938D21AA216899B6DD7955 /* libsodium_ios.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libsodium_ios.a; path = "TFYSwiftSSRKit/shadowsocks-libev/libsodium/lib/libsodium_ios.a"; sourceTree = "<group>"; };
 		D021662BFDF96EF359FB44C1A43B2769 /* http_simple.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = http_simple.h; sourceTree = "<group>"; };
@@ -264,7 +264,7 @@
 		F2E8E58B769C678CC5A2056746B395B3 /* libpcre_ios.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libpcre_ios.a; path = "TFYSwiftSSRKit/shadowsocks-libev/pcre/lib/libpcre_ios.a"; sourceTree = "<group>"; };
 		F53124388049268C687E9847A5D06ABE /* TFYSSConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = TFYSSConfig.h; sourceTree = "<group>"; };
 		F53C25713CF7C4700810BFBAFAD8D6A8 /* libss_ios.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libss_ios.a; path = "TFYSwiftSSRKit/shadowsocks-rust/lib/libss_ios.a"; sourceTree = "<group>"; };
-		F5736E560775096059C6557AED64649D /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		F5736E560775096059C6557AED64649D /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
 		F5A638B9CE4441E5EEA5528A5A6ADA24 /* privoxy_api.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = privoxy_api.h; sourceTree = "<group>"; };
 		F5A9AC7498422D34C8CF4D21577E700D /* udprelay.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = udprelay.h; sourceTree = "<group>"; };
 		F5B8929F29A6E207CD01345AF309873E /* common.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
@@ -400,6 +400,7 @@
 				B6C176AE05C0A42D607F939D30F18E85 /* w32taskbar.h */,
 				41F1C2172C39A57F6F08490B0C4E6879 /* win32.h */,
 			);
+			name = include;
 			path = include;
 			sourceTree = "<group>";
 		};
@@ -451,6 +452,7 @@
 				3695D47164516FE202B653FD9E8AE3BB /* xmltok.h */,
 				568D5FB673716BAD534DF3FF6FA87AA1 /* xmltok_impl.h */,
 			);
+			name = include;
 			path = include;
 			sourceTree = "<group>";
 		};
@@ -565,7 +567,7 @@
 		E3554712CBC2BC43136EDC383DE30F17 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				41F7A5D908CD08584DCA8A2FE79EC67A /* TFYSwiftSSRKit.framework */,
+				41F7A5D908CD08584DCA8A2FE79EC67A /* TFYSwiftSSRKit */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -607,6 +609,7 @@
 				FB584B2EA7FA290E703E91AF1D2EF0BE /* utils.h */,
 				6BE5A0E5E3F8D5AB8F3FE179F52A7AE3 /* verify.h */,
 			);
+			name = include;
 			path = include;
 			sourceTree = "<group>";
 		};
@@ -754,7 +757,7 @@
 			);
 			name = TFYSwiftSSRKit;
 			productName = TFYSwiftSSRKit;
-			productReference = 41F7A5D908CD08584DCA8A2FE79EC67A /* TFYSwiftSSRKit.framework */;
+			productReference = 41F7A5D908CD08584DCA8A2FE79EC67A /* TFYSwiftSSRKit */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -775,6 +778,8 @@
 				en,
 			);
 			mainGroup = 26E65D2CF184C64D7EC3D22C8901296A;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = E3554712CBC2BC43136EDC383DE30F17 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
