@@ -13,6 +13,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <pthread.h>
 
 // 定义 Libev 核心类型
 #define TFYSSCoreTypeLibev 2    // Libev 核心实现

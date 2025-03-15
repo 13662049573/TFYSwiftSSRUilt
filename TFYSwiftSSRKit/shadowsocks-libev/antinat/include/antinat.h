@@ -1,3 +1,7 @@
+#ifndef AN_EXPORT
+#define AN_EXPORT
+#endif
+
 /* ANTINAT
  * =======
  * This software is Copyright (c) 2003-05 Malcolm Smith.
@@ -111,69 +115,69 @@ extern "C" {
 	int AN_FD_SET (ANCONN, fd_set *, int);
 	int AN_FD_ISSET (ANCONN, fd_set *);
 
-	int an_accept (ANCONN, struct sockaddr *, int);
-	int an_bind_tohostname (ANCONN, const char *, unsigned short);
-	int an_bind_tosockaddr (ANCONN, struct sockaddr *, int);
-	int an_clear_authschemes (ANCONN);
-	int an_close (ANCONN);
-	int an_connect_tohostname (ANCONN, const char *, unsigned short);
-	int an_connect_tosockaddr (ANCONN, struct sockaddr *, int);
-	int an_destroy (ANCONN);
-	int an_direct_accept (ANCONN, struct sockaddr *, int);
-	int an_direct_bind_tohostname (ANCONN, const char *, unsigned short);
-	int an_direct_bind_tosockaddr (ANCONN, struct sockaddr *, int);
-	int an_direct_connect_tohostname (ANCONN, const char *, unsigned short);
-	int an_direct_connect_tosockaddr (ANCONN, struct sockaddr *, int);
-	int an_direct_close (ANCONN);
-	int an_direct_getpeername (ANCONN, struct sockaddr *, int);
-	int an_direct_getsockname (ANCONN, struct sockaddr *, int);
-	int an_direct_listen (ANCONN);
-	int an_direct_recv (ANCONN, void *, int, int);
-	int an_direct_send (ANCONN, void *, int, int);
-	char *an_geterror (int);
-	int an_gethostbyname (const char *, struct hostent *, char *, int,
+	AN_EXPORT int an_accept (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_bind_tohostname (ANCONN, const char *, unsigned short);
+	AN_EXPORT int an_bind_tosockaddr (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_clear_authschemes (ANCONN);
+	AN_EXPORT int an_close (ANCONN);
+	AN_EXPORT int an_connect_tohostname (ANCONN, const char *, unsigned short);
+	AN_EXPORT int an_connect_tosockaddr (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_destroy (ANCONN);
+	AN_EXPORT int an_direct_accept (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_direct_bind_tohostname (ANCONN, const char *, unsigned short);
+	AN_EXPORT int an_direct_bind_tosockaddr (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_direct_connect_tohostname (ANCONN, const char *, unsigned short);
+	AN_EXPORT int an_direct_connect_tosockaddr (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_direct_close (ANCONN);
+	AN_EXPORT int an_direct_getpeername (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_direct_getsockname (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_direct_listen (ANCONN);
+	AN_EXPORT int an_direct_recv (ANCONN, void *, int, int);
+	AN_EXPORT int an_direct_send (ANCONN, void *, int, int);
+	AN_EXPORT char *an_geterror (int);
+	AN_EXPORT int an_gethostbyname (const char *, struct hostent *, char *, int,
 						  struct hostent **ret, int *);
-	int an_getpeername (ANCONN, struct sockaddr *, int);
-	int an_getsockname (ANCONN, struct sockaddr *, int);
-	unsigned int an_getversion ();
-	int an_listen (ANCONN);
+	AN_EXPORT int an_getpeername (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_getsockname (ANCONN, struct sockaddr *, int);
+	unsigned AN_EXPORT int an_getversion ();
+	AN_EXPORT int an_listen (ANCONN);
 	ANCONN an_new_connection ();
-	int an_recv (ANCONN, void *, int, int);
-	int an_send (ANCONN, void *, int, int);
-	int an_set_authscheme (ANCONN, unsigned int);
-	int an_set_blocking (ANCONN, unsigned short);
-	int an_set_credentials (ANCONN, const char *, const char *);
-	int an_set_proxy (ANCONN, unsigned short, unsigned short, const char *,
+	AN_EXPORT int an_recv (ANCONN, void *, int, int);
+	AN_EXPORT int an_send (ANCONN, void *, int, int);
+	AN_EXPORT int an_set_authscheme (ANCONN, unsigned int);
+	AN_EXPORT int an_set_blocking (ANCONN, unsigned short);
+	AN_EXPORT int an_set_credentials (ANCONN, const char *, const char *);
+	AN_EXPORT int an_set_proxy (ANCONN, unsigned short, unsigned short, const char *,
 					  unsigned short);
-	int an_set_proxy_url (ANCONN, const char *);
-	int an_socks4_accept (ANCONN, struct sockaddr *, int);
-	int an_socks4_bind_tohostname (ANCONN, const char *, unsigned short);
-	int an_socks4_bind_tosockaddr (ANCONN, struct sockaddr *, int);
-	int an_socks4_connect_tohostname (ANCONN, const char *, unsigned short);
-	int an_socks4_connect_tosockaddr (ANCONN, struct sockaddr *, int);
-	int an_socks4_close (ANCONN);
-	int an_socks4_getpeername (ANCONN, struct sockaddr *, int);
-	int an_socks4_getsockname (ANCONN, struct sockaddr *, int);
-	int an_socks4_listen (ANCONN);
-	int an_socks4_recv (ANCONN, void *, int, int);
-	int an_socks4_send (ANCONN, void *, int, int);
-	int an_socks5_accept (ANCONN, struct sockaddr *, int);
-	int an_socks5_bind_tohostname (ANCONN, const char *, unsigned short);
-	int an_socks5_bind_tosockaddr (ANCONN, struct sockaddr *, int);
-	int an_socks5_connect_tohostname (ANCONN, const char *, unsigned short);
-	int an_socks5_connect_tosockaddr (ANCONN, struct sockaddr *, int);
-	int an_socks5_close (ANCONN);
-	int an_socks5_getpeername (ANCONN, struct sockaddr *, int);
-	int an_socks5_getsockname (ANCONN, struct sockaddr *, int);
-	int an_socks5_listen (ANCONN);
-	int an_socks5_recv (ANCONN, void *, int, int);
-	int an_socks5_send (ANCONN, void *, int, int);
-	int an_ssl_connect_tohostname (ANCONN, const char *, unsigned short);
-	int an_ssl_connect_tosockaddr (ANCONN, struct sockaddr *, int);
-	int an_ssl_close (ANCONN);
-	int an_ssl_recv (ANCONN, void *, int, int);
-	int an_ssl_send (ANCONN, void *, int, int);
-	int an_unset_proxy (ANCONN);
+	AN_EXPORT int an_set_proxy_url (ANCONN, const char *);
+	AN_EXPORT int an_socks4_accept (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks4_bind_tohostname (ANCONN, const char *, unsigned short);
+	AN_EXPORT int an_socks4_bind_tosockaddr (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks4_connect_tohostname (ANCONN, const char *, unsigned short);
+	AN_EXPORT int an_socks4_connect_tosockaddr (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks4_close (ANCONN);
+	AN_EXPORT int an_socks4_getpeername (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks4_getsockname (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks4_listen (ANCONN);
+	AN_EXPORT int an_socks4_recv (ANCONN, void *, int, int);
+	AN_EXPORT int an_socks4_send (ANCONN, void *, int, int);
+	AN_EXPORT int an_socks5_accept (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks5_bind_tohostname (ANCONN, const char *, unsigned short);
+	AN_EXPORT int an_socks5_bind_tosockaddr (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks5_connect_tohostname (ANCONN, const char *, unsigned short);
+	AN_EXPORT int an_socks5_connect_tosockaddr (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks5_close (ANCONN);
+	AN_EXPORT int an_socks5_getpeername (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks5_getsockname (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_socks5_listen (ANCONN);
+	AN_EXPORT int an_socks5_recv (ANCONN, void *, int, int);
+	AN_EXPORT int an_socks5_send (ANCONN, void *, int, int);
+	AN_EXPORT int an_ssl_connect_tohostname (ANCONN, const char *, unsigned short);
+	AN_EXPORT int an_ssl_connect_tosockaddr (ANCONN, struct sockaddr *, int);
+	AN_EXPORT int an_ssl_close (ANCONN);
+	AN_EXPORT int an_ssl_recv (ANCONN, void *, int, int);
+	AN_EXPORT int an_ssl_send (ANCONN, void *, int, int);
+	AN_EXPORT int an_unset_proxy (ANCONN);
 
 #ifdef __cplusplus
 }

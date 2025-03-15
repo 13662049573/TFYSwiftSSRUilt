@@ -97,6 +97,24 @@ Pod::Spec.new do |spec|
     
     libev.private_header_files = "TFYSwiftSSRKit/shadowsocks-libev/**/*.h"
     libev.libraries = "c", "resolv", "z"
+    
+    # 添加特定于 antinat 和 privoxy 的编译设置
+    libev.pod_target_xcconfig = {
+      'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 
+                                       'ANTINAT_IMPLEMENTATION=1',
+                                       'PRIVOXY_IMPLEMENTATION=1',
+                                       'HAVE_CONFIG_H=1',
+                                       'PCRE_STATIC=1',
+                                       'SUPPORT_UTF8=1',
+                                       'SUPPORT_UCP=1',
+                                       'SUPPORT_PCRE8=1',
+                                       'HAVE_PCRE_H=1',
+                                       'PCRE_DEFINITION_CHANGED=1',
+                                       'PCRE_OVERRIDE_MALLOC=1',
+                                       'NO_RECURSE=1'],
+      'OTHER_LDFLAGS' => '-force_load $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib/libantinat_ios.a -force_load $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib/libprivoxy_ios.a -force_load $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib/libshadowsocks-libev_ios.a'
+    }
+
   end
   
   # Shadowsocks-rust
@@ -121,9 +139,9 @@ Pod::Spec.new do |spec|
   # 编译设置
   spec.pod_target_xcconfig = { 
     'VALID_ARCHS' => 'arm64 arm64e x86_64',
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => '',
     'SWIFT_VERSION' => '5.0',
-    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT) $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
+    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT) $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include',
     'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
     'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 
                                      'HAVE_CONFIG_H=1',
@@ -134,17 +152,22 @@ Pod::Spec.new do |spec|
                                      'HAVE_PCRE_H=1',
                                      'PCRE_DEFINITION_CHANGED=1',
                                      'PCRE_OVERRIDE_MALLOC=1',
-                                     'NO_RECURSE=1'],
+                                     'NO_RECURSE=1',
+                                     'ANTINAT_IMPLEMENTATION=1',
+                                     'PRIVOXY_IMPLEMENTATION=1',
+                                     'DEFINE_MISSING_SYMBOLS=1'],
     'DEFINES_MODULE' => 'YES',
     'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/module.modulemap',
     'SWIFT_INCLUDE_PATHS' => '$(PODS_TARGET_SRCROOT)',
     'FRAMEWORK_SEARCH_PATHS' => '$(PODS_CONFIGURATION_BUILD_DIR)',
-    'OTHER_CFLAGS' => '-fmodule-map-file=$(PODS_TARGET_SRCROOT)/module.modulemap'
+    'OTHER_CFLAGS' => '-fmodule-map-file=$(PODS_TARGET_SRCROOT)/module.modulemap',
+    'LIBRARY_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_TARGET_SRCROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
+    'OTHER_LDFLAGS' => '-ObjC -all_load'
   }
   
   spec.user_target_xcconfig = { 
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64',
-    'HEADER_SEARCH_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include',
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => '',
+    'HEADER_SEARCH_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libsodium/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/mbedtls/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libev/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/libcork/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/pcre/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/include $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/include',
     'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit',
     'FRAMEWORK_SEARCH_PATHS' => '$(PODS_CONFIGURATION_BUILD_DIR)',
     'GCC_PREPROCESSOR_DEFINITIONS' => ['$(inherited)', 
@@ -155,7 +178,12 @@ Pod::Spec.new do |spec|
                                      'HAVE_PCRE_H=1',
                                      'PCRE_DEFINITION_CHANGED=1',
                                      'PCRE_OVERRIDE_MALLOC=1',
-                                     'NO_RECURSE=1']
+                                     'NO_RECURSE=1',
+                                     'ANTINAT_IMPLEMENTATION=1',
+                                     'PRIVOXY_IMPLEMENTATION=1',
+                                     'DEFINE_MISSING_SYMBOLS=1'],
+    'LIBRARY_SEARCH_PATHS' => '$(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/shadowsocks/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/antinat/lib $(PODS_ROOT)/TFYSwiftSSRKit/shadowsocks-libev/privoxy/lib',
+    'OTHER_LDFLAGS' => '-ObjC -all_load'
   }
   
   # 保留路径，确保模块映射文件和头文件被正确包含
