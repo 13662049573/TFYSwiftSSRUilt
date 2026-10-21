@@ -204,16 +204,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
     
     private func formatTraffic(_ bytes: UInt64) -> String {
-        let kb = Double(bytes) / 1024.0
-        let mb = kb / 1024.0
-        let gb = mb / 1024.0
-        
-        if gb >= 1.0 {
-            return String(format: "%.2f GB", gb)
-        } else if mb >= 1.0 {
-            return String(format: "%.2f MB", mb)
-        } else {
-            return String(format: "%.2f KB", kb)
-        }
+        bytes.formatted(.byteCount(style: .binary, allowedUnits: [.kb, .mb, .gb]))
     }
 }

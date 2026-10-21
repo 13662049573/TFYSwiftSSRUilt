@@ -1,7 +1,7 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
 # 设置iOS和macOS平台
-platform :ios, '15.0'
+platform :ios, '16.0'
 
 # 忽略所有警告
 inhibit_all_warnings!
@@ -27,7 +27,7 @@ end
 post_install do |installer| 
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '12.0'
       config.build_settings['SWIFT_VERSION'] = '5.0'
       config.build_settings['CLANG_ENABLE_MODULES'] = '$(inherited)'
