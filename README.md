@@ -2,6 +2,13 @@
 
 TFYSwiftSSRKit 是一个用于 iOS 和 macOS 的 Shadowsocks/SSR 客户端框架，支持 Rust 和 C 两种实现。
 
+## 要求
+
+- iOS 16.0 或更高版本
+- macOS 12.0 或更高版本（macOS 支持保持不变）
+- Xcode 14.0 或更高版本
+- Swift 5.0
+
 ## 特性
 
 - 支持 Shadowsocks-libev (C) 和 Shadowsocks-rust 两种实现

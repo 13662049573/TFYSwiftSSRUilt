@@ -295,6 +295,7 @@ function FindProxyForURL(url, host) {\
     
     proxySettings.excludeSimpleHostnames = YES;
     proxySettings.exceptionList = @[@"localhost", @"127.0.0.1"];
+    proxySettings.includeAllNetworks = YES;
     settings.proxySettings = proxySettings;
     
     // 应用网络设置

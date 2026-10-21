@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
   spec.name         = "TFYSwiftSSRKit"
 
-  spec.version      = "1.0.9"
+  spec.version      = "1.1.0"
 
   spec.summary      = "iOS/macOS Shadowsocks/SSR 客户端框架，支持 Rust 和 C 两种实现"
 
@@ -18,7 +18,7 @@ Pod::Spec.new do |spec|
 
   spec.author       = { "tianfengyou" => "420144542@qq.com" }
   
-  spec.ios.deployment_target = "15.0"
+  spec.ios.deployment_target = "16.0"
 
   spec.osx.deployment_target = "12.0"
   
@@ -138,6 +138,7 @@ Pod::Spec.new do |spec|
   
   # 编译设置
   spec.pod_target_xcconfig = { 
+    'IPHONEOS_DEPLOYMENT_TARGET' => '16.0',
     'VALID_ARCHS' => 'arm64 arm64e x86_64',
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => '',
     'SWIFT_VERSION' => '5.0',

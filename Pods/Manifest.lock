@@ -1,9 +1,9 @@
 PODS:
-  - TFYSwiftSSRKit (1.0.9):
-    - TFYSwiftSSRKit/shadowsocks-libev (= 1.0.9)
-    - TFYSwiftSSRKit/shadowsocks-rust (= 1.0.9)
-  - TFYSwiftSSRKit/shadowsocks-libev (1.0.9)
-  - TFYSwiftSSRKit/shadowsocks-rust (1.0.9)
+  - TFYSwiftSSRKit (1.1.0):
+    - TFYSwiftSSRKit/shadowsocks-libev (= 1.1.0)
+    - TFYSwiftSSRKit/shadowsocks-rust (= 1.1.0)
+  - TFYSwiftSSRKit/shadowsocks-libev (1.1.0)
+  - TFYSwiftSSRKit/shadowsocks-rust (1.1.0)
 
 DEPENDENCIES:
   - TFYSwiftSSRKit (from `./`)
